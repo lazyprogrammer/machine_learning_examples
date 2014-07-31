@@ -1,0 +1,11 @@
+Reinforcement Learning: A Tutorial Survey and Recent Advances - Abhijit Gosavi
+http://web.mst.edu/~gosavia/joc.pdf
+
+Algorithms for Reinforcement Learning - Csaba Szepesv´ari
+http://old.sztaki.hu/~szcsaba/papers/RLAlgsInMDPs-lecture.pdf
+
+Sutton & Barto
+http://incompleteideas.net/sutton/book/the-book-2nd.html
+
+Mastering the game of Go with deep neural networks and tree search - Silver, D. et al.
+https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf

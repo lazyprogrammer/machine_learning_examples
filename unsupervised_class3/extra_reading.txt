@@ -1,0 +1,12 @@
+Generative Visual Manipulation on the Natural Image Manifold
+https://www.youtube.com/watch?v=9c4z6YsBGQ0
+
+Generative Adversarial Nets (Goodfellow 2014)
+https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf
+
+Radford, A., Metz, L., and Chintala, S. (2015). Unsupervised representation learning with deep convolutional generative adversarial networks
+https://arxiv.org/abs/1511.06434v2
+
+Striving for Simplicity: The All Convolutional Net (Springenberg et al., 2015)
+https://arxiv.org/abs/1412.6806
+
