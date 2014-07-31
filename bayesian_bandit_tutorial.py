@@ -1,3 +1,8 @@
+"""
+Code for Bayesian Bandit tutorial, which can be found here:
+http://lazyprogrammer.tumblr.com/post/93446998489/bayesian-bandit-tutorial
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import beta
