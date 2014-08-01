@@ -1,11 +1,11 @@
 import numpy as np
 from numpy import linalg
-
+from classifier import Classifier
 
 NUM_SAMPLES = 1000
 
 
-class LinearRegression(object):
+class LinearRegression(Classifier):
     def fit(self, X, y):
         D = len(X[0]) + 1
         P = np.zeros((D, D))
@@ -17,25 +17,12 @@ class LinearRegression(object):
         self.beta = np.dot(linalg.inv(P), Q)
 
 
-    def score(self, X, y):
-        meany = np.mean(y)
-        SStot = 0
-        SSres = 0
-        for xi, yi in zip(X, y):
-            x = np.concatenate([[1], xi])
-            res = yi - np.dot(self.beta, x)
-            tot = yi - meany
-            SSres += res*res
-            SStot += tot*tot
-        return 1 - SSres/SStot
-
-
     def predict(self, x):
         # prepend 1, dot product with beta
         return np.inner(self.beta, np.concatenate([[1], x]))
 
 
-def main():
+def test():
     # create a bunch of random data for X-axis
     # uniformly generate 2-D vectors in [-50, 50]
     X = 100*np.random.random([NUM_SAMPLES, 2]) - 50
@@ -62,4 +49,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    test()
