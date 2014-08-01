@@ -37,7 +37,7 @@ class LinearRegression(object):
 
 def main():
     # create a bunch of random data for X-axis
-    # uniformly generate numbers in [-50, 50]
+    # uniformly generate 2-D vectors in [-50, 50]
     X = 100*np.random.random([NUM_SAMPLES, 2]) - 50
 
     # create a bunch of random data for Y-axis
