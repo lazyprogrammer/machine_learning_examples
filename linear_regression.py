@@ -1,11 +1,11 @@
 import numpy as np
 from numpy import linalg
-from classifier import Classifier
+from regressor import Regressor
 
 NUM_SAMPLES = 1000
 
 
-class LinearRegression(Classifier):
+class LinearRegression(Regressor):
     def fit(self, X, y):
         D = len(X[0]) + 1
         P = np.zeros((D, D))

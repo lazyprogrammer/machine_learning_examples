@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Classifier(object):
+class Regressor(object):
     def score(self, X, y):
         meany = np.mean(y)
         SStot = 0
