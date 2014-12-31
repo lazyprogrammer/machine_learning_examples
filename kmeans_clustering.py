@@ -6,6 +6,9 @@
 # allow us to compare the true clusters vs.
 # predicted clusters.
 
+# A link to the tutorial is here:
+# http://lazyprogrammer.me/post/106693297569/k-means-clustering
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -52,7 +55,7 @@ class KMeans(object):
             min_c = -1
             min_dist = float("inf")
             for c,m in enumerate(self.centers):
-                d = np.linalg.norm(x - m)
+                d = np.linalg.norm(X - m)
                 if d < min_dist:
                     min_c = c
                     min_dist = d
