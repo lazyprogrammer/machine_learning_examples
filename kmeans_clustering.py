@@ -24,6 +24,7 @@ class KMeans(object):
         initial_indices = np.random.choice(np.arange(N), self.K)
         self.centers = np.array([X[i] for i in initial_indices])
 
+        intermediate_predictions = []
         for i in xrange(self.max_iter):
             # there are only 2 steps for vanilla k-means clustering
             # 1. determing current cluster assignments
@@ -31,11 +32,13 @@ class KMeans(object):
 
             # 1. determing current cluster assignments
             Y = self.predict(X)
+            intermediate_predictions.append(Y)
 
             # 2. find new cluster centers
             self.centers, max_change = self.get_centers(X,Y)
             if max_change < self.epsilon:
                 break
+        return intermediate_predictions
 
 
     def predict(self, X):
@@ -109,7 +112,7 @@ def test():
     plt.show()
 
     kmeans = KMeans(len(means))
-    kmeans.fit(X)
+    intermediate_predictions = kmeans.fit(X)
 
     print "predicted centers:\n", kmeans.centers
 
@@ -121,6 +124,12 @@ def test():
     plt.scatter(X[:,0], X[:,1], c=C, s=100, alpha=0.5)
     plt.title("Predicted clusters")
     plt.show()
+
+    for i, yhat in enumerate(intermediate_predictions):
+        plt.figure()
+        plt.scatter(X[:,0], X[:,1], c=yhat, s=100, alpha=0.5)
+        plt.title("Predictions at iteration %d" % (i+1))
+        plt.show()
 
 
 if __name__ == "__main__":
