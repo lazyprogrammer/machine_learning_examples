@@ -1,3 +1,14 @@
+'''
+This is an example of a K-Nearest Neighbors classifier on MNIST data.
+
+We try k=1...5 to show how we might choose the best k.
+
+This is not production code!
+
+See the tutorial here:
+http://lazyprogrammer.me/post/114114892404/tutorial-k-nearest-neighbor-classifier-for-mnist
+'''
+
 import pandas as pd
 import numpy as np
 from sortedcontainers import SortedDict
@@ -47,10 +58,6 @@ class KNN(object):
             y[i] = max_votes_class
         return y
 
-# mini test
-# knn = KNN(1)
-# knn.fit(Xtrain, Ytrain)
-# Ypred = knn.predict(Xtest[:10])
 
 for k in (1,2,3,4,5):
     C = np.zeros((10,10), dtype=np.int)

@@ -1,3 +1,13 @@
+'''
+This is an example of a Bayes classifier on MNIST data using
+multivariate Gaussians to model the data.
+
+This is not production code!
+
+See the tutorial here:
+http://lazyprogrammer.me/post/114077813814/bayes-classifier-and-naive-bayes-tutorial-using
+'''
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -53,7 +63,7 @@ if __name__ == '__main__':
     print C
     print "Accuracy:", np.trace(C) / 500.0
 
-    if len(sys.argv) > 1 and sys.argv[1] == 'reconstruct':
+    if 'reconstruct' in sys.argv:
         # show means as images
         Q = pd.read_csv("mnist_csv/Q.txt", header=None).as_matrix()
         for c,g in bayes.gaussians.iteritems():
@@ -62,14 +72,3 @@ if __name__ == '__main__':
             plt.imshow(y)
             plt.title(c)
             plt.show()
-
-    # show distributions for 3 misclassified examples
-    print "distributions for 3 misclassified examples:"
-    count = 0
-    for i,p in Ypred.iteritems():
-        if p != Ytest.loc[i][0]:
-            print "predicted:", p, "actual:", Ytest.loc[i][0]
-            print bayes.distributions(Xtest.loc[i])
-            count += 1
-        if count >= 3:
-            break
