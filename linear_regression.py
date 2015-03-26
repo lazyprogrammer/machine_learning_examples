@@ -7,14 +7,9 @@ NUM_SAMPLES = 1000
 
 class LinearRegression(Regressor):
     def fit(self, X, y):
-        D = len(X[0]) + 1
-        P = np.zeros((D, D))
-        Q = np.zeros(D)
-        for xi, yi in zip(X, y):
-            x = np.concatenate([[1], xi])
-            P += np.outer(x, x)
-            Q += x*yi
-        self.beta = np.dot(linalg.inv(P), Q)
+        N = len(X)
+        X = np.concatenate((np.array([[1]*N]).T, X), axis=1)
+        self.beta = np.dot( np.dot( np.linalg.inv(np.dot(X.T,X)), X.T ), y )
 
 
     def predict(self, x):
