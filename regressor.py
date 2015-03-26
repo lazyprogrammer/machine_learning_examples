@@ -8,3 +8,6 @@ class Regressor(object):
         SStot = y - np.mean(y)
         SStot = np.dot(SStot.T, SStot)
         return 1 - SSres/SStot
+
+    def predict(self, X):
+        raise Exception("Not implemented: predict")
