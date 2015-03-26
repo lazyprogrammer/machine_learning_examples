@@ -11,3 +11,6 @@ class Regressor(object):
 
     def predict(self, X):
         raise Exception("Not implemented: predict")
+
+    def fit(self, X, y):
+        raise Exception("Not implemented: fit")
