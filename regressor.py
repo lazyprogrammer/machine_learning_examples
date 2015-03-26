@@ -3,12 +3,8 @@ import numpy as np
 
 class Regressor(object):
     def score(self, X, y):
-        meany = np.mean(y)
-        SStot = 0
-        SSres = 0
-        for xi, yi in zip(X, y):
-            res = yi - self.predict(xi)
-            tot = yi - meany
-            SSres += res*res
-            SStot += tot*tot
+        SSres = y - self.predict(X)
+        SSres = np.dot(SSres.T, SSres)
+        SStot = y - np.mean(y)
+        SStot = np.dot(SStot.T, SStot)
         return 1 - SSres/SStot

@@ -12,9 +12,11 @@ class LinearRegression(Regressor):
         self.beta = np.dot( np.dot( np.linalg.inv(np.dot(X.T,X)), X.T ), y )
 
 
-    def predict(self, x):
+    def predict(self, X):
         # prepend 1, dot product with beta
-        return np.inner(self.beta, np.concatenate([[1], x]))
+        N = len(X)
+        X = np.concatenate((np.array([[1]*N]).T, X), axis=1)
+        return np.inner(self.beta, X)
 
 
 def test():
@@ -38,7 +40,7 @@ def test():
 
     # predict
     x = (100, 100)
-    h = lr.predict(x)
+    h = lr.predict(np.array([x]))
     y = 5*x[0] - 2*x[1] + 3
     print "Extrapolated prediction: %.2f\nActual: %.2f" % (h, y)
 
