@@ -1,3 +1,6 @@
+# The associated tutorial for this code is here:
+# http://lazyprogrammer.me/post/117112987199/deep-learning-tutorial-part-1-3-logistic
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
