@@ -111,6 +111,13 @@ def test():
     plt.title("Target clusters")
     plt.show()
 
+    print "colors.shape:", np.array(colors).shape
+    print "X.shape:", X.shape
+
+    plt.plot(colors)
+    plt.title("Colors")
+    plt.show()
+
     kmeans = KMeans(len(means))
     intermediate_predictions = kmeans.fit(X)
 
