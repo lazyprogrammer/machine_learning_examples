@@ -2,6 +2,7 @@
 # with regularization.
 #
 # the notes for this class can be found at: 
+# https://www.udemy.com/data-science-logistic-regression-in-python
 
 import numpy as np
 

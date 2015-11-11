@@ -1,3 +1,9 @@
+# generates 2-dimensional data for linear regression analysis
+#
+# notes for this course can be founda at:
+# https://www.udemy.com/data-science-linear-regression-in-python
+
+
 import numpy as np
 
 N = 100
