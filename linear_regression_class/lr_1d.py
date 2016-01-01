@@ -1,3 +1,8 @@
+# shows how linear regression analysis can be applied to 1-dimensional data
+#
+# notes for this course can be founda at:
+# https://www.udemy.com/data-science-linear-regression-in-python
+
 import numpy as np
 import matplotlib.pyplot as plt
 
