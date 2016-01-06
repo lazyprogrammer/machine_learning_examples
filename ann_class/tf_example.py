@@ -1,3 +1,8 @@
+# neural network in TensorFlow very simple example.
+#
+# the notes for this class can be found at: 
+# https://www.udemy.com/data-science-deep-learning-in-python
+
 import tensorflow as tf
 import numpy as np
 

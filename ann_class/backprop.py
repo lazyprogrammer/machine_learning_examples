@@ -1,3 +1,8 @@
+# backpropagation example for deep learning in python class.
+#
+# the notes for this class can be found at: 
+# https://www.udemy.com/data-science-deep-learning-in-python
+
 import numpy as np
 
 def forward(X, W1, W2):

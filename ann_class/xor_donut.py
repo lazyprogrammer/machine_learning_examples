@@ -1,3 +1,9 @@
+# revisiting the XOR and donut problems to show how features
+# can be learned automatically using neural networks.
+#
+# the notes for this class can be found at: 
+# https://www.udemy.com/data-science-deep-learning-in-python
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -108,7 +114,7 @@ def test_donut():
     learning_rate = 0.00005
     regularization = 0.2
     last_error_rate = None
-    for i in xrange(150000):
+    for i in xrange(160000):
         pY, Z = forward(X, W1, b1, W2, b2)
         ll = cost(Y, pY)
         prediction = predict(X, W1, b1, W2, b2)
@@ -120,11 +126,13 @@ def test_donut():
         b1 += learning_rate * (derivative_b1(Z, Y, pY, W2) - regularization * b1)
         if i % 100 == 0:
             print "ll:", ll, "classification rate:", 1 - er
+    plt.plot(LL)
+    plt.show()
 
 
 if __name__ == '__main__':
-    test_xor()
-    # test_donut()
+    # test_xor()
+    test_donut()
 
     
 
