@@ -6,7 +6,7 @@
 import numpy as np
 
 def forward(X, W1, W2):
-    Z = np.tanh(X.dot(W1))
+    Z = 1 / (1 + np.exp(-X.dot(W1)))
     A = Z.dot(W2)
     expA = np.exp(A)
     Y = expA / expA.sum(axis=1, keepdims=True)

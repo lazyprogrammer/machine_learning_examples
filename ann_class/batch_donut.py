@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 def forward(X, W1, b1, W2, b2):
     # assume we will use tanh() on hidden
     # and softmax on output
-    Z = np.tanh(X.dot(W1) + b1)
+    Z = 1 / (1 + np.exp( -(X.dot(W1) + b1) ))
     activation = Z.dot(W2) + b2
     Y = 1 / (1 + np.exp(-activation))
     return Y, Z
@@ -88,7 +88,7 @@ def test_donut():
     batch_size = 100
     for i in xrange(150000):
         tmpX, tmpY = shuffle(X, Y)
-        
+
         tmpX = tmpX[:batch_size]
         tmpY = tmpY[:batch_size]
         pY, Z = forward(tmpX, W1, b1, W2, b2)
