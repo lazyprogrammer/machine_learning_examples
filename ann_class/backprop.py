@@ -39,7 +39,7 @@ def derivative_w2(Z, T, Y):
     # assert(np.abs(ret1 - ret3).sum() < 0.00001)
 
     # fastest - let's not loop over anything
-    ret4 = Z.T.dot(T*(1 - Y))
+    ret4 = Z.T.dot(T - Y)
     # assert(np.abs(ret1 - ret4).sum() < 0.00001)
 
     return ret4
@@ -58,7 +58,7 @@ def derivative_w1(X, Z, T, Y, W2):
     #                 ret1[d,m] += T[n,k]*(1 - Y[n,k])*W2[m,k]*Z[n,m]*(1 - Z[n,m])*X[n,d]
 
     # fastest
-    ret2 = X.T.dot( ( ( T*(1-Y) ).dot(W2.T) * ( Z*(1 - Z) ) ) )
+    ret2 = X.T.dot( ( ( T-Y ).dot(W2.T) * ( Z*(1 - Z) ) ) )
 
     # assert(np.abs(ret1 - ret2).sum() < 0.00001)
 
