@@ -21,20 +21,20 @@ def derivative_w2(Z, T, Y):
     # for n in xrange(N):
     #     for m in xrange(M):
     #         for k in xrange(K):
-    #             ret1[m,k] += T[n,k]*(1 - Y[n,k])*Z[n,m]
+    #             ret1[m,k] += (T[n,k] - Y[n,k])*Z[n,m]
 
     # # a bit faster - let's not loop over m
     # ret2 = np.zeros((M, K))
     # for n in xrange(N):
     #     for k in xrange(K):
-    #         ret2[:,k] += T[n,k]*(1 - Y[n,k])*Z[n,:]
+    #         ret2[:,k] += (T[n,k]* - Y[n,k])*Z[n,:]
 
     # assert(np.abs(ret1 - ret2).sum() < 0.00001)
 
     # # even faster  - let's not loop over k either
     # ret3 = np.zeros((M, K))
     # for n in xrange(N): # slow way first
-    #     ret3 += np.outer( Z[n], T[n]*(1 - Y[n]) )
+    #     ret3 += np.outer( Z[n], T[n] - Y[n] )
 
     # assert(np.abs(ret1 - ret3).sum() < 0.00001)
 
@@ -55,7 +55,7 @@ def derivative_w1(X, Z, T, Y, W2):
     #     for k in xrange(K):
     #         for m in xrange(M):
     #             for d in xrange(D):
-    #                 ret1[d,m] += T[n,k]*(1 - Y[n,k])*W2[m,k]*Z[n,m]*(1 - Z[n,m])*X[n,d]
+    #                 ret1[d,m] += (T[n,k] - Y[n,k])*W2[m,k]*Z[n,m]*(1 - Z[n,m])*X[n,d]
 
     # fastest
     ret2 = X.T.dot( ( ( T-Y ).dot(W2.T) * ( Z*(1 - Z) ) ) )
