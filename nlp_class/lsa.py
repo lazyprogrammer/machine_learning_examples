@@ -66,7 +66,7 @@ for tokens in all_tokens:
     X[:,i] = tokens_to_vector(tokens)
     i += 1
 
-
+svd = TruncatedSVD()
 Z = svd.fit_transform(X)
 plt.scatter(Z[:,0], Z[:,1])
 for i in xrange(D):
