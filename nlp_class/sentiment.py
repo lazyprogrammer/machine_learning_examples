@@ -5,6 +5,8 @@
 # simple idea, hitting an obstacle, overcoming it, etc.
 # i.e. It is not optimized for anything.
 
+# Author: http://lazyprogrammer.me
+
 import nltk
 import numpy as np
 

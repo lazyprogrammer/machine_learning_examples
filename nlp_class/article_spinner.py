@@ -1,3 +1,8 @@
+# Very basic article spinner for NLP class, which can be found at:
+# https://www.udemy.com/data-science-natural-language-processing-in-python
+
+# Author: http://lazyprogrammer.me
+
 # A very bad article spinner using trigrams.
 import nltk
 import random
