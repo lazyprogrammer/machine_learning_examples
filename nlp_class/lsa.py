@@ -1,3 +1,6 @@
+# Latent semantic analysis visualization for NLP class, which can be found at:
+# https://www.udemy.com/data-science-natural-language-processing-in-python
+
 import nltk
 import numpy as np
 import matplotlib.pyplot as plt
