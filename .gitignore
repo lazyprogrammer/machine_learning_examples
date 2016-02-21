@@ -1,1 +1,3 @@
 *.pyc
+large_files
+large_files/*
