@@ -9,6 +9,9 @@
 # So what we are really comparing is how quickly each type of GD can converge,
 # (but not actually waiting for convergence) and what the cost looks like at
 # each iteration.
+#
+# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFLow
+# https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
 
 import numpy as np
 import pandas as pd

@@ -1,3 +1,7 @@
+# Simple multi-layer preceptron / neural network in Python and Numpy
+# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFLow
+# https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
+
 import numpy as np
 
 def forward(X, W1, b1, W2, b2):

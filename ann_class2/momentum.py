@@ -1,3 +1,7 @@
+# Compare momentum with regular gradient descent
+# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFLow
+# https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
+
 # NOTE: MUST restrict initial values of W by dividing by #
 # NOTE: sigmoid vs. rectifier for hiddens
 # We get 15% error rate with sigmoid, 3% error rate with ReLU

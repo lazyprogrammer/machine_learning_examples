@@ -1,4 +1,6 @@
 # Compare RMSprop vs. constant learning rate
+# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFLow
+# https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
 
 import numpy as np
 from sklearn.utils import shuffle

@@ -1,3 +1,7 @@
+# Theano basics.
+# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFLow
+# https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
+
 import theano.tensor as T
 
 # just some different types of variables
