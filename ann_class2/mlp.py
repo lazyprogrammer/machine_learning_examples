@@ -22,9 +22,9 @@ def derivative_b2(T, Y):
     return (Y - T).sum(axis=0)
 
 def derivative_w1(X, Z, T, Y, W2):
-    # return X.T.dot( ( ( Y-T ).dot(W2.T) * ( Z*(1 - Z) ) ) ) # for tanh
+    # return X.T.dot( ( ( Y-T ).dot(W2.T) * ( Z*(1 - Z) ) ) ) # for sigmoid
     return X.T.dot( ( ( Y-T ).dot(W2.T) * np.sign(Z) ) ) # for relu
 
 def derivative_b1(Z, T, Y, W2):
-    # return (( Y-T ).dot(W2.T) * ( Z*(1 - Z) )).sum(axis=0) # for tanh
+    # return (( Y-T ).dot(W2.T) * ( Z*(1 - Z) )).sum(axis=0) # for sigmoid
     return (( Y-T ).dot(W2.T) * np.sign(Z)).sum(axis=0) # for relu
