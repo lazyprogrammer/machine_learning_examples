@@ -206,7 +206,7 @@ def benchmark_pca():
     # D = 300 -> error = 0.07
     lr = 0.0001
     reg = 0.01
-    for i in xrange(800):
+    for i in xrange(200):
         p_y = forward(Xtrain, W, b)
         # print "p_y:", p_y
         ll = cost(p_y, Ytrain_ind)
@@ -235,6 +235,6 @@ def benchmark_pca():
 
 
 if __name__ == '__main__':
-    # benchmark_pca()
-    benchmark_full()
+    benchmark_pca()
+    # benchmark_full()
 

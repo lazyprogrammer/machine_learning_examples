@@ -26,7 +26,7 @@ def main():
     print_period = 10
 
     lr = 0.00004
-    mu = 0.9
+    reg = 0.01
 
     Xtrain = X[:-1000,]
     Ytrain = Y[:-1000]
@@ -94,7 +94,7 @@ def main():
                     test_cost = session.run(cost, feed_dict={X: Xtest, T: Ytest_ind})
                     prediction = session.run(predict_op, feed_dict={X: Xtest})
                     err = error_rate(prediction, Ytest)
-                    print "Cost / err at iteration i=%d, j=%d: %.6f / %.3f" % (i, j, test_cost, err)
+                    print "Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err)
                     LL.append(test_cost)
 
     plt.plot(LL)

@@ -53,13 +53,14 @@ Y = sigmoid(z)
 
 # calculate the cross-entropy error
 def cross_entropy(T, Y):
-    E = 0
-    for i in xrange(N):
-        if T[i] == 1:
-            E -= np.log(Y[i])
-        else:
-            E -= np.log(1 - Y[i])
-    return E
+    # E = 0
+    # for i in xrange(N):
+    #     if T[i] == 1:
+    #         E -= np.log(Y[i])
+    #     else:
+    #         E -= np.log(1 - Y[i])
+    # return E
+    return (T*np.log(Y) + (1-T)*np.log(1-Y)).sum()
 
 
 # let's do gradient descent 100 times

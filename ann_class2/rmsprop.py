@@ -82,7 +82,7 @@ def main():
     cache_W1 = 0
     cache_b1 = 0
     decay_rate = 0.999
-    eps = 0.000001
+    eps = 0.0000000001
     for i in xrange(max_iter):
         for j in xrange(n_batches):
             Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
