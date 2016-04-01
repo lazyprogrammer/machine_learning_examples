@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 from scipy.io import loadmat
 from sklearn.utils import shuffle
+from datetime import datetime
 
 
 def y2indicator(y):
@@ -103,6 +104,7 @@ def main():
     # we'll use this to calculate the error rate
     predict_op = tf.argmax(Yish, 1)
 
+    t0 = datetime.now()
     LL = []
     init = tf.initialize_all_variables()
     with tf.Session() as session:
@@ -120,7 +122,7 @@ def main():
                     err = error_rate(prediction, Ytest)
                     print "Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err)
                     LL.append(test_cost)
-
+    print "Elapsed time:", (datetime.now() - t0)
     plt.plot(LL)
     plt.show()
 

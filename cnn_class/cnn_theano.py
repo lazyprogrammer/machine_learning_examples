@@ -44,7 +44,8 @@ def convpool(X, W, b, poolsize=(2, 2)):
     # reshape it to a tensor of shape (1, n_filters, 1, 1). Each bias will
     # thus be broadcasted across mini-batches and feature map
     # width & height
-    return T.tanh(pooled_out + b.dimshuffle('x', 0, 'x', 'x'))
+    # return T.tanh(pooled_out + b.dimshuffle('x', 0, 'x', 'x'))
+    return relu(pooled_out + b.dimshuffle('x', 0, 'x', 'x'))
 
 
 def init_filter(shape, poolsz):
@@ -84,10 +85,10 @@ def main():
     Ytest_ind  = y2indicator(Ytest)
 
 
-    max_iter = 20
+    max_iter = 8
     print_period = 10
 
-    lr = np.float32(0.0001)
+    lr = np.float32(0.00001)
     reg = np.float32(0.01)
     mu = np.float32(0.99)
 
@@ -144,12 +145,12 @@ def main():
     Z1 = convpool(X, W1, b1)
     Z2 = convpool(Z1, W2, b2)
     Z3 = relu(Z2.flatten(ndim=2).dot(W3) + b3)
-    pY = T.nnet.softmax( Z3.dot(W4) + b4 )
+    pY = T.nnet.softmax( Z3.dot(W4) + b4)
 
     # define the cost function and prediction
     params = (W1, b1, W2, b2, W3, b3, W4, b4)
     reg_cost = reg*np.sum((param*param).sum() for param in params)
-    cost = -(Y * T.log(pY + 1e-10)).sum() + reg_cost
+    cost = -(Y * T.log(pY)).sum() + reg_cost
     prediction = T.argmax(pY, axis=1)
 
     # step 3: training expressions and functions
@@ -216,8 +217,6 @@ def main():
     print "Elapsed time:", (datetime.now() - t0)
     plt.plot(LL)
     plt.show()
-
-    # how would you incorporate momentum into the gradient descent procedure?
 
 
 if __name__ == '__main__':
