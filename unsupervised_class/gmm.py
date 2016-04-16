@@ -33,7 +33,6 @@ def gmm(X, K, max_iter=20):
             Nk = R[:,k].sum()
             pi[k] = Nk / N
             M[k] = R[:,k].dot(X) / Nk
-            X_minus_mu = X - M[k]
             C[k] = np.sum(R[n,k]*np.outer(X[n] - M[k], X[n] - M[k]) for n in xrange(N)) / Nk + np.diag(np.ones(D)*0.001)
 
 
