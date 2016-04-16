@@ -68,7 +68,7 @@ def main():
     N = 2000 # number of samples
     X = np.zeros((N, D))
     X[:1200, :] = np.random.randn(1200, D)*2 + mu1
-    X[200:800, :] = np.random.randn(600, D) + mu2
+    X[1200:1800, :] = np.random.randn(600, D) + mu2
     X[1800:, :] = np.random.randn(200, D)*0.5 + mu3
 
     # what does it look like without clustering?
