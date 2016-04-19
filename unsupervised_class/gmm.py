@@ -14,7 +14,7 @@ def gmm(X, K, max_iter=20):
     # initialize M to random, initialize C to spherical with variance 1
     for k in xrange(K):
         M[k] = X[np.random.choice(N)]
-        C[k] = np.diag(np.ones(D))
+        C[k] = np.eye(D)
 
     costs = np.zeros(max_iter)
     weighted_pdfs = np.zeros((N, K)) # we'll use these to store the PDF value of sample n and Gaussian k
@@ -33,7 +33,7 @@ def gmm(X, K, max_iter=20):
             Nk = R[:,k].sum()
             pi[k] = Nk / N
             M[k] = R[:,k].dot(X) / Nk
-            C[k] = np.sum(R[n,k]*np.outer(X[n] - M[k], X[n] - M[k]) for n in xrange(N)) / Nk + np.diag(np.ones(D)*0.001)
+            C[k] = np.sum(R[n,k]*np.outer(X[n] - M[k], X[n] - M[k]) for n in xrange(N)) / Nk + np.eye(D)*0.001
 
 
         costs[i] = np.log(weighted_pdfs.sum(axis=1)).sum()
