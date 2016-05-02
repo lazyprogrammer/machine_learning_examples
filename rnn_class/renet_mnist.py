@@ -1,5 +1,6 @@
 
 import numpy as np
+import pandas as pd
 import theano
 import theano.tensor as T
 import matplotlib.pyplot as plt
@@ -7,7 +8,6 @@ import matplotlib.pyplot as plt
 from theano.tensor.nnet import conv2d
 from theano.tensor.signal import downsample
 
-from scipy.io import loadmat
 from sklearn.utils import shuffle
 
 from datetime import datetime
@@ -35,14 +35,10 @@ def init_filter(shape):
 
 
 def rearrange(X):
-    # For reference Xtrain.shape = (32, 32, 3, 73257)
-    # input is (32, 32, 3, N)
-    # output is (N, 3, 32, 32)
-    N = X.shape[-1]
-    out = np.zeros((N, 3, 32, 32), dtype=np.float32)
+    N = len(X)
+    out = np.zeros((N, 1, 28, 28), dtype=np.float32)
     for i in xrange(N):
-        for j in xrange(3):
-            out[i, j, :, :] = X[:, :, j, i]
+        out[i, 0, :, :] = X[i].reshape(28, 28)
     return out / 255
 
 
@@ -117,42 +113,39 @@ def renet_layer_ud(X, Wx, Wh, Wo, Bh, Bo, H0, w, h, wp, hp):
 
 def main():
     t0 = datetime.now()
-    train = loadmat('../large_files/train_32x32.mat')
-    test  = loadmat('../large_files/test_32x32.mat')
+    # MNIST data:
+    # column 0 is labels
+    # column 1-785 is data, with values 0 .. 255
+    train = pd.read_csv('../large_files/train.csv').as_matrix()
+    train = shuffle(train)
 
-    Xtrain = rearrange(train['X'])
-    Ytrain = train['y'].flatten() - 1
-    del train
-    Xtrain, Ytrain = shuffle(Xtrain, Ytrain)
-    Ytrain_ind = y2indicator(Ytrain)
+    Xtrain = rearrange( train[:-100,1:] )
+    Ytrain = train[:-100,0]
+    Ytrain_ind  = y2indicator(Ytrain)
 
-    Xtest  = rearrange(test['X'])
-    Ytest  = test['y'].flatten() - 1
-    del test
+    Xtest  = rearrange( train[-100:,1:] )
+    Ytest  = train[-100:,0]
     Ytest_ind  = y2indicator(Ytest)
 
 
     max_iter = 8
     print_period = 200
 
-    lr = np.float32(0.05)
+    lr = np.float32(0.01)
     reg = np.float32(0.01)
     mu = np.float32(0.99)
 
     N = Xtrain.shape[0]
-    batch_sz = 1
-    n_batches = N / batch_sz
 
-    M = 500
+    M = 4096
     K = 10
 
     # New
     wp, hp = 2, 2
 
-
     M1 = 64 # hidden layer size
     M2 = 256 # num feature maps
-    W1x_shape = (M1, 3*wp*hp)
+    W1x_shape = (M1, 1*wp*hp)
     W1x_init = init_filter(W1x_shape)
     W1h_init = init_filter( (M1,M1) )
     b1h_init = np.zeros((M1,), dtype=np.float32)
@@ -162,7 +155,7 @@ def main():
 
     M3 = 64 # hidden layer size
     M4 = 256 # num feature maps
-    W2x_shape = (M3, 2*M2*1*1)
+    W2x_shape = (M3, 2*M2*1*1) # TODO: revert
     W2x_init = init_filter(W2x_shape)
     W2h_init = init_filter( (M3,M3) )
     b2h_init = np.zeros((M3,), dtype=np.float32)
@@ -192,7 +185,7 @@ def main():
 
 
     # vanilla ANN weights
-    W5_init = np.random.randn(2*M8*8*8, M) / np.sqrt(2*M8*8*8 + M)
+    W5_init = np.random.randn(2*M8*7*7, M) / np.sqrt(2*M8*7*7 + M)
     b5_init = np.zeros(M, dtype=np.float32)
     W6_init = np.random.randn(M, K) / np.sqrt(M + K)
     b6_init = np.zeros(K, dtype=np.float32)
@@ -242,21 +235,18 @@ def main():
     # db4 = theano.shared(np.zeros(b4_init.shape, dtype=np.float32), 'db4')
 
     # forward pass
-    Z1 = renet_layer_lr(X, W1x, W1h, W1o, b1h, b1o, H01, 32, 32, wp, hp)
-    Z2 = renet_layer_ud(Z1, W2x, W2h, W2o, b2h, b2o, H02, 16, 16, 1, 1)
-    Z3 = renet_layer_lr(Z2, W3x, W3h, W3o, b3h, b3o, H03, 16, 16, wp, hp)
-    Z4 = renet_layer_ud(Z3, W4x, W4h, W4o, b4h, b4o, H04, 8, 8, 1, 1)
-    Z5 = relu(Z4.flatten().dot(W5) + b5)
-    pY = T.nnet.softmax( Z5.dot(W6) + b6)
-
+    Z1 = renet_layer_lr(X, W1x, W1h, W1o, b1h, b1o, H01, 28, 28, wp, hp)
 
     ## TMP: just test the first/second layer ##
     # tmp_op = theano.function(
     #     inputs=[X],
     #     outputs=Z1,
     # )
+    # print "Xtrain[0].shape:", Xtrain[0].shape
     # out = tmp_op(Xtrain[0])
     # print "Z1.shape:", out.shape
+
+    Z2 = renet_layer_ud(Z1, W2x, W2h, W2o, b2h, b2o, H02, 14, 14, 1, 1)
 
     # tmp_op2 = theano.function(
     #     inputs=[X],
@@ -264,6 +254,14 @@ def main():
     # )
     # out = tmp_op2(Xtrain[0])
     # print "Z2.shape:", out.shape
+    # exit()
+
+
+    Z3 = renet_layer_lr(Z2, W3x, W3h, W3o, b3h, b3o, H03, 14, 14, wp, hp)
+    Z4 = renet_layer_ud(Z3, W4x, W4h, W4o, b4h, b4o, H04, 7, 7, 1, 1)
+    Z5 = relu(Z4.flatten().dot(W5) + b5)
+    pY = T.nnet.softmax( Z5.dot(W6) + b6)
+
 
     # tmp_op3 = theano.function(
     #     inputs=[X],
@@ -278,6 +276,7 @@ def main():
     # )
     # out = tmp_op4(Xtrain[0])
     # print "Z4.shape:", out.shape
+    # exit()
 
     # define the cost function and prediction
     # params = (W1, b1, W2, b2, W3, b3, W4, b4)
@@ -323,23 +322,21 @@ def main():
     t1 = t0
     for i in xrange(max_iter):
         print "i:", i
-        for j in xrange(n_batches):
+        for j in xrange(N):
             # print "j:", j
             Xbatch = Xtrain[j,:]
             Ybatch = Ytrain_ind[j:j+1,:]
 
             train(Xbatch, Ybatch)
             if j % print_period == 0:
-                N_sample = 100
-                sample_idx = np.random.choice(xrange(len(Xtest)), size=N_sample, replace=False)
                 cost_val = 0
-                prediction_val = np.zeros(N_sample)
-                for m, k in enumerate(sample_idx):
+                prediction_val = np.zeros(100)
+                for k in xrange(100):
                     c, p = get_prediction(Xtest[k], Ytest_ind[k:k+1,:])
                     cost_val += c
-                    prediction_val[m] = p
-                err = error_rate(prediction_val, Ytest[sample_idx])
-                print "Cost / err at iteration i=%d, j=%d: %.3f / %.2f" % (i, j, cost_val / N_sample, err)
+                    prediction_val[k] = p
+                err = error_rate(prediction_val, Ytest)
+                print "Cost / err at iteration i=%d, j=%d: %.3f / %.2f" % (i, j, cost_val / len(Ytest), err)
                 t2 = datetime.now()
                 print "Time since last print:", (t2 - t1)
                 t1 = t2
