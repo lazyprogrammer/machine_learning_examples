@@ -1,4 +1,7 @@
-
+import os
+import gzip
+import cPickle
+import urllib2
 import numpy as np
 import pandas as pd
 import theano
@@ -15,6 +18,7 @@ from datetime import datetime
 # TODO: add LSTM
 # TODO: add batch training
 # TODO: add ability to switch between datasets
+# TODO: use only Ytest in cost instead of indicator
 
 def error_rate(p, t):
     return np.mean(p != t)
@@ -216,9 +220,7 @@ def renet_layer_ud(X, rnn1, rnn2, w, h, wp, hp):
     return T.stacklists(list_of_images).dimshuffle((1, 0, 2))
 
 
-
-def main(ReUnit=GRU):
-    t0 = datetime.now()
+def getKaggleMNIST():
     # MNIST data:
     # column 0 is labels
     # column 1-785 is data, with values 0 .. 255
@@ -232,7 +234,41 @@ def main(ReUnit=GRU):
     Xtest  = rearrange( train[-1000:,1:] )
     Ytest  = train[-1000:,0]
     Ytest_ind  = y2indicator(Ytest)
+    return Xtrain, Ytrain, Ytrain_ind, Xtest, Ytest, Ytest_ind
 
+
+def getMNIST():
+    # data shape: train (50000, 784), test (10000, 784)
+    # already scaled from 0..1
+    datadir = '../large_files/'
+    if not os.path.exists(datadir):
+        datadir = ''
+
+    input_file = "%smnist.pkl.gz" % datadir
+    if not os.path.exists(input_file):
+        url = 'http://www.iro.umontreal.ca/~lisa/deep/data/mnist/mnist.pkl.gz'
+        with open(input_file, "wb") as out:
+            f = urllib2.urlopen(url)
+            out.write(f.read())
+            out.flush()
+
+    with gzip.open(input_file) as f:
+        train, valid, test = cPickle.load(f)
+
+    Xtrain, Ytrain = train
+    Xvalid, Yvalid = valid
+    Xtest, Ytest = test
+
+    Ytrain_ind = y2indicator(Ytrain)
+    Ytest_ind = y2indicator(Ytest)
+
+    return Xtrain.reshape(50000, 1, 28, 28), Ytrain, Ytrain_ind, Xtest.reshape(10000, 1, 28, 28), Ytest, Ytest_ind
+
+
+def main(ReUnit=GRU, getData=getMNIST):
+    t0 = datetime.now()
+    
+    Xtrain, Ytrain, Ytrain_ind, Xtest, Ytest, Ytest_ind = getData()
 
     max_iter = 8
     print_period = 200
@@ -243,7 +279,7 @@ def main(ReUnit=GRU):
 
     N = Xtrain.shape[0]
     C = Xtrain.shape[1]
-    M = 1000
+    M = 4096
     K = 10
 
     # New
