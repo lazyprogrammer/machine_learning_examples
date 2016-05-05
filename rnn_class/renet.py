@@ -279,61 +279,25 @@ def main(ReUnit=GRU, getData=getMNIST):
 
     N = Xtrain.shape[0]
     C = Xtrain.shape[1]
-    M = 4096
+    M = 300
     K = 10
 
-    # New
-    wp, hp = 2, 2
+    batch_sz = 100
+    n_batches = N / batch_sz
 
-    M1 = 256 # num feature maps
-    # Wx1_shape = (M1, Xtrain.shape[1]*wp*hp)
-    # Wx1_init = init_filter(Wx1_shape)
-    # Wh1_init = init_filter( (M1,M1) )
-    # bh1_init = np.zeros((M1,), dtype=np.float32)
-    # H01_init = init_filter( (M1,) )
-    # Wx2_init = init_filter(Wx1_shape)
-    # Wh2_init = init_filter( (M1,M1) )
-    # bh2_init = np.zeros((M1,), dtype=np.float32)
-    # H02_init = init_filter( (M1,) )
+    M1 = 2 # num feature maps
     rnn1 = ReUnit('1', 2, 2, C, M1)
     rnn2 = ReUnit('2', 2, 2, C, M1)
 
-    M2 = 256 # num feature maps
-    # Wx3_shape = (M2, 2*M1*1*1)
-    # Wx3_init = init_filter(Wx3_shape)
-    # Wh3_init = init_filter( (M2,M2) )
-    # bh3_init = np.zeros((M2,), dtype=np.float32)
-    # H03_init = init_filter( (M2,) )
-    # Wx4_init = init_filter(Wx3_shape)
-    # Wh4_init = init_filter( (M2,M2) )
-    # bh4_init = np.zeros((M2,), dtype=np.float32)
-    # H04_init = init_filter( (M2,) )
+    M2 = 2 # num feature maps
     rnn3 = ReUnit('3', 1, 1, 2*M1, M2)
     rnn4 = ReUnit('4', 1, 1, 2*M1, M2)
 
-    M3 = 64
-    # Wx5_shape = (M3, 2*M2*wp*hp)
-    # Wx5_init = init_filter(Wx5_shape)
-    # Wh5_init = init_filter( (M3,M3) )
-    # bh5_init = np.zeros((M3,), dtype=np.float32)
-    # H05_init = init_filter( (M3,) )
-    # Wx6_init = init_filter(Wx5_shape)
-    # Wh6_init = init_filter( (M3,M3) )
-    # bh6_init = np.zeros((M3,), dtype=np.float32)
-    # H06_init = init_filter( (M3,) )
+    M3 = 2
     rnn5 = ReUnit('5', 2, 2, 2*M2, M3)
     rnn6 = ReUnit('6', 2, 2, 2*M2, M3)
 
-    M4 = 64
-    # Wx7_shape = (M4, 2*M3*1*1)
-    # Wx7_init = init_filter(Wx7_shape)
-    # Wh7_init = init_filter( (M4,M4) )
-    # bh7_init = np.zeros((M4,), dtype=np.float32)
-    # H07_init = init_filter( (M4,) )
-    # Wx8_init = init_filter(Wx7_shape)
-    # Wh8_init = init_filter( (M4,M4) )
-    # bh8_init = np.zeros((M4,), dtype=np.float32)
-    # H08_init = init_filter( (M4,) )
+    M4 = 2
     rnn7 = ReUnit('7', 1, 1, 2*M3, M4)
     rnn8 = ReUnit('8', 1, 1, 2*M3, M4)
 
@@ -346,59 +310,15 @@ def main(ReUnit=GRU, getData=getMNIST):
 
 
     # step 2: define theano variables and expressions
-    X = T.tensor3('X', dtype='float32')
+    X = T.tensor4('X', dtype='float32')
+    # x = T.tensor3('x', dtype='float32')
     Y = T.matrix('T')
-    # Wx1 = theano.shared(Wx1_init, 'Wx1')
-    # Wh1 = theano.shared(Wh1_init, 'Wh1')
-    # bh1 = theano.shared(bh1_init, 'bh1')
-    # H01 = theano.shared(H01_init, 'H01')
-    # Wx2 = theano.shared(Wx2_init, 'Wx2')
-    # Wh2 = theano.shared(Wh2_init, 'Wh2')
-    # bh2 = theano.shared(bh2_init, 'bh2')
-    # H02 = theano.shared(H02_init, 'H02')
-
-    # Wx3 = theano.shared(Wx3_init, 'Wx3')
-    # Wh3 = theano.shared(Wh3_init, 'Wh3')
-    # bh3 = theano.shared(bh3_init, 'bh3')
-    # H03 = theano.shared(H03_init, 'H03')
-    # Wx4 = theano.shared(Wx4_init, 'Wx4')
-    # Wh4 = theano.shared(Wh4_init, 'Wh4')
-    # bh4 = theano.shared(bh4_init, 'bh4')
-    # H04 = theano.shared(H04_init, 'H04')
-
-    # Wx5 = theano.shared(Wx5_init, 'Wx5')
-    # Wh5 = theano.shared(Wh5_init, 'Wh5')
-    # bh5 = theano.shared(bh5_init, 'bh5')
-    # H05 = theano.shared(H05_init, 'H05')
-    # Wx6 = theano.shared(Wx6_init, 'Wx6')
-    # Wh6 = theano.shared(Wh6_init, 'Wh6')
-    # bh6 = theano.shared(bh6_init, 'bh6')
-    # H06 = theano.shared(H06_init, 'H06')
-
-    # Wx7 = theano.shared(Wx7_init, 'Wx7')
-    # Wh7 = theano.shared(Wh7_init, 'Wh7')
-    # bh7 = theano.shared(bh7_init, 'bh7')
-    # H07 = theano.shared(H07_init, 'H07')
-    # Wx8 = theano.shared(Wx8_init, 'Wx8')
-    # Wh8 = theano.shared(Wh8_init, 'Wh8')
-    # bh8 = theano.shared(bh8_init, 'bh8')
-    # H08 = theano.shared(H08_init, 'H08')
 
     W9 = theano.shared(W9_init.astype(np.float32), 'W9')
     b9 = theano.shared(b9_init, 'b9')
     W10 = theano.shared(W10_init.astype(np.float32), 'W10')
     b10 = theano.shared(b10_init, 'b10')
-    params = [
-        # Wx1, Wh1, bh1, H01,
-        # Wx2, Wh2, bh2, H02,
-        # Wx3, Wh3, bh3, H03,
-        # Wx4, Wh4, bh4, H04,
-        # Wx5, Wh5, bh5, H05,
-        # Wx6, Wh6, bh6, H06,
-        # Wx7, Wh7, bh7, H07,
-        # Wx8, Wh8, bh8, H08,
-        W9, b9, W10, b10,
-    ]
+    params = [W9, b9, W10, b10]
     for rnn in (rnn1, rnn2, rnn3, rnn4, rnn5, rnn6, rnn7, rnn8):
         params += rnn.params
 
@@ -412,9 +332,23 @@ def main(ReUnit=GRU, getData=getMNIST):
     # dW4 = theano.shared(np.zeros(W4_init.shape, dtype=np.float32), 'dW4')
     # db4 = theano.shared(np.zeros(b4_init.shape, dtype=np.float32), 'db4')
 
-    # forward pass
-    # Z1 = renet_layer_lr(X, Wx1, Wh1, bh1, H01, Wx2, Wh2, bh2, H02, 28, 28, wp, hp)
-    Z1 = renet_layer_lr(X, rnn1, rnn2, 28, 28, wp, hp)
+    def forward(x):
+        # forward pass
+        Z1 = renet_layer_lr(x, rnn1, rnn2, 28, 28, 2, 2)
+        Z2 = renet_layer_ud(Z1, rnn3, rnn4, 14, 14, 1, 1)
+        Z3 = renet_layer_lr(Z2, rnn5, rnn6, 14, 14, 2, 2)
+        Z4 = renet_layer_ud(Z3, rnn7, rnn8, 7, 7, 1, 1)
+        Z5 = relu(Z4.flatten().dot(W9) + b9)
+        pY = T.nnet.softmax( Z5.dot(W10) + b10)
+        return pY
+
+    batch_forward_out3, _ = theano.scan(
+        fn=forward,
+        sequences=X,
+        # outputs_info=[self.H0],
+        n_steps=X.shape[0]
+    )
+    batch_forward_out = batch_forward_out3.flatten(ndim=2) # the output will be (N, 1, 10)
 
     ## TMP: just test the first/second layer ##
     # tmp_op = theano.function(
@@ -426,8 +360,7 @@ def main(ReUnit=GRU, getData=getMNIST):
     # print "Z1.shape:", out.shape
     # exit()
 
-    # Z2 = renet_layer_ud(Z1, Wx3, Wh3, bh3, H03, Wx4, Wh4, bh4, H04, 14, 14, 1, 1)
-    Z2 = renet_layer_ud(Z1, rnn3, rnn4, 14, 14, 1, 1)
+    
 
     # tmp_op2 = theano.function(
     #     inputs=[X],
@@ -437,9 +370,7 @@ def main(ReUnit=GRU, getData=getMNIST):
     # print "Z2.shape:", out.shape
     # exit()
 
-
-    # Z3 = renet_layer_lr(Z2, Wx5, Wh5, bh5, H05, Wx6, Wh6, bh6, H06, 14, 14, wp, hp)
-    Z3 = renet_layer_lr(Z2, rnn5, rnn6, 14, 14, wp, hp)
+    
 
     # tmp_op3 = theano.function(
     #     inputs=[X],
@@ -449,11 +380,7 @@ def main(ReUnit=GRU, getData=getMNIST):
     # print "Z3.shape:", out.shape
     # exit()
 
-    # Z4 = renet_layer_ud(Z3, Wx7, Wh7, bh7, H07, Wx8, Wh8, bh8, H08, 7, 7, 1, 1)
-    Z4 = renet_layer_ud(Z3, rnn7, rnn8, 7, 7, 1, 1)
-
-    Z5 = relu(Z4.flatten().dot(W9) + b9)
-    pY = T.nnet.softmax( Z5.dot(W10) + b10)
+    
 
     # tmp_op4 = theano.function(
     #     inputs=[X],
@@ -463,21 +390,18 @@ def main(ReUnit=GRU, getData=getMNIST):
     # print "Z4.shape:", out.shape
     # exit()
 
+    # tmp_op_out = theano.function(inputs=[X], outputs=batch_forward_out)
+    # out = tmp_op_out(Xtest[0:50,])
+    # print "out.shape:", out.shape
+    # exit()
+
     # define the cost function and prediction
     # params = (W1, b1, W2, b2, W3, b3, W4, b4)
     reg_cost = reg*np.sum((param*param).sum() for param in params)
-    cost = -(Y * T.log(pY)).sum() + reg_cost
-    prediction = T.argmax(pY, axis=1)
+    cost = -(Y * T.log(batch_forward_out)).sum() + reg_cost
+    prediction = T.argmax(batch_forward_out, axis=1)
 
     # step 3: training expressions and functions
-    # update_W1 = W1 + mu*dW1 - lr*T.grad(cost, W1)
-    # update_b1 = b1 + mu*db1 - lr*T.grad(cost, b1)
-    # update_W2 = W2 + mu*dW2 - lr*T.grad(cost, W2)
-    # update_b2 = b2 + mu*db2 - lr*T.grad(cost, b2)
-    # update_W3 = W3 + mu*dW3 - lr*T.grad(cost, W3)
-    # update_b3 = b3 + mu*db3 - lr*T.grad(cost, b3)
-    # update_W4 = W4 + mu*dW4 - lr*T.grad(cost, W4)
-    # update_b4 = b4 + mu*db4 - lr*T.grad(cost, b4)
     updates = [(param, param - lr*T.grad(cost, param)) for param in params]
 
     # update weight changes
@@ -493,34 +417,42 @@ def main(ReUnit=GRU, getData=getMNIST):
     train = theano.function(
         inputs=[X, Y],
         updates=updates,
+        allow_input_downcast=True,
     )
 
     # create another function for this because we want it over the whole dataset
     get_prediction = theano.function(
         inputs=[X, Y],
         outputs=[cost, prediction],
+        allow_input_downcast=True,
     )
 
     print "Setup elapsed time:", (datetime.now() - t0)
+
+    # test it
+    # print get_prediction(Xtest, Ytest_ind)
+    # exit()
+
     t0 = datetime.now()
     LL = []
     t1 = t0
     for i in xrange(max_iter):
         print "i:", i
-        for j in xrange(N):
+        for j in xrange(n_batches):
             # print "j:", j
-            Xbatch = Xtrain[j,:]
-            Ybatch = Ytrain_ind[j:j+1,:]
+            Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),:]
+            Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),:]
 
             train(Xbatch, Ybatch)
             if j % print_period == 0:
-                cost_val = 0
-                prediction_val = np.zeros(len(Ytest))
-                for k in xrange(len(Ytest)):
-                    c, p = get_prediction(Xtest[k], Ytest_ind[k:k+1,:])
-                    cost_val += c
-                    prediction_val[k] = p[0]
-                    # print "pred:", p[0], type(p[0]), "target:", Ytest[k], type(Ytest[k])
+                cost_val, prediction_val = get_prediction(Xtest, Ytest_ind)
+                # cost_val = 0
+                # prediction_val = np.zeros(len(Ytest))
+                # for k in xrange(len(Ytest)):
+                #     c, p = get_prediction(Xtest[k], Ytest_ind[k:k+1,:])
+                #     cost_val += c
+                #     prediction_val[k] = p[0]
+                #     # print "pred:", p[0], type(p[0]), "target:", Ytest[k], type(Ytest[k])
                 err = error_rate(prediction_val, Ytest)
                 print "Cost / err at iteration i=%d, j=%d: %.3f / %.2f" % (i, j, cost_val / len(Ytest), err)
                 t2 = datetime.now()
