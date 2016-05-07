@@ -30,7 +30,7 @@ def relu(a):
 
 def y2indicator(y):
     N = len(y)
-    ind = np.zeros((N, 10))
+    ind = np.zeros((N, 10), dtype='int32')
     for i in xrange(N):
         ind[i, y[i]] = 1
     return ind
@@ -133,10 +133,61 @@ class RNNUnit(object):
             sequences=x,
             outputs_info=[self.H0],
             n_steps=x.shape[0],
-            go_backwards=go_backwards
+            go_backwards=go_backwards,
+            # non_sequences=self.params,
+            # strict=True,
         )
         return h
 
+
+def renet_layer_lr_noscan(X, rnn1, rnn2, w, h, wp, hp):
+    list_of_images = []
+    for i in xrange(h/hp):
+        # x = X[:,i*hp:(i*hp + hp),:].dimshuffle((2, 0, 1)).flatten().reshape((w/wp, X.shape[0]*wp*hp))
+        h_tm1 = rnn1.H0
+        hr_tm1 = rnn2.H0
+        h1 = []
+        h2 = []
+        for j in xrange(w/wp):
+            x = X[:,i*hp:(i*hp + hp),j*wp:(j*wp + wp)].flatten()
+            h_t = rnn1.recurrence(x, h_tm1)
+            h1.append(h_t)
+            h_tm1 = h_t
+
+            jr = w/wp - j - 1
+            xr = X[:,i*hp:(i*hp + hp),jr*wp:(jr*wp + wp)].flatten()
+            hr_t = rnn2.recurrence(x, hr_tm1)
+            h2.append(hr_t)
+            hr_tm1 = hr_t
+        img = T.concatenate([h1, h2])
+        list_of_images.append(img)
+    return T.stacklists(list_of_images).dimshuffle((1, 0, 2))
+
+
+def renet_layer_lr_allscan(X, rnn1, rnn2, w, h, wp, hp):
+    # list_of_images = []
+    C = X.shape[0]
+    X = X.dimshuffle((1, 0, 2)).reshape((h/hp, hp*C*w)) # split the rows for the first scan
+    def rnn_pass(x):
+        x = x.reshape((hp, C, w)).dimshuffle((2, 1, 0)).reshape((w/wp, C*wp*hp))
+        h1 = rnn1.output(x)
+        h2 = rnn2.output(x, go_backwards=True)
+        img = T.concatenate([h1.T, h2.T])
+        # list_of_images.append(img)
+        return img
+
+    results, _ = theano.scan(
+        fn=rnn_pass,
+        sequences=X,
+        outputs_info=None,
+        n_steps=h/hp,
+    )
+    return results.dimshuffle((1, 0, 2))
+    # return T.stacklists(list_of_images).dimshuffle((1, 0, 2))
+
+
+def renet_layer_ud_allscan(X, rnn1, rnn2, w, h, wp, hp):
+    return renet_layer_lr_allscan(X.dimshuffle((0, 2, 1)), rnn1, rnn2, w, h, wp, hp)
 
 
 # expect the input image to be K x width x height
@@ -156,7 +207,7 @@ def renet_layer_lr(X, rnn1, rnn2, w, h, wp, hp):
     # lefts = []
     # rights = []
     for i in xrange(h/hp):
-        x = X[:,i*hp:(i*hp + hp),:].dimshuffle((1, 0, 2)).flatten().reshape((w/wp, X.shape[0]*wp*hp))
+        x = X[:,i*hp:(i*hp + hp),:].dimshuffle((2, 0, 1)).flatten().reshape((w/wp, X.shape[0]*wp*hp))
         # reshape the row into a 2-D matrix to be fed into scan
         # h1, _ = theano.scan(
         #     fn=recurrence1,
@@ -224,6 +275,7 @@ def getKaggleMNIST():
     # MNIST data:
     # column 0 is labels
     # column 1-785 is data, with values 0 .. 255
+    # total size of CSV: (42000, 1, 28, 28)
     train = pd.read_csv('../large_files/train.csv').as_matrix()
     train = shuffle(train)
 
@@ -239,7 +291,7 @@ def getKaggleMNIST():
 
 def getMNIST():
     # data shape: train (50000, 784), test (10000, 784)
-    # already scaled from 0..1
+    # already scaled from 0..1 and converted to float32
     datadir = '../large_files/'
     if not os.path.exists(datadir):
         datadir = ''
@@ -262,11 +314,21 @@ def getMNIST():
     Ytrain_ind = y2indicator(Ytrain)
     Ytest_ind = y2indicator(Ytest)
 
-    return Xtrain.reshape(50000, 1, 28, 28), Ytrain, Ytrain_ind, Xtest.reshape(10000, 1, 28, 28), Ytest, Ytest_ind
+    Xtrain, Ytrain = shuffle(Xtrain, Ytrain)
+    Xtest, Ytest = shuffle(Xtest, Ytest)
+
+    # try to take a smaller sample
+    Xtrain = Xtrain[0:30000]
+    Ytrain = Ytrain[0:30000]
+    Xtest = Xtest[0:1000]
+    Ytest = Ytest[0:1000]
+
+    return Xtrain.reshape(len(Xtrain), 1, 28, 28), Ytrain, Ytrain_ind, Xtest.reshape(len(Xtest), 1, 28, 28), Ytest, Ytest_ind
 
 
-def main(ReUnit=GRU, getData=getMNIST):
+def main(ReUnit=RNNUnit, getData=getMNIST):
     t0 = datetime.now()
+    print "Start time:", t0
     
     Xtrain, Ytrain, Ytrain_ind, Xtest, Ytest, Ytest_ind = getData()
 
@@ -282,24 +344,26 @@ def main(ReUnit=GRU, getData=getMNIST):
     M = 300
     K = 10
 
-    batch_sz = 100
+    batch_sz = 1
     n_batches = N / batch_sz
 
-    M1 = 2 # num feature maps
+    M1 = 256 # num feature maps
     rnn1 = ReUnit('1', 2, 2, C, M1)
     rnn2 = ReUnit('2', 2, 2, C, M1)
 
-    M2 = 2 # num feature maps
+    M2 = 256 # num feature maps
     rnn3 = ReUnit('3', 1, 1, 2*M1, M2)
     rnn4 = ReUnit('4', 1, 1, 2*M1, M2)
 
-    M3 = 2
+    M3 = 64
     rnn5 = ReUnit('5', 2, 2, 2*M2, M3)
     rnn6 = ReUnit('6', 2, 2, 2*M2, M3)
 
-    M4 = 2
+    M4 = 64
     rnn7 = ReUnit('7', 1, 1, 2*M3, M4)
     rnn8 = ReUnit('8', 1, 1, 2*M3, M4)
+
+    print "Finished creating rnn objects, elapsed time:", (datetime.now() - t0)
 
 
     # vanilla ANN weights
@@ -311,7 +375,7 @@ def main(ReUnit=GRU, getData=getMNIST):
 
     # step 2: define theano variables and expressions
     X = T.tensor4('X', dtype='float32')
-    # x = T.tensor3('x', dtype='float32')
+    x = T.tensor3('x', dtype='float32')
     Y = T.matrix('T')
 
     W9 = theano.shared(W9_init.astype(np.float32), 'W9')
@@ -322,6 +386,8 @@ def main(ReUnit=GRU, getData=getMNIST):
     for rnn in (rnn1, rnn2, rnn3, rnn4, rnn5, rnn6, rnn7, rnn8):
         params += rnn.params
 
+
+    print "Finished creating all shared vars, elapsed time:", (datetime.now() - t0)
     # momentum changes
     # dW1 = theano.shared(np.zeros(W1_init.shape, dtype=np.float32), 'dW1')
     # db1 = theano.shared(np.zeros(b1_init.shape, dtype=np.float32), 'db1')
@@ -332,23 +398,44 @@ def main(ReUnit=GRU, getData=getMNIST):
     # dW4 = theano.shared(np.zeros(W4_init.shape, dtype=np.float32), 'dW4')
     # db4 = theano.shared(np.zeros(b4_init.shape, dtype=np.float32), 'db4')
 
+    # Z_tmp = renet_layer_lr_allscan(x, rnn1, rnn2, 28, 28, 2, 2)
+    # # Z_tmp = renet_layer_lr_noscan(x, rnn1, rnn2, 28, 28, 2, 2)
+    # tmp_op = theano.function(
+    #     inputs=[x],
+    #     outputs=Z_tmp,
+    # )
+    # print "Xtrain[0].shape:", Xtrain[0].shape
+    # out = tmp_op(Xtrain[0])
+    # print "Z_tmp.shape:", out.shape
+    # exit()
+
     def forward(x):
+        # x = args[0]
         # forward pass
-        Z1 = renet_layer_lr(x, rnn1, rnn2, 28, 28, 2, 2)
-        Z2 = renet_layer_ud(Z1, rnn3, rnn4, 14, 14, 1, 1)
-        Z3 = renet_layer_lr(Z2, rnn5, rnn6, 14, 14, 2, 2)
-        Z4 = renet_layer_ud(Z3, rnn7, rnn8, 7, 7, 1, 1)
+        Z1 = renet_layer_lr_allscan(x, rnn1, rnn2, 28, 28, 2, 2)
+        Z2 = renet_layer_ud_allscan(Z1, rnn3, rnn4, 14, 14, 1, 1)
+        Z3 = renet_layer_lr_allscan(Z2, rnn5, rnn6, 14, 14, 2, 2)
+        Z4 = renet_layer_ud_allscan(Z3, rnn7, rnn8, 7, 7, 1, 1)
         Z5 = relu(Z4.flatten().dot(W9) + b9)
         pY = T.nnet.softmax( Z5.dot(W10) + b10)
         return pY
 
-    batch_forward_out3, _ = theano.scan(
-        fn=forward,
-        sequences=X,
-        # outputs_info=[self.H0],
-        n_steps=X.shape[0]
-    )
+    if True: #batch_sz > 1:
+        batch_forward_out3, _ = theano.scan(
+            fn=forward,
+            sequences=X,
+            # outputs_info=[self.H0],
+            n_steps=X.shape[0],
+            # non_sequences=params,
+            # strict=True,
+        )
+    else:
+        batch_forward_out3 = forward(X[0])
+
+    print "Finished creating output scan, elapsed time:", (datetime.now() - t0)
     batch_forward_out = batch_forward_out3.flatten(ndim=2) # the output will be (N, 1, 10)
+
+    print "Finished reshaping output, elapsed time:", (datetime.now() - t0)
 
     ## TMP: just test the first/second layer ##
     # tmp_op = theano.function(
@@ -403,6 +490,8 @@ def main(ReUnit=GRU, getData=getMNIST):
 
     # step 3: training expressions and functions
     updates = [(param, param - lr*T.grad(cost, param)) for param in params]
+
+    print "Finished creating update expressions, elapsed time:", (datetime.now() - t0)
 
     # update weight changes
     # update_dW1 = mu*dW1 - lr*T.grad(cost, W1)
