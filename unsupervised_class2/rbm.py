@@ -15,7 +15,7 @@ class RBM(object):
         self.id = an_id
         self.rng = RandomStreams()
 
-    def fit(self, X, learning_rate=0.1, epochs=10, batch_sz=100, show_fig=False):
+    def fit(self, X, learning_rate=0.1, epochs=1, batch_sz=100, show_fig=False):
         N, D = X.shape
         n_batches = N / batch_sz
 
@@ -27,6 +27,7 @@ class RBM(object):
         self.forward_params = [self.W, self.c]
 
         # we won't use this to fit the RBM but we will use these for backpropagation later
+        # TODO: technically they should be reset before doing backprop
         self.dW = theano.shared(np.zeros(W0.shape), 'dW_%s' % self.id)
         self.dc = theano.shared(np.zeros(self.M), 'dbh_%s' % self.id)
         self.db = theano.shared(np.zeros(D), 'dbo_%s' % self.id)
@@ -75,7 +76,7 @@ class RBM(object):
             for j in xrange(n_batches):
                 batch = X[j*batch_sz:(j*batch_sz + batch_sz)]
                 train_op(batch)
-                the_cost = cost_op(X)
+                the_cost = cost_op(X)  # technically we could also get the cost for Xtest here
                 print "j / n_batches:", j, "/", n_batches, "cost:", the_cost
                 costs.append(the_cost)
         if show_fig:
@@ -102,6 +103,16 @@ class RBM(object):
         Z = self.forward_hidden(X)
         Y = T.nnet.sigmoid(Z.dot(self.W.T) + self.b)
         return Y
+
+    @staticmethod
+    def createFromArrays(W, c, b, an_id):
+        rbm = AutoEncoder(W.shape[1], an_id)
+        rbm.W = theano.shared(W, 'W_%s' % rbm.id)
+        rbm.c = theano.shared(c, 'c_%s' % rbm.id)
+        rbm.b = theano.shared(b, 'b_%s' % rbm.id)
+        rbm.params = [rbm.W, rbm.c, rbm.b]
+        rbm.forward_params = [rbm.W, rbm.c]
+        return rbm
 
 
 def main():

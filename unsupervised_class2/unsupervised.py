@@ -22,6 +22,8 @@ class DBN(object):
             count += 1
 
     def fit(self, X, pretrain_epochs=1):
+        self.D = X.shape[1] # save for later
+
         current_input = X
         for ae in self.hidden_layers:
             ae.fit(current_input, epochs=pretrain_epochs)
@@ -38,6 +40,58 @@ class DBN(object):
             Z = ae.forward_hidden(current_input)
             current_input = Z
         return current_input
+
+    def fit_to_input(self, k, learning_rate=1.0, epochs=100000):
+        # This is not very flexible, as you would ideally
+        # like to be able to activate any node in any hidden
+        # layer, not just the last layer.
+        # Exercise for students: modify this function to be able
+        # to activate neurons in the middle layers.
+        X0 = init_weights((1, self.D))
+        X = theano.shared(X0, 'X_shared')
+        Y = self.forward(X)
+        t = np.zeros(self.hidden_layers[-1].M)
+        t[k] = 1
+
+        cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum()
+        updates = [(X, X - learning_rate*T.grad(cost, X))]
+        train = theano.function(
+            inputs=[],
+            outputs=cost,
+            updates=updates,
+        )
+
+        costs = []
+        for i in xrange(epochs):
+            if i % 1000 == 0:
+                print "epoch:", i
+            the_cost = train()
+            costs.append(the_cost)
+        plt.plot(costs)
+        plt.show()
+
+        return X.eval()
+
+    def save(self, filename):
+        arrays = [p.eval() for p in layer.params for layer in self.hidden_layers]
+        np.savez(filename, *arrays)
+
+    @staticmethod
+    def load(filename, UnsupervisedModel=AutoEncoder):
+        dbn = DBN(0, UnsupervisedModel)
+        npz = np.load(filename)
+        dbn.hidden_layers = []
+        count = 0
+        for i in xrange(0, len(npz.files), 3):
+            W = npz[npz[i]]
+            bh = npz[npz[i+1]]
+            bo = npz[npz[i+2]]
+
+            ae = UnsupervisedModel.createFromArrays(W, bh, bo, count)
+            dbn.hidden_layers.append(ae)
+            count += 1
+        return dbn
+
 
 def main():
     Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()

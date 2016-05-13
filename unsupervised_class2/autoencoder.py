@@ -24,6 +24,7 @@ class AutoEncoder(object):
         self.params = [self.W, self.bh, self.bo]
         self.forward_params = [self.W, self.bh]
 
+        # TODO: technically these should be reset before doing backprop
         self.dW = theano.shared(np.zeros(W0.shape), 'dW_%s' % self.id)
         self.dbh = theano.shared(np.zeros(self.M), 'dbh_%s' % self.id)
         self.dbo = theano.shared(np.zeros(D), 'dbo_%s' % self.id)
@@ -32,11 +33,6 @@ class AutoEncoder(object):
 
         X_in = T.matrix('X_%s' % self.id)
         X_hat = self.forward_output(X_in)
-
-        forward_op = theano.function(
-            inputs=[X_in],
-            outputs=X_hat,
-        )
 
         # attach it to the object so it can be used later
         # must be sigmoidal because the output is also a sigmoid
@@ -71,7 +67,7 @@ class AutoEncoder(object):
             for j in xrange(n_batches):
                 batch = X[j*batch_sz:(j*batch_sz + batch_sz)]
                 train_op(batch)
-                the_cost = cost_op(X)
+                the_cost = cost_op(X) # technically we could also get the cost for Xtest here
                 print "j / n_batches:", j, "/", n_batches, "cost:", the_cost
                 costs.append(the_cost)
         if show_fig:
@@ -88,6 +84,16 @@ class AutoEncoder(object):
         Z = self.forward_hidden(X)
         Y = T.nnet.sigmoid(Z.dot(self.W.T) + self.bo)
         return Y
+
+    @staticmethod
+    def createFromArrays(W, bh, bo, an_id):
+        ae = AutoEncoder(W.shape[1], an_id)
+        ae.W = theano.shared(W, 'W_%s' % ae.id)
+        ae.bh = theano.shared(bh, 'bh_%s' % ae.id)
+        ae.bo = theano.shared(bo, 'bo_%s' % ae.id)
+        ae.params = [ae.W, ae.bh, ae.bo]
+        ae.forward_params = [ae.W, ae.bh]
+        return ae
 
 
 class DNN(object):
@@ -135,14 +141,9 @@ class DNN(object):
         targets = T.ivector('Targets')
         pY = self.forward(X_in)
 
-        forward_op = theano.function(
-            inputs=[X_in],
-            outputs=pY,
-        )
-
         # squared_magnitude = [(p*p).sum() for p in self.params]
         # reg_cost = T.sum(squared_magnitude)
-        cost = -T.mean( T.log(pY)[T.arange(pY.shape[0]), targets] ) #+ reg*reg_cost
+        cost = -T.mean( T.log(pY[T.arange(pY.shape[0]), targets]) ) #+ reg*reg_cost
         prediction = self.predict(X_in)
         cost_predict_op = theano.function(
             inputs=[X_in, targets],
@@ -171,7 +172,6 @@ class DNN(object):
                 Ybatch = Y[j*batch_sz:(j*batch_sz + batch_sz)]
                 train_op(Xbatch, Ybatch)
                 the_cost, the_prediction = cost_predict_op(Xtest, Ytest)
-                # print "prediction:", the_prediction, "test:", Ytest
                 error = error_rate(the_prediction, Ytest)
                 print "j / n_batches:", j, "/", n_batches, "cost:", the_cost, "error:", error
                 costs.append(the_cost)
