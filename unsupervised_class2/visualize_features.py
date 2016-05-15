@@ -14,15 +14,16 @@ from rbm import RBM
 def main(loadfile=None, savefile=None):
     Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()
     if loadfile:
+        dbn = DBN.load(loadfile)
+    else:
         dbn = DBN([1000, 750, 500, 10]) # AutoEncoder is default
         dbn = DBN([1000, 750, 500, 10], UnsupervisedModel=RBM)
         dbn.fit(Xtrain, pretrain_epochs=15)
-    else:
-        dbn.load(loadfile)
 
     if savefile:
         dbn.save(savefile)
 
+    # first layer features
     # initial weight is D x M
     # W = dbn.hidden_layers[0].W.eval()
     # for i in xrange(dbn.hidden_layers[0].M):
@@ -32,10 +33,7 @@ def main(loadfile=None, savefile=None):
     #     if should_quit == 'n':
     #         break
 
-    # TODO: save the weights so I can initialize from them later
-    #       and just do the last step
-
-    # print features learned in the last layer
+    # features learned in the last layer
     for k in xrange(dbn.hidden_layers[-1].M):
         # activate the kth node
         X = dbn.fit_to_input(k)
@@ -47,4 +45,11 @@ def main(loadfile=None, savefile=None):
 
 
 if __name__ == '__main__':
-    main()
+    # to load a saved file
+    main(loadfile='saved.npz')
+
+    # to neither load nor save
+    # main()
+
+    # to save a trained unsupervised deep network
+    # main(savefile='saved.npz')

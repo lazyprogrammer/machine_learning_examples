@@ -42,7 +42,7 @@ class DBN(object):
             current_input = Z
         return current_input
 
-    def fit_to_input(self, k, learning_rate=1.0, epochs=100000):
+    def fit_to_input(self, k, learning_rate=1.0, mu=0.99, epochs=100000):
         # This is not very flexible, as you would ideally
         # like to be able to activate any node in any hidden
         # layer, not just the last layer.
@@ -50,12 +50,16 @@ class DBN(object):
         # to activate neurons in the middle layers.
         X0 = init_weights((1, self.D))
         X = theano.shared(X0, 'X_shared')
+        dX = theano.shared(np.zeros(X0.shape), 'dX_shared')
         Y = self.forward(X)
         t = np.zeros(self.hidden_layers[-1].M)
         t[k] = 1
 
         cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum()
-        updates = [(X, X - learning_rate*T.grad(cost, X))]
+        updates = [
+            (X, X + mu*dX - learning_rate*T.grad(cost, X)),
+            (dX, mu*dX - learning_rate*T.grad(cost, X)),
+        ]
         train = theano.function(
             inputs=[],
             outputs=cost,
@@ -74,19 +78,22 @@ class DBN(object):
         return X.eval()
 
     def save(self, filename):
-        arrays = [p.eval() for p in layer.params for layer in self.hidden_layers]
+        arrays = [p.eval() for layer in self.hidden_layers for p in layer.params]
         np.savez(filename, *arrays)
 
     @staticmethod
     def load(filename, UnsupervisedModel=AutoEncoder):
-        dbn = DBN(0, UnsupervisedModel)
+        dbn = DBN([], UnsupervisedModel)
         npz = np.load(filename)
         dbn.hidden_layers = []
         count = 0
         for i in xrange(0, len(npz.files), 3):
-            W = npz[npz[i]]
-            bh = npz[npz[i+1]]
-            bo = npz[npz[i+2]]
+            W = npz['arr_%s' % i]
+            bh = npz['arr_%s' % (i + 1)]
+            bo = npz['arr_%s' % (i + 2)]
+
+            if i == 0:
+                dbn.D = W.shape[0]
 
             ae = UnsupervisedModel.createFromArrays(W, bh, bo, count)
             dbn.hidden_layers.append(ae)
