@@ -75,10 +75,10 @@ class DBN(object):
         plt.plot(costs)
         plt.show()
 
-        return X.eval()
+        return X.get_value()
 
     def save(self, filename):
-        arrays = [p.eval() for layer in self.hidden_layers for p in layer.params]
+        arrays = [p.get_value() for layer in self.hidden_layers for p in layer.params]
         np.savez(filename, *arrays)
 
     @staticmethod
