@@ -1,4 +1,4 @@
-
+# https://www.udemy.com/unsupervised-deep-learning-in-python
 import numpy as np
 import theano
 import theano.tensor as T
