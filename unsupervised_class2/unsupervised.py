@@ -42,7 +42,7 @@ class DBN(object):
             current_input = Z
         return current_input
 
-    def fit_to_input(self, k, learning_rate=1.0, mu=0.99, epochs=100000):
+    def fit_to_input(self, k, learning_rate=0.00001, mu=0.99, reg=10e-10, epochs=20000):
         # This is not very flexible, as you would ideally
         # like to be able to activate any node in any hidden
         # layer, not just the last layer.
@@ -55,7 +55,7 @@ class DBN(object):
         t = np.zeros(self.hidden_layers[-1].M)
         t[k] = 1
 
-        cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum()
+        cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum() + reg*(X * X).sum()
         updates = [
             (X, X + mu*dX - learning_rate*T.grad(cost, X)),
             (dX, mu*dX - learning_rate*T.grad(cost, X)),
@@ -67,18 +67,26 @@ class DBN(object):
         )
 
         costs = []
+        bestX = None
         for i in xrange(epochs):
             if i % 1000 == 0:
                 print "epoch:", i
             the_cost = train()
             costs.append(the_cost)
+            # if the_cost < 10:
+            #     break
+            if the_cost > costs[-1] or np.isnan(the_cost):
+                break
+
+            bestX = X.get_value()
+        print "len(costs):", len(costs), "max:", np.max(costs), "min:", np.min(costs)
         plt.plot(costs)
         plt.show()
 
-        return X.eval()
+        return bestX
 
     def save(self, filename):
-        arrays = [p.eval() for layer in self.hidden_layers for p in layer.params]
+        arrays = [p.get_value() for layer in self.hidden_layers for p in layer.params]
         np.savez(filename, *arrays)
 
     @staticmethod
