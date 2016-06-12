@@ -39,17 +39,18 @@ def main(loadfile=None, savefile=None):
         X = dbn.fit_to_input(k)
         imgplot = plt.imshow(X.reshape(28, 28), cmap='gray')
         plt.show()
-        should_quit = raw_input("Show more? Enter 'n' to quit\n")
-        if should_quit == 'n':
-            break
+        if k < dbn.hidden_layers[-1].M - 1:
+            should_quit = raw_input("Show more? Enter 'n' to quit\n")
+            if should_quit == 'n':
+                break
 
 
 if __name__ == '__main__':
     # to load a saved file
-    main(loadfile='saved.npz')
+    main(loadfile='rbm15.npz')
 
     # to neither load nor save
     # main()
 
     # to save a trained unsupervised deep network
-    # main(savefile='saved.npz')
+    # main(savefile='rbm15.npz')
