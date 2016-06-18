@@ -46,11 +46,11 @@ tfX = tf.placeholder(tf.float32, [None, D])
 tfY = tf.placeholder(tf.float32, [None, K])
 
 W1 = init_weights([D, M]) # create symbolic variables
-b1 = np.zeros(M)
+b1 = init_weights([M])
 W2 = init_weights([M, K])
-b2 = np.zeros(K)
+b2 = init_weights([K])
 
-py_x = forward(X, W1, b1, W2, b2)
+py_x = forward(tfX, W1, b1, W2, b2)
 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, T)) # compute costs
 # WARNING: This op expects unscaled logits,
