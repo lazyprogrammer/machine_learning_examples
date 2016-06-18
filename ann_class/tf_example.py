@@ -5,18 +5,31 @@
 
 import tensorflow as tf
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 
 # create random training data again
-N = 100
-data_X = np.random.randn(N,3)
-data_T = np.zeros((N,3))
-means = np.array([[2,2,2], [-2,-2,-2], [2,2,-2]])
+Nclass = 500
+D = 2 # dimensionality of input
+M = 3 # hidden layer size
+K = 3 # number of classes
+
+X1 = np.random.randn(Nclass, D) + np.array([0, -2])
+X2 = np.random.randn(Nclass, D) + np.array([2, 2])
+X3 = np.random.randn(Nclass, D) + np.array([-2, 2])
+X = np.vstack([X1, X2, X3]).astype(np.float32)
+
+Y = np.array([0]*Nclass + [1]*Nclass + [2]*Nclass)
+
+# let's see what it looks like
+plt.scatter(X[:,0], X[:,1], c=Y, s=100, alpha=0.5)
+plt.show()
+
+N = len(Y)
+# turn Y into an indicator matrix for training
+T = np.zeros((N, K))
 for i in xrange(N):
-    k = np.random.randint(3)
-    data_X[i] += means[k]
-    data_T[i,k] = 1
+    T[i, Y[i]] = 1
 
 
 # tensor flow variables are not the same as regular Python variables
@@ -24,20 +37,22 @@ def init_weights(shape):
     return tf.Variable(tf.random_normal(shape, stddev=0.01))
 
 
-def model(X, W1, W2):
-    Z = tf.nn.sigmoid(tf.matmul(X, W1))
-    return tf.matmul(Z, W2)
+def forward(X, W1, b1, W2, b2):
+    Z = tf.nn.sigmoid(tf.matmul(X, W1) + b1)
+    return tf.matmul(Z, W2) + b2
 
 
-X = tf.placeholder("float", [None, 3])
-Y = tf.placeholder("float", [None, 3])
+tfX = tf.placeholder(tf.float32, [None, D])
+tfY = tf.placeholder(tf.float32, [None, K])
 
-W1 = init_weights([3, 5]) # create symbolic variables
-W2 = init_weights([5, 3])
+W1 = init_weights([D, M]) # create symbolic variables
+b1 = np.zeros(M)
+W2 = init_weights([M, K])
+b2 = np.zeros(K)
 
-py_x = model(X, W1, W2)
+py_x = forward(X, W1, b1, W2, b2)
 
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, Y)) # compute costs
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, T)) # compute costs
 # WARNING: This op expects unscaled logits,
 # since it performs a softmax on logits
 # internally for efficiency.
@@ -56,10 +71,8 @@ init = tf.initialize_all_variables()
 sess.run(init)
 
 for i in range(1000):
-    sess.run(train_op, feed_dict={X: data_X, Y: data_T})
-
-    true = np.argmax(data_T, axis=1)
-    pred = sess.run(predict_op, feed_dict={X: data_X, Y: data_T})
+    sess.run(train_op, feed_dict={tfX: X, tfY: T})
+    pred = sess.run(predict_op, feed_dict={tfX: X, tfY: T})
     if i % 10 == 0:
-        print np.mean(true == pred)
+        print np.mean(Y == pred)
 
