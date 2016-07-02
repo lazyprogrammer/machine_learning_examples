@@ -36,11 +36,10 @@ class DBN(object):
         return current_input
 
     def forward(self, X):
-        current_input = X
+        Z = X
         for ae in self.hidden_layers:
-            Z = ae.forward_hidden(current_input)
-            current_input = Z
-        return current_input
+            Z = ae.forward_hidden(Z)
+        return Z
 
     def fit_to_input(self, k, learning_rate=0.00001, mu=0.99, reg=10e-10, epochs=20000):
         # This is not very flexible, as you would ideally
@@ -52,10 +51,14 @@ class DBN(object):
         X = theano.shared(X0, 'X_shared')
         dX = theano.shared(np.zeros(X0.shape), 'dX_shared')
         Y = self.forward(X)
-        t = np.zeros(self.hidden_layers[-1].M)
-        t[k] = 1
+        # t = np.zeros(self.hidden_layers[-1].M)
+        # t[k] = 1
 
-        cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum() + reg*(X * X).sum()
+        # # choose Y[0] b/c it's shape 1xD, we want just a D-size vector, not 1xD matrix
+        # cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum() + reg*(X * X).sum()
+
+        cost = -T.log(Y[k]) + reg*(X * X).sum()
+
         updates = [
             (X, X + mu*dX - learning_rate*T.grad(cost, X)),
             (dX, mu*dX - learning_rate*T.grad(cost, X)),

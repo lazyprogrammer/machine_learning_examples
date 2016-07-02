@@ -47,10 +47,10 @@ def main(loadfile=None, savefile=None):
 
 if __name__ == '__main__':
     # to load a saved file
-    main(loadfile='rbm15.npz')
+    # main(loadfile='rbm15.npz')
 
     # to neither load nor save
     # main()
 
     # to save a trained unsupervised deep network
-    # main(savefile='rbm15.npz')
+    main(savefile='rbm15.npz')
