@@ -57,7 +57,7 @@ class DBN(object):
         # # choose Y[0] b/c it's shape 1xD, we want just a D-size vector, not 1xD matrix
         # cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum() + reg*(X * X).sum()
 
-        cost = -T.log(Y[k]) + reg*(X * X).sum()
+        cost = -T.log(Y[0,k]) + reg*(X * X).sum()
 
         updates = [
             (X, X + mu*dX - learning_rate*T.grad(cost, X)),
@@ -65,7 +65,7 @@ class DBN(object):
         ]
         train = theano.function(
             inputs=[],
-            outputs=cost,
+            outputs=[cost, Y],
             updates=updates,
         )
 
@@ -74,7 +74,9 @@ class DBN(object):
         for i in xrange(epochs):
             if i % 1000 == 0:
                 print "epoch:", i
-            the_cost = train()
+            the_cost, out = train()
+            if i == 0:
+                print "out.shape:", out.shape
             costs.append(the_cost)
             # if the_cost < 10:
             #     break
