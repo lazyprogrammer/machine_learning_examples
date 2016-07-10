@@ -3,6 +3,7 @@ import string
 import os
 import operator
 from nltk import pos_tag, word_tokenize
+from datetime import datetime
 
 def init_weight(Mi, Mo):
     return np.random.randn(Mi, Mo) / np.sqrt(Mi + Mo)
@@ -54,7 +55,7 @@ def my_tokenizer(s):
 def get_wikipedia_data(n_files, n_vocab):
     # TODO: limit the vocabulary size to speed up training
     prefix = '../large_files/'
-    input_files = [f for f in os.listdir(prefix) if f.startswith('enwiki')]
+    input_files = [f for f in os.listdir(prefix) if f.startswith('enwiki') and f.endswith('txt')]
 
     # return variables
     sentences = []
@@ -63,7 +64,10 @@ def get_wikipedia_data(n_files, n_vocab):
     current_idx = 2
     word_idx_count = {0: float('inf'), 1: float('inf')}
 
-    for f in input_files[:n_files]:
+    if n_files is not None:
+        input_files = input_files[:n_files]
+
+    for f in input_files:
         print "reading:", f
         for line in open(prefix + f):
             line = line.strip()
@@ -155,3 +159,58 @@ def get_poetry_classifier_data(samples_per_class, load_cached=True, save_cached=
     if save_cached:
         np.savez(datafile, X, Y, current_idx)
     return X, Y, current_idx
+
+
+def get_stock_data():
+    input_files = os.listdir('stock_data')
+    min_length = 2000
+
+    # first find the latest start date
+    # so that each time series can start at the same time
+    max_min_date = datetime(2000, 1, 1)
+    line_counts = {}
+    for f in input_files:
+        n = 0
+        for line in open('stock_data/%s' % f):
+            # pass
+            n += 1
+        line_counts[f] = n
+        if n > min_length:
+            # else we'll ignore this symbol, too little data
+            # print 'stock_data/%s' % f, 'num lines:', n
+            last_line = line
+            date = line.split(',')[0]
+            date = datetime.strptime(date, '%Y-%m-%d')
+            if date > max_min_date:
+                max_min_date = date
+
+    print "max min date:", max_min_date
+
+    # now collect the data up to min date
+    all_binary_targets = []
+    all_prices = []
+    for f in input_files:
+        if line_counts[f] > min_length:
+            prices = []
+            binary_targets = []
+            first = True
+            last_price = 0
+            for line in open('stock_data/%s' % f):
+                if first:
+                    first = False
+                    continue
+                date, price = line.split(',')[:2]
+                date = datetime.strptime(date, '%Y-%m-%d')
+                if date < max_min_date:
+                    break
+                prices.append(float(price))
+                target = 1 if last_price < price else 0
+                binary_targets.append(target)
+                last_price = price
+            all_prices.append(prices)
+            all_binary_targets.append(binary_targets)
+
+    # D = number of symbols
+    # T = length of series
+    return np.array(all_prices).T, np.array(all_binary_targets).T # make it T x D
+

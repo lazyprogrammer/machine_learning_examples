@@ -81,7 +81,6 @@ def test_donut():
     LL = [] # keep track of likelihoods
     learning_rate = 0.0001
     regularization = 0.1
-    last_error_rate = None
 
 
     # batch version

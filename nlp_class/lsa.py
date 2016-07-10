@@ -71,10 +71,14 @@ for tokens in all_tokens:
     X[:,i] = tokens_to_vector(tokens)
     i += 1
 
-svd = TruncatedSVD()
-Z = svd.fit_transform(X)
-plt.scatter(Z[:,0], Z[:,1])
-for i in xrange(D):
-    plt.annotate(s=index_word_map[i], xy=(Z[i,0], Z[i,1]))
-plt.show()
+def main():
+    svd = TruncatedSVD()
+    Z = svd.fit_transform(X)
+    plt.scatter(Z[:,0], Z[:,1])
+    for i in xrange(D):
+        plt.annotate(s=index_word_map[i], xy=(Z[i,0], Z[i,1]))
+    plt.show()
+
+if __name__ == '__main__':
+    main()
 

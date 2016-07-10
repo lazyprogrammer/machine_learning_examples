@@ -1,9 +1,11 @@
+import sys
 import theano
 import theano.tensor as T
 import numpy as np
 import matplotlib.pyplot as plt
 import json
 
+from datetime import datetime
 from sklearn.utils import shuffle
 from util import init_weight, get_wikipedia_data
 
@@ -63,7 +65,7 @@ class RNN:
         self.D = D
         self.V = V
 
-    def fit(self, X, learning_rate=10e-5, mu=0.99, epochs=10, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU):
+    def fit(self, X, learning_rate=10e-5, mu=0.99, epochs=10, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU, normalize=True):
         D = self.D
         V = self.V
         N = len(X)
@@ -110,7 +112,8 @@ class RNN:
         gWe = T.grad(cost, self.We)
         dWe_update = mu*dWe - learning_rate*gWe
         We_update = self.We + dWe_update
-        We_update /= We_update.sum(axis=1).dimshuffle(0, 'x')
+        if normalize:
+            We_update /= We_update.sum(axis=1).dimshuffle(0, 'x')
 
         updates = [
             (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
@@ -128,6 +131,7 @@ class RNN:
 
         costs = []
         for i in xrange(epochs):
+            t0 = datetime.now()
             X = shuffle(X)
             n_correct = 0
             n_total = 0
@@ -159,8 +163,9 @@ class RNN:
                     if pj == xj:
                         n_correct += 1
                 if j % 200 == 0:
-                    print "j:", j, "correct rate so far:", (float(n_correct)/n_total)
-            print "i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total)
+                    sys.stdout.write("j/N: %d/%d correct rate so far: %f\r" % (j, N, float(n_correct)/n_total))
+                    sys.stdout.flush()
+            print "i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total), "time for epoch:", (datetime.now() - t0)
             costs.append(cost)
 
         if show_fig:
@@ -168,24 +173,24 @@ class RNN:
             plt.show()
 
 
-def train_wikipedia():
+def train_wikipedia(we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.json'):
     # there are 32 files
     sentences, word2idx = get_wikipedia_data(n_files=32, n_vocab=2000)
     print "finished retrieving data"
     print "vocab size:", len(word2idx), "number of sentences:", len(sentences)
-    rnn = RNN(20, [20], len(word2idx))
-    rnn.fit(sentences, learning_rate=10e-5, epochs=10, show_fig=True, activation=T.nnet.relu)
+    rnn = RNN(30, [30], len(word2idx))
+    rnn.fit(sentences, learning_rate=10e-6, epochs=10, show_fig=True, activation=T.nnet.relu)
 
-    np.save('word_embeddings.npy', rnn.We.get_value())
-    with open('wikipedia_word2idx.json', 'w') as f:
+    np.save(we_file, rnn.We.get_value())
+    with open(w2i_file, 'w') as f:
         json.dump(word2idx, f)
 
 def generate_wikipedia():
     pass
 
-def find_analogies(w1, w2, w3):
-    We = np.load('word_embeddings.npy')
-    with open('wikipedia_word2idx.json') as f:
+def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.json'):
+    We = np.load(we_file)
+    with open(w2i_file) as f:
         word2idx = json.load(f)
 
     king = We[word2idx[w1]]

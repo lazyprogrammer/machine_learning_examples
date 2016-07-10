@@ -1,11 +1,11 @@
 LO! Death hath rear'd himself a throne
 In a strange city, all alone,
-Far down within the dim west —
+Far down within the dim west
 Where the good, and the bad, and the worst, and the best,
 Have gone to their eternal rest.
  
 There shrines, and palaces, and towers
-Are — not like any thing of ours —
+Are not like any thing of ours
 Oh no! O no! ours never loom
 To heaven with that ungodly gloom!
 Time-eaten towers that tremble not!
@@ -17,23 +17,23 @@ The melancholy waters lie.
 No holy rays from heaven come down
 On the long night-time of that town,
 But light from out the lurid sea
-Streams up the turrets silently —
-Up thrones — up long-forgotten bowers
-Of scultur'd ivy and stone flowers —
-Up domes — up spires — up kingly halls —
-Up fanes — up Babylon-like walls —
+Streams up the turrets silently
+Up thrones up long-forgotten bowers
+Of scultur'd ivy and stone flowers
+Up domes up spires up kingly halls
+Up fanes up Babylon-like walls
 Up many a melancholy shrine
 Whose entablatures intertwine
-The mask — the viol — and the vine.
+The mask the viol and the vine.
  
-There open temples — open graves
-Are on a level with the waves —
+There open temples open graves
+Are on a level with the waves
 But not the riches there that lie
 In each idol's diamond eye,
 Not the gaily-jewell'd dead
 Tempt the waters from their bed:
 For no ripples curl, alas!
-Along that wilderness of glass —
+Along that wilderness of glass
 No swellings hint that winds may be
 Upon a far-off happier sea:
 So blend the turrets and shadows there
@@ -42,13 +42,13 @@ While from the high towers of the town
 Death looks gigantically down.
  
 But lo! a stir is in the air!
-The wave — there is a ripple there!
+The wave there is a ripple there!
 As if the towers had thrown aside,
-In slightly sinking, the dull tide —
+In slightly sinking, the dull tide
 As if the turret-tops had given
 A vacuum in the filmy heaven.
-The waves have now a redder glow —
-The very hours are breathing low —
+The waves have now a redder glow
+The very hours are breathing low
 And when, amid no earthly moans,
 Down, down, that town shall settle hence,
 All Hades, from a thousand thrones,
@@ -209,7 +209,7 @@ And love- a simple duty.
 
 When from your gems of thought I turn 
 To those pure orbs, your heart to learn, 
-I scarce know which to prize most high — 
+I scarce know which to prize most high 
 The bright i-dea, or the bright dear-eye.
 
 Of all who hail thy presence as the morning-
@@ -290,23 +290,23 @@ Darkly my Present and my Past,
 Let my Future radiant shine
 With sweet hopes of thee and thine!
 
-The bells! — ah, the bells! 
+The bells! ah, the bells! 
 The little silver bells! 
 How fairy-like a melody there floats 
-From their throats. — 
-From their merry little throats — 
+From their throats. 
+From their merry little throats 
 From the silver, tinkling throats 
-Of the bells, bells, bells — 
+Of the bells, bells, bells 
 Of the bells! 
 
-The bells! — ah, the bells! 
+The bells! ah, the bells! 
 The heavy iron bells! 
 How horrible a monody there floats 
-From their throats — 
-From their deep-toned throats — 
+From their throats 
+From their deep-toned throats 
 From their melancholy throats! 
 How I shudder at the notes 
-Of the bells, bells, bells — 
+Of the bells, bells, bells 
 Of the bells!
 
 How often we forget all time, when lone
@@ -554,7 +554,7 @@ The Elfin from the green grass, and from me
 The summer dream beneath the tamarind tree?
 
 I'll tell you a plan for gaining wealth,
-Better than banking, trade or leases — 
+Better than banking, trade or leases 
 Take a bank note and fold it up, 
 And then you will find your money in creases! 
 This wonderful plan, without danger or loss, 
