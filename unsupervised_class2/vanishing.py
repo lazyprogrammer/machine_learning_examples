@@ -24,7 +24,7 @@ class ANN(object):
     def __init__(self, hidden_layer_sizes):
         self.hidden_layer_sizes = hidden_layer_sizes
 
-    def fit(self, X, Y, learning_rate=0.01, mu=0.99, epochs=1, batch_sz=100):
+    def fit(self, X, Y, learning_rate=0.01, mu=0.99, epochs=30, batch_sz=100):
         N, D = X.shape
         K = len(set(Y))
 
