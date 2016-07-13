@@ -1,3 +1,4 @@
+# https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import numpy as np
 import theano
 import theano.tensor as T

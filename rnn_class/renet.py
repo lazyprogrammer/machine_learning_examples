@@ -1,3 +1,4 @@
+# https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import os
 import gzip
 import cPickle
@@ -16,9 +17,9 @@ from sklearn.utils import shuffle
 from datetime import datetime
 
 # TODO: add LSTM
-# TODO: add batch training
-# TODO: add ability to switch between datasets
+# NOTE: batch training is slow to compile, do it better with slicing
 # TODO: use only Ytest in cost instead of indicator
+# TODO: multiply X with W replicated so that X.dot(W) is not inside the scan loop
 
 def error_rate(p, t):
     return np.mean(p != t)

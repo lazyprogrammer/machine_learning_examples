@@ -1,3 +1,4 @@
+# https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import sys
 import theano
 import theano.tensor as T
@@ -66,7 +67,7 @@ class RNN:
         dWe_update = mu*dWe - learning_rate*gWe
         We_update = self.We + dWe_update
         if normalize:
-            We_update /= We_update.sum(axis=1).dimshuffle(0, 'x')
+            We_update /= We_update.norm(2)
 
         updates = [
             (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
@@ -158,7 +159,7 @@ def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedi
 
     for dist, name in [(dist1, 'Euclidean'), (dist2, 'cosine')]:
         min_dist = float('inf')
-        best_word = '';
+        best_word = ''
         for word, idx in word2idx.iteritems():
             if word not in (w1, w2, w3):
                 v1 = We[idx]
@@ -170,12 +171,14 @@ def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedi
         print w1, "-", w2, "=", best_word, "-", w3
 
 if __name__ == '__main__':
-    train_wikipedia() # GRU
-    # train_wikipedia(RecurrentUnit=LSTM)
-    find_analogies('king', 'man', 'woman')
-    find_analogies('france', 'paris', 'london')
-    find_analogies('france', 'paris', 'rome')
-    find_analogies('paris', 'france', 'italy')
+    # train_wikipedia() # GRU
+    we = 'lstm_word_embeddings2.npy'
+    w2i = 'lstm_wikipedia_word2idx2.json'
+    train_wikipedia(we, w2i, RecurrentUnit=LSTM)
+    find_analogies('king', 'man', 'woman', we, w2i)
+    find_analogies('france', 'paris', 'london', we, w2i)
+    find_analogies('france', 'paris', 'rome', we, w2i)
+    find_analogies('paris', 'france', 'italy', we, w2i)
 
 
 

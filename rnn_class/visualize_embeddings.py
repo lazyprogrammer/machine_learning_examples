@@ -1,9 +1,9 @@
+# https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import json
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
-from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import PCA, TruncatedSVD
 
 def main(we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.json', Model=PCA):
     We = np.load(we_file)

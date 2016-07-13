@@ -1,3 +1,4 @@
+# https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import numpy as np
 import string
 import os
@@ -53,7 +54,6 @@ def my_tokenizer(s):
     return s.split()
 
 def get_wikipedia_data(n_files, n_vocab):
-    # TODO: limit the vocabulary size to speed up training
     prefix = '../large_files/'
     input_files = [f for f in os.listdir(prefix) if f.startswith('enwiki') and f.endswith('txt')]
 

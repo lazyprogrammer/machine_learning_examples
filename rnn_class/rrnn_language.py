@@ -1,3 +1,4 @@
+# https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import theano
 import theano.tensor as T
 import numpy as np
@@ -25,11 +26,14 @@ class SimpleRNN:
         Wh = init_weight(M, M)
         bh = np.zeros(M)
         h0 = np.zeros(M)
-        z  = np.ones(M)
+        # z  = np.ones(M)
+        Wxz = init_weight(D, M)
+        Whz = init_weight(M, M)
+        bz  = np.zeros(M)
         Wo = init_weight(M, V)
         bo = np.zeros(V)
 
-        thX, thY, py_x, prediction = self.set(We, Wx, Wh, bh, h0, z, Wo, bo, activation)
+        thX, thY, py_x, prediction = self.set(We, Wx, Wh, bh, h0, Wxz, Whz, bz, Wo, bo, activation)
 
         cost = -T.mean(T.log(py_x[T.arange(thY.shape[0]), thY]))
         grads = T.grad(cost, self.params)
@@ -90,16 +94,18 @@ class SimpleRNN:
         Wh = npz['arr_2']
         bh = npz['arr_3']
         h0 = npz['arr_4']
-        z  = npz['arr_5']
-        Wo = npz['arr_6']
-        bo = npz['arr_7']
+        Wxz = npz['arr_5']
+        Whz = npz['arr_6']
+        bz = npz['arr_7']
+        Wo = npz['arr_8']
+        bo = npz['arr_9']
         V, D = We.shape
         _, M = Wx.shape
         rnn = SimpleRNN(D, M, V)
-        rnn.set(We, Wx, Wh, bh, h0, z, Wo, bo, activation)
+        rnn.set(We, Wx, Wh, bh, h0, Wxz, Whz, bz, Wo, bo, activation)
         return rnn
 
-    def set(self, We, Wx, Wh, bh, h0, z, Wo, bo, activation):
+    def set(self, We, Wx, Wh, bh, h0, Wxz, Whz, bz, Wo, bo, activation):
         self.f = activation
 
         # redundant - see how you can improve it
@@ -108,10 +114,12 @@ class SimpleRNN:
         self.Wh = theano.shared(Wh)
         self.bh = theano.shared(bh)
         self.h0 = theano.shared(h0)
-        self.z  = theano.shared(z)
+        self.Wxz = theano.shared(Wxz)
+        self.Whz = theano.shared(Whz)
+        self.bz = theano.shared(bz)
         self.Wo = theano.shared(Wo)
         self.bo = theano.shared(bo)
-        self.params = [self.We, self.Wx, self.Wh, self.bh, self.h0, self.z, self.Wo, self.bo]
+        self.params = [self.We, self.Wx, self.Wh, self.bh, self.h0, self.Wxz, self.Whz, self.bz, self.Wo, self.bo]
 
         thX = T.ivector('X')
         Ei = self.We[thX] # will be a TxD matrix
@@ -120,7 +128,8 @@ class SimpleRNN:
         def recurrence(x_t, h_t1):
             # returns h(t), y(t)
             hhat_t = self.f(x_t.dot(self.Wx) + h_t1.dot(self.Wh) + self.bh)
-            h_t = (1 - self.z) * h_t1 + self.z * hhat_t
+            z_t = T.nnet.sigmoid(x_t.dot(self.Wxz) + h_t1.dot(self.Whz) + self.bz)
+            h_t = (1 - z_t) * h_t1 + z_t * hhat_t
             y_t = T.nnet.softmax(h_t.dot(self.Wo) + self.bo)
             return h_t, y_t
 
@@ -174,7 +183,7 @@ def train_poetry():
     # students: tanh didn't work but you should try it
     sentences, word2idx = get_robert_frost()
     rnn = SimpleRNN(50, 50, len(word2idx))
-    rnn.fit(sentences, learning_rate=10e-5, show_fig=True, activation=T.nnet.relu, epochs=2000)
+    rnn.fit(sentences, learning_rate=10e-6, show_fig=True, activation=T.nnet.relu, epochs=2000)
     rnn.save('RRNN_D50_M50_epochs2000_relu.npz')
 
 def generate_poetry():
@@ -184,6 +193,6 @@ def generate_poetry():
 
 
 if __name__ == '__main__':
-    # train_poetry()
+    train_poetry()
     generate_poetry()
 

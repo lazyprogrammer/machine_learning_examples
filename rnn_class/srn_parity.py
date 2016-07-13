@@ -1,3 +1,4 @@
+# https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import theano
 import theano.tensor as T
 import numpy as np
@@ -6,18 +7,19 @@ import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from util import init_weight, all_parity_pairs
 
+
 class SimpleRNN:
     def __init__(self, M):
-        self.M = M
+        self.M = M # hidden layer size
 
     def fit(self, X, Y, learning_rate=10e-1, mu=0.99, reg=1.0, activation=T.tanh, epochs=100, show_fig=False):
-        D = X[0].shape[1]
+        D = X[0].shape[1] # X is of size N x T(n) x D
         K = len(set(Y.flatten()))
         N = len(Y)
         M = self.M
         self.f = activation
 
-        # initialize weights
+        # initial weights
         Wx = init_weight(D, M)
         Wh = init_weight(M, M)
         bh = np.zeros(M)
@@ -25,6 +27,7 @@ class SimpleRNN:
         Wo = init_weight(M, K)
         bo = np.zeros(K)
 
+        # make them theano shared
         self.Wx = theano.shared(Wx)
         self.Wh = theano.shared(Wh)
         self.bh = theano.shared(bh)
@@ -66,7 +69,7 @@ class SimpleRNN:
         self.train_op = theano.function(
             inputs=[thX, thY],
             outputs=[cost, prediction, y],
-            updates=updates,
+            updates=updates
         )
 
         costs = []
@@ -76,11 +79,12 @@ class SimpleRNN:
             cost = 0
             for j in xrange(N):
                 c, p, rout = self.train_op(X[j], Y[j])
+                # print "p:", p
                 cost += c
                 if p[-1] == Y[j,-1]:
                     n_correct += 1
             print "shape y:", rout.shape
-            print "i:", i, "cost:", cost, "classification rate:", (float(n_correct) / N)
+            print "i:", i, "cost:", cost, "classification rate:", (float(n_correct)/N)
             costs.append(cost)
 
         if show_fig:
@@ -88,10 +92,12 @@ class SimpleRNN:
             plt.show()
 
 
+
 def parity(B=12, learning_rate=10e-5, epochs=200):
     X, Y = all_parity_pairs(B)
     N, t = X.shape
 
+    # we want every time step to have a label
     Y_t = np.zeros(X.shape, dtype=np.int32)
     for n in xrange(N):
         ones_count = 0
@@ -101,12 +107,14 @@ def parity(B=12, learning_rate=10e-5, epochs=200):
             if ones_count % 2 == 1:
                 Y_t[n,i] = 1
 
+    # for x, y in zip(X, Y_t):
+    #     print "x:", x, "y:", y
     X = X.reshape(N, t, 1).astype(np.float32)
 
     rnn = SimpleRNN(4)
     rnn.fit(X, Y_t, learning_rate=learning_rate, epochs=epochs, activation=T.nnet.sigmoid, show_fig=True)
 
+
 if __name__ == '__main__':
     parity()
-
 
