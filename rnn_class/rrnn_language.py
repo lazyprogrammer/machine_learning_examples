@@ -35,19 +35,21 @@ class SimpleRNN:
 
         thX, thY, py_x, prediction = self.set(We, Wx, Wh, bh, h0, Wxz, Whz, bz, Wo, bo, activation)
 
+        lr = T.scalar('lr')
+
         cost = -T.mean(T.log(py_x[T.arange(thY.shape[0]), thY]))
         grads = T.grad(cost, self.params)
         dparams = [theano.shared(p.get_value()*0) for p in self.params]
 
         updates = [
-            (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
+            (p, p + mu*dp - lr*g) for p, dp, g in zip(self.params, dparams, grads)
         ] + [
-            (dp, mu*dp - learning_rate*g) for dp, g in zip(dparams, grads)
+            (dp, mu*dp - lr*g) for dp, g in zip(dparams, grads)
         ]
 
         self.predict_op = theano.function(inputs=[thX], outputs=prediction)
         self.train_op = theano.function(
-            inputs=[thX, thY],
+            inputs=[thX, thY, lr],
             outputs=[cost, prediction],
             updates=updates
         )
@@ -68,7 +70,7 @@ class SimpleRNN:
                 n_total += len(output_sequence)
 
                 # we set 0 to start and 1 to end
-                c, p = self.train_op(input_sequence, output_sequence)
+                c, p = self.train_op(input_sequence, output_sequence, learning_rate)
                 # print "p:", p
                 cost += c
                 # print "j:", j, "c:", c/len(X[j]+1)
@@ -76,6 +78,8 @@ class SimpleRNN:
                     if pj == xj:
                         n_correct += 1
             print "i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total)
+            if (i + 1) % 500 == 0:
+                learning_rate /= 2
             costs.append(cost)
 
         if show_fig:
@@ -183,7 +187,7 @@ def train_poetry():
     # students: tanh didn't work but you should try it
     sentences, word2idx = get_robert_frost()
     rnn = SimpleRNN(50, 50, len(word2idx))
-    rnn.fit(sentences, learning_rate=10e-6, show_fig=True, activation=T.nnet.relu, epochs=2000)
+    rnn.fit(sentences, learning_rate=10e-5, show_fig=True, activation=T.nnet.relu, epochs=2000)
     rnn.save('RRNN_D50_M50_epochs2000_relu.npz')
 
 def generate_poetry():
@@ -193,6 +197,6 @@ def generate_poetry():
 
 
 if __name__ == '__main__':
-    train_poetry()
+    # train_poetry()
     generate_poetry()
 
