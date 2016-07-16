@@ -1,0 +1,102 @@
+Intel 4004	2,300	1971	Intel	10,000 nm	12 mm²
+Intel 8008	3,500	1972	Intel	10,000 nm	14 mm²
+Intel 8080	4,500	1974	Intel	6,000 nm	20 mm²
+Motorola 6800	4,100	1974	Motorola	6,000 nm	16 mm²
+RCA 1802	5,000	1974	RCA	5,000 nm	27 mm²
+TMS 1000	8,000	1974[7]	Texas Instruments	8,000 nm	
+MOS Technology 6502	3,510[8]	1975	MOS Technology	8,000 nm	21 mm²
+Intel 8085	6,500	1976	Intel	3,000 nm	20 mm²
+Zilog Z80	8,500	1976	Zilog	4,000 nm	18 mm²
+Intel 8086	29,000	1978	Intel	3,000 nm	33 mm²
+Motorola 6809	9,000	1978	Motorola	5,000 nm	21 mm²
+Intel 8088	29,000	1979	Intel	3,000 nm	33 mm²
+Motorola 68000	68,000	1979	Motorola	3,500 nm	44 mm²
+WDC 65C02	11,500[9]	1981	WDC	3,000 nm	6 mm²
+Intel 80186	55,000	1982	Intel	3,000 nm	60 mm²
+Intel 80286	134,000	1982	Intel	1,500 nm	49 mm²
+WDC 65C816	22,000[10]	1983	WDC		9 mm²
+Motorola 68020	190,000[11]	1984	Motorola	2,000 nm	85 mm²
+ARM 1	25,000[11]	1985	Acorn	3,000 nm	50 mm²
+Intel 80386	275,000	1985	Intel	1,500 nm	104 mm²
+Novix NC4016	16,000[12]	1985[13]	Harris Corporation	3,000 nm[14]	
+ARM 2	30,000[11]	1986	Acorn	2,000 nm	30 mm²
+TI Explorer's 32-bit Lisp machine chip	553,000[15]	1987	Texas Instruments		
+DEC WRL MultiTitan	180,000[16]	1988	DEC WRL	1,500 nm	61 mm²
+Intel i960	250,000[17]	1988	Intel	600 nm	
+ARM 3	300,000	1989	Acorn		
+Intel 80486	1,180,235	1989	Intel	1000 nm	173 mm²
+ARM 6	35,000	1991	ARM		
+R4000	1,350,000	1991	MIPS	1,000 nm	213 mm²
+Pentium	3,100,000	1993	Intel	800 nm	294 mm²
+ARM700	578,977[18]	1994	ARM		68.51 mm²
+Pentium Pro	5,500,000[19]	1995	Intel	500 nm	307 mm²
+SA-110	2,500,000[11]	1995	Acorn/DEC/Apple	350 nm	50 mm²
+AMD K5	4,300,000	1996	AMD	500 nm	251 mm²
+AMD K6	8,800,000	1997	AMD	350 nm	162 mm²
+Pentium II Klamath	7,500,000	1997	Intel	350 nm	195 mm²
+Pentium II Deschutes	7,500,000	1998	Intel	250 nm	113 mm²
+AMD K6-III	21,300,000	1999	AMD	250 nm	118 mm²
+AMD K7	22,000,000	1999	AMD	250 nm	184 mm²
+ARM 9TDMI	111,000[11]	1999	Acorn	350 nm	4.8 mm²
+Pentium II Mobile Dixon	27,400,000	1999	Intel	180 nm	180 mm²
+Pentium III Katmai	9,500,000	1999	Intel	250 nm	128 mm²
+Pentium 4 Willamette	42,000,000	2000	Intel	180 nm	217 mm²
+Pentium III Coppermine	21,000,000	2000	Intel	180 nm	80 mm²
+Pentium III Tualatin	45,000,000	2001	Intel	130 nm	81 mm²
+Itanium 2 McKinley	220,000,000	2002	Intel	180 nm	421 mm²
+Pentium 4 Northwood	55,000,000	2002	Intel	130 nm	145 mm²
+AMD K8	105,900,000	2003	AMD	130 nm	193 mm²
+Barton	54,300,000	2003	AMD	130 nm	101 mm²
+Itanium 2 Madison 6M	410,000,000	2003	Intel	130 nm	374 mm²
+Itanium 2 with 9 MB cache	592,000,000	2004	Intel	130 nm	432 mm²
+Pentium 4 Prescott	112,000,000	2004	Intel	90 nm	110 mm²
+Pentium 4 Prescott-2M	169,000,000	2005	Intel	90 nm	143 mm²
+Pentium D Smithfield	228,000,000	2005	Intel	90 nm	206 mm²
+Cell	241,000,000	2006	Sony/IBM/Toshiba	90 nm	221 mm²
+Core 2 Duo Conroe	291,000,000	2006	Intel	65 nm	143 mm²
+Dual-core Itanium 2	1,700,000,000[26]	2006	Intel	90 nm	596 mm²
+Pentium 4 Cedar Mill	184,000,000	2006	Intel	65 nm	90 mm²
+Pentium D Presler	362,000,000	2006	Intel	65 nm	162 mm²
+AMD K10 quad-core 2M L3	463,000,000[20]	2007	AMD	65 nm	283 mm²
+ARM Cortex-A9	26,000,000[21]	2007	ARM	45 nm	31 mm²
+Core 2 Duo Allendale	169,000,000	2007	Intel	65 nm	111 mm²
+Core 2 Duo Wolfdale	411,000,000	2007	Intel	45 nm	107 mm²
+POWER6	789,000,000	2007	IBM	65 nm	341 mm²
+AMD K10 quad-core 6M L3	758,000,000[20]	2008	AMD	45 nm	258 mm²
+Atom	47,000,000	2008	Intel	45 nm	24 mm²
+Core 2 Duo Wolfdale 3M	230,000,000	2008	Intel	45 nm	83 mm²
+Core i7 (Quad)	731,000,000	2008	Intel	45 nm	263 mm²
+Six-core Xeon 7400	1,900,000,000	2008	Intel	45 nm	503 mm²
+Six-core Opteron 2400	904,000,000	2009	AMD	45 nm	346 mm²
+16-core SPARC T3	1,000,000,000[22]	2010	Sun/Oracle	40 nm	377 mm²
+8-core POWER7 32M L3	1,200,000,000	2010	IBM	45 nm	567 mm²
+8-core Xeon Nehalem-EX	2,300,000,000[30]	2010	Intel	45 nm	684 mm²
+Quad-core Itanium Tukwila	2,000,000,000[28]	2010	Intel	65 nm	699 mm²
+Quad-core z196[24]	1,400,000,000	2010	IBM	45 nm	512 mm²
+Six-core Core i7 (Gulftown)	1,170,000,000	2010	Intel	32 nm	240 mm²
+10-core Xeon Westmere-EX	2,600,000,000	2011	Intel	32 nm	512 mm²
+Quad-core + GPU Core i7	1,160,000,000	2011	Intel	32 nm	216 mm²
+Six-core Core i7/8-core Xeon E5 (Sandy Bridge-E/EP)	2,270,000,000[29]	2011	Intel	32 nm	434 mm²
+61-core Xeon Phi	5,000,000,000[34]	2012	Intel	22 nm	350 mm²
+8-core AMD Bulldozer	1,200,000,000[23]	2012	AMD	32 nm	315 mm²
+8-core Itanium Poulson	3,100,000,000	2012	Intel	32 nm	544 mm²
+8-core POWER7+ 80 MB L3 cache	2,100,000,000	2012	IBM	32 nm	567 mm²
+Quad-core + GPU AMD Trinity	1,303,000,000	2012	AMD	32 nm	246 mm²
+Quad-core + GPU Core i7 Ivy Bridge	1,400,000,000	2012	Intel	22 nm	160 mm²
+Six-core zEC12	2,750,000,000	2012	IBM	32 nm	597 mm²
+12-core POWER8	4,200,000,000	2013	IBM	22 nm	650 mm²
+Apple A7 (dual-core ARM64 "mobile SoC")	1,000,000,000	2013	Apple	28 nm	102 mm²
+Six-core Core i7 Ivy Bridge E	1,860,000,000	2013	Intel	22 nm	256 mm²
+Xbox One main SoC	5,000,000,000	2013	Microsoft/AMD	28 nm	363 mm²
+15-core Xeon Ivy Bridge-EX	4,310,000,000[33]	2014	Intel	22 nm	541 mm²
+18-core Xeon Haswell-E5	5,560,000,000[35]	2014	Intel	22 nm	661 mm²
+8-core Core i7 Haswell-E	2,600,000,000[31]	2014	Intel	22 nm	355 mm²
+Apple A8 (dual-core ARM64 "mobile SoC")	2,000,000,000	2014	Apple	20 nm	89 mm²
+Apple A8X (tri-core ARM64 "mobile SoC")	3,000,000,000[32]	2014	Apple	20 nm	128 mm²
+Quad-core + GPU Core i7 Haswell	1,400,000,000[25]	2014	Intel	22 nm	177 mm²
+Duo-core + GPU Iris Core i7 Broadwell-U	1,900,000,000[27]	2015	Intel	14 nm	133 mm²
+IBM z13	3,990,000,000	2015	IBM	22 nm	678 mm²
+IBM z13 Storage Controller	7,100,000,000	2015	IBM	22 nm	678 mm²
+Quad-core + GPU GT2 Core i7 Skylake K	cca 1,750,000,000	2015	Intel	14 nm	122 mm²
+SPARC M7	10,000,000,000[37]	2015	Oracle	20 nm	
+22-core Xeon Broadwell-E5	~7,200,000,000[36]	2016	Intel	14 nm	456 mm²
