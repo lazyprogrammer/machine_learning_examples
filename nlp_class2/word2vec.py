@@ -14,7 +14,6 @@ import sys
 sys.path.append(os.path.abspath('..'))
 from rnn_class.util import get_wikipedia_data
 
-# TODO: perhaps need to review CS224 solutions
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
