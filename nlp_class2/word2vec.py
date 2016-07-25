@@ -173,20 +173,15 @@ class Model(object):
         thInput = T.iscalar('input_word')
         thContext = T.ivector('context')
         thNegSamples = T.ivector('negative_samples')
-        # output_indexes = T.concatenate([thContext, thNegSamples])
 
         W1_subset = W1[thInput]
         W2_psubset = W2[:, thContext]
         W2_nsubset = W2[:, thNegSamples]
-        # activation = W1_subset.dot(W2)
         p_activation = W1_subset.dot(W2_psubset)
         pos_pY = T.nnet.sigmoid(p_activation)
         n_activation = W1_subset.dot(W2_nsubset)
         neg_pY = T.nnet.sigmoid(-n_activation)
         cost = -T.log(pos_pY).sum() - T.log(neg_pY).sum()
-
-        # params = [W1_subset, W2_subset]
-        # dparams = [theano.shared(p.get_value()*0) for p in params]
 
         W1_grad = T.grad(cost, W1_subset)
         W2_pgrad = T.grad(cost, W2_psubset)
@@ -201,11 +196,6 @@ class Model(object):
         # https://groups.google.com/forum/#!topic/theano-users/hdwaFyrNvHQ
 
         updates = [(W1, W1_update), (W2, W2_update)]
-        # updates = [
-        #     (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(params, dparams, grads)
-        # ] + [
-        #     (dp, mu*dp - learning_rate*g) for dp, g in zip(dparams, grads)
-        # ]
 
         train_op = theano.function(
             inputs=[thInput, thContext, thNegSamples],
@@ -231,7 +221,6 @@ class Model(object):
 
                 cj = []
                 n = len(x)
-                # print "sentence:", x
                 for jj in xrange(n):
 
                     start = max(0, jj - self.context_sz)
@@ -242,14 +231,8 @@ class Model(object):
                     context = np.array(list(set(context)), dtype=np.int32)
                     neg_samples = self._get_negative_samples(context, num_neg_samples)
 
-                    # print "input:", x[jj]
-                    # print "context:", context
-                    # print "neg samples:", neg_samples
-
                     c = train_op(x[jj], context, neg_samples)
                     cj.append(c / (num_neg_samples + len(context)))
-
-                    # print "W2 shape:", W2.get_value().shape
 
                 cj = np.mean(cj)
                 cost_per_epoch_i.append(cj)
@@ -285,8 +268,6 @@ def main():
 
     V = len(word2idx)
     model = Model(80, V, 10)
-    # fp = open('/Users/macuser/Code/word2vec-proto/wiki.en.text')
-    # model.fit(fp)
     model.fitt(sentences, learning_rate=10e-4, mu=0, epochs=5)
     model.save('w2v_model.npz')
 
