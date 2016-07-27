@@ -55,6 +55,7 @@ def str2tree(s, word2idx):
         # find the string that represents right child
         # can contain multiple ((( )))
         # left child is completely represented when we've closed as many as we've opened
+        # we stop at 1 because the first opening paren represents the current node, not children nodes
         i = 0
         depth = 0
         for c in s:
