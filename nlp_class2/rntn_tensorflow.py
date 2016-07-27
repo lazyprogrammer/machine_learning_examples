@@ -111,6 +111,7 @@ class RNTN:
                     n_correct += np.sum(p == labels)
                     n_total += len(labels)
 
+                    j += 1
                     if j % 10 == 0:
                         sys.stdout.write("j: %d, N: %d, c: %f\r" % (j, N, c))
                         sys.stdout.flush()
@@ -207,6 +208,9 @@ class RNTN:
 
 def main():
     train, test, word2idx = get_ptb_data()
+
+    train = train[:100]
+    test = test[:100]
 
     V = len(word2idx)
     D = 80
