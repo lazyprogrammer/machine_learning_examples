@@ -131,7 +131,7 @@ class RNTN:
             plt.show()
 
     def get_cost(self, logits, labels, reg):
-        cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels)) / len(labels)
+        cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
         rcost = sum(tf.nn.l2_loss(p) for p in self.params)
         cost += reg*rcost
         return cost
@@ -199,7 +199,7 @@ class RNTN:
         with tf.Session() as session:
             for prediction, y in zip(predictions, all_labels):
                 p = session.run(prediction)
-                n_correct += np.sum(p == y)
+                n_correct += (p[-1] == y[-1]) # we only care about the root
                 n_total += len(y)
 
         return float(n_correct) / n_total
