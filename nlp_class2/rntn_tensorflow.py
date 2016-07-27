@@ -1,3 +1,5 @@
+# data is from: http://nlp.stanford.edu/sentiment/
+
 import sys
 import tensorflow as tf
 import numpy as np
@@ -8,7 +10,6 @@ from util import init_weight, get_ptb_data, display_tree
 
 
 def tensor_mul(d, x1, A, x2):
-    # d = self.config.embed_size
     A = tf.reshape(A, [d, d*d])
     # (1 x d) x (d x dd)
     tmp = tf.matmul(x1, A)
@@ -176,7 +177,16 @@ class RNTN:
         # and accumulate the total
         predictions = []
         all_labels = []
+
+        i = 0
+        N = len(trees)
+        print "Compiling ops"
         for t in trees:
+
+            i += 1
+            sys.stdout.write("%d/%d\r" % (i, N))
+            sys.stdout.flush()
+
             logits = self.get_output(t)
             labels = get_labels(t)
             all_labels.append(labels)
