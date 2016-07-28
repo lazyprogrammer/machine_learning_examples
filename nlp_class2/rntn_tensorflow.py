@@ -65,7 +65,7 @@ class RNTN:
         self.bo = tf.Variable(bo.astype(np.float32))
         self.params = [self.We, self.W11, self.W22, self.W12, self.W1, self.W2, self.Wo]
 
-    def fit(self, trees, lr=10e-2, mu=0.9, reg=0.1, epochs=5):
+    def fit(self, trees, lr=10e-3, mu=0.9, reg=10e-2, epochs=5):
         train_ops = []
         costs = []
         predictions = []
@@ -90,6 +90,11 @@ class RNTN:
             train_op = tf.train.MomentumOptimizer(lr, mu).minimize(cost)
             train_ops.append(train_op)
 
+        # save for later so we don't have to recompile if we call score
+        self.predictions = predictions
+        self.all_labels = all_labels
+
+        self.saver = tf.train.Saver()
         init = tf.initialize_all_variables()
         actual_costs = []
         per_epoch_costs = []
@@ -116,20 +121,25 @@ class RNTN:
                         sys.stdout.write("j: %d, N: %d, c: %f\r" % (j, N, c))
                         sys.stdout.flush()
 
+                    if np.isnan(c):
+                        exit()
+
                 per_epoch_costs.append(epoch_cost)
                 correct_rates.append(n_correct / float(n_total))
 
-            plt.plot(actual_costs)
-            plt.title("cost per train_op call")
-            plt.show()
+            self.save_path = self.saver.save(session, "tf_model.ckpt")
 
-            plt.plot(per_epoch_costs)
-            plt.title("per epoch costs")
-            plt.show()
+        plt.plot(actual_costs)
+        plt.title("cost per train_op call")
+        plt.show()
 
-            plt.plot(correct_rates)
-            plt.title("correct rates")
-            plt.show()
+        plt.plot(per_epoch_costs)
+        plt.title("per epoch costs")
+        plt.show()
+
+        plt.plot(correct_rates)
+        plt.title("correct rates")
+        plt.show()
 
     def get_cost(self, logits, labels, reg):
         cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
@@ -174,32 +184,41 @@ class RNTN:
         return tf.concat(0, logits)
 
     def score(self, trees):
-        # just build and run the predict_op for each tree
-        # and accumulate the total
-        predictions = []
-        all_labels = []
+        if trees is None:
+            predictions = self.predictions
+            all_labels = self.all_labels
+        else:
+            # just build and run the predict_op for each tree
+            # and accumulate the total
+            predictions = []
+            all_labels = []
 
-        i = 0
-        N = len(trees)
-        print "Compiling ops"
-        for t in trees:
+            i = 0
+            N = len(trees)
+            print "Compiling ops"
+            for t in trees:
 
-            i += 1
-            sys.stdout.write("%d/%d\r" % (i, N))
-            sys.stdout.flush()
+                i += 1
+                sys.stdout.write("%d/%d\r" % (i, N))
+                sys.stdout.flush()
 
-            logits = self.get_output(t)
-            labels = get_labels(t)
-            all_labels.append(labels)
+                logits = self.get_output(t)
+                labels = get_labels(t)
+                all_labels.append(labels)
 
-            prediction = tf.argmax(logits, 1)
-            predictions.append(prediction)
+                prediction = tf.argmax(logits, 1)
+                predictions.append(prediction)
 
         n_correct = 0
         n_total = 0
         with tf.Session() as session:
+            self.saver.restore(session, "tf_model.ckpt")
+
             for prediction, y in zip(predictions, all_labels):
                 p = session.run(prediction)
+                # print "pred:", p
+                # print "label:", y
+                # n_correct += np.sum(p == y)
                 n_correct += (p[-1] == y[-1]) # we only care about the root
                 n_total += len(y)
 
@@ -218,7 +237,7 @@ def main():
 
     model = RNTN(V, D, K, tf.nn.relu)
     model.fit(train)
-    print "train accuracy:", model.score(train)
+    print "train accuracy:", model.score(None)
     print "test accuracy:", model.score(test)
 
 
