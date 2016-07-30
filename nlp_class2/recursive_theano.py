@@ -15,7 +15,7 @@ class RecursiveNN:
         self.D = D
         self.K = K
 
-    def fit(self, trees, learning_rate=10e-4, mu=0.99, reg=10e-3, epochs=15, activation=T.nnet.relu, train_inner_nodes=False):
+    def fit(self, trees, learning_rate=3*10e-4, mu=0.99, reg=10e-5, epochs=15, activation=T.nnet.relu, train_inner_nodes=False):
         D = self.D
         V = self.V
         K = self.K
@@ -53,8 +53,8 @@ class RecursiveNN:
                 T.set_subtensor(hiddens[n], self.f(hiddens[n] + self.bh))
             )
 
-            r = relations[n]
-            p = parents[n]
+            r = relations[n] # 0 = is_left, 1 = is_right
+            p = parents[n] # parent idx
             if T.ge(p, 0):
                 # root will have parent -1
                 hiddens = T.set_subtensor(hiddens[p], hiddens[p] + hiddens[n].dot(self.Wh[r]))
@@ -74,7 +74,7 @@ class RecursiveNN:
 
         prediction = T.argmax(py_x, axis=1)
         
-        rcost = T.sum([(p*p).mean() for p in self.params])
+        rcost = T.mean([(p*p).sum() for p in self.params])
         if train_inner_nodes:
             cost = -T.mean(T.log(py_x[T.arange(labels.shape[0]), labels])) + rcost
         else:
@@ -139,6 +139,7 @@ class RecursiveNN:
         for words, par, rel, lab in trees:
             _, p = self.cost_predict_op(words, par, rel, lab)
             n_correct += (p[-1] == lab[-1])
+        print "n_correct:", n_correct, "n_total:", n_total,
         return float(n_correct) / n_total
 
 
@@ -153,7 +154,7 @@ def add_idx_to_tree(tree, current_idx):
     return current_idx
 
 
-def tree2list(tree, parent_idx, is_left=False, is_right=False):
+def tree2list(tree, parent_idx, is_binary=False, is_left=False, is_right=False):
     if tree is None:
         return [], [], [], []
 
@@ -164,13 +165,22 @@ def tree2list(tree, parent_idx, is_left=False, is_right=False):
         r = 1
     else:
         r = -1
-    words_left, parents_left, relations_left, labels_left = tree2list(tree.left, tree.idx, is_left=True)
-    words_right, parents_right, relations_right, labels_right = tree2list(tree.right, tree.idx, is_right=True)
+    words_left, parents_left, relations_left, labels_left = tree2list(tree.left, tree.idx, is_binary, is_left=True)
+    words_right, parents_right, relations_right, labels_right = tree2list(tree.right, tree.idx, is_binary, is_right=True)
 
     words = words_left + words_right + [w]
     parents = parents_left + parents_right + [parent_idx]
     relations = relations_left + relations_right + [r]
-    labels = labels_left + labels_right + [tree.label]
+    if is_binary:
+        if tree.label > 2:
+            label = 1
+        elif tree.label < 2:
+            label = 0
+        else:
+            label = -1 # we will eventually filter these out
+    else:
+        label = tree.label
+    labels = labels_left + labels_right + [label]
 
     return words, parents, relations, labels
 
@@ -180,14 +190,18 @@ def main():
 
     for t in train:
         add_idx_to_tree(t, 0)
-    train = [tree2list(t, -1) for t in train]
+    train = [tree2list(t, -1, is_binary=True) for t in train]
+    train = [t for t in train if t[3][-1] >= 0] # for filtering binary labels
 
     for t in test:
         add_idx_to_tree(t, 0)
-    test = [tree2list(t, -1) for t in test]
+    test = [tree2list(t, -1, is_binary=True) for t in test]
+    test = [t for t in test if t[3][-1] >= 0] # for filtering binary labels
 
-    # train = train[:1000]
-    # test = test[:100]
+    train = shuffle(train)
+    train = train[:1000]
+    test = shuffle(test)
+    test = test[:500]
 
     V = len(word2idx)
     print "vocab size:", V
@@ -195,7 +209,7 @@ def main():
     K = 5
 
     model = RecursiveNN(V, D, K)
-    model.fit(train, activation=T.nnet.relu)
+    model.fit(train, reg=0, activation=T.nnet.relu)
     print "train accuracy:", model.score(train)
     print "test accuracy:", model.score(test)
 

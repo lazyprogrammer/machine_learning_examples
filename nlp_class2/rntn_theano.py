@@ -7,6 +7,7 @@ import theano.tensor as T
 from sklearn.utils import shuffle
 from util import init_weight, get_ptb_data, display_tree
 from datetime import datetime
+from sklearn.metrics import f1_score
 
 
 class RecursiveNN:
@@ -81,7 +82,7 @@ class RecursiveNN:
 
         prediction = T.argmax(py_x, axis=1)
         
-        rcost = T.sum([(p*p).mean() for p in self.params])
+        rcost = T.mean([(p*p).sum() for p in self.params])
         if train_inner_nodes:
             cost = -T.mean(T.log(py_x[T.arange(labels.shape[0]), labels])) + rcost
         else:
@@ -148,6 +149,15 @@ class RecursiveNN:
             n_correct += (p[-1] == lab[-1])
         return float(n_correct) / n_total
 
+    def f1_score(self, trees):
+        Y = []
+        P = []
+        for words, left, right, lab in trees:
+            _, p = self.cost_predict_op(words, left, right, lab)
+            Y.append(lab[-1])
+            P.append(p[-1])
+        return f1_score(Y, P, average=None).mean()
+
 
 def add_idx_to_tree(tree, current_idx):
     # post-order labeling of tree nodes
@@ -160,12 +170,12 @@ def add_idx_to_tree(tree, current_idx):
     return current_idx
 
 
-def tree2list(tree, parent_idx):
+def tree2list(tree, parent_idx, is_binary=False):
     if tree is None:
         return [], [], [], []
 
-    words_left, left_child_left, right_child_left, labels_left = tree2list(tree.left, tree.idx)
-    words_right, left_child_right, right_child_right, labels_right = tree2list(tree.right, tree.idx)
+    words_left, left_child_left, right_child_left, labels_left = tree2list(tree.left, tree.idx, is_binary)
+    words_right, left_child_right, right_child_right, labels_right = tree2list(tree.right, tree.idx, is_binary)
 
     if tree.word is None:
         w = -1
@@ -179,7 +189,17 @@ def tree2list(tree, parent_idx):
     words = words_left + words_right + [w]
     left_child = left_child_left + left_child_right + [left]
     right_child = right_child_left + right_child_right + [right]
-    labels = labels_left + labels_right + [tree.label]
+
+    if is_binary:
+        if tree.label > 2:
+            label = 1
+        elif tree.label < 2:
+            label = 0
+        else:
+            label = -1 # we will eventually filter these out
+    else:
+        label = tree.label
+    labels = labels_left + labels_right + [label]
 
     return words, left_child, right_child, labels
 
@@ -189,14 +209,22 @@ def main():
 
     for t in train:
         add_idx_to_tree(t, 0)
-    train = [tree2list(t, -1) for t in train]
+    train = [tree2list(t, -1, True) for t in train]
+    train = [t for t in train if t[3][-1] >= 0] # for filtering binary labels
 
     for t in test:
         add_idx_to_tree(t, 0)
-    test = [tree2list(t, -1) for t in test]
+    test = [tree2list(t, -1, True) for t in test]
+    test = [t for t in test if t[3][-1] >= 0] # for filtering binary labels
 
-    train = train[:100]
+    train = shuffle(train)
+    train = train[:1000]
+    # n_pos = sum(t[3][-1] for t in train)
+    # print "n_pos train:", n_pos
+    test = shuffle(test)
     test = test[:100]
+    # n_pos = sum(t[3][-1] for t in test)
+    # print "n_pos test:", n_pos
 
     V = len(word2idx)
     print "vocab size:", V
@@ -204,9 +232,11 @@ def main():
     K = 5
 
     model = RecursiveNN(V, D, K)
-    model.fit(train, activation=T.nnet.relu)
+    model.fit(train, epochs=3, activation=T.nnet.relu)
     print "train accuracy:", model.score(train)
     print "test accuracy:", model.score(test)
+    print "train f1:", model.f1_score(train)
+    print "test f1:", model.f1_score(test)
 
 
 if __name__ == '__main__':
