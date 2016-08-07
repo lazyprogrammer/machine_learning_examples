@@ -1,3 +1,4 @@
+# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
 import numpy as np
 import matplotlib.pyplot as plt
 

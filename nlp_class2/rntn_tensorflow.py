@@ -1,3 +1,4 @@
+# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
 # data is from: http://nlp.stanford.edu/sentiment/
 
 import sys

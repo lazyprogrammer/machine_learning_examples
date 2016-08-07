@@ -1,3 +1,4 @@
+# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,9 +56,14 @@ class RecursiveNN:
 
             r = relations[n] # 0 = is_left, 1 = is_right
             p = parents[n] # parent idx
-            if T.ge(p, 0):
-                # root will have parent -1
-                hiddens = T.set_subtensor(hiddens[p], hiddens[p] + hiddens[n].dot(self.Wh[r]))
+            # if T.ge(p, 0):
+            #     # root will have parent -1
+            #     hiddens = T.set_subtensor(hiddens[p], hiddens[p] + hiddens[n].dot(self.Wh[r]))
+            hiddens = T.switch(
+                T.ge(p, 0),
+                T.set_subtensor(hiddens[p], hiddens[p] + hiddens[n].dot(self.Wh[r])),
+                hiddens
+            )
             return hiddens
 
         hiddens = T.zeros((words.shape[0], D))
@@ -70,14 +76,24 @@ class RecursiveNN:
             non_sequences=[words, parents, relations],
         )
 
-        py_x = T.nnet.softmax(h[:,0,:].dot(self.Wo) + self.bo)
+        # shape of h that is returned by scan is TxTxD
+        # because hiddens is TxD, and it does the recurrence T times
+        # technically this stores T times too much data
+        py_x = T.nnet.softmax(h[-1].dot(self.Wo) + self.bo)
 
         prediction = T.argmax(py_x, axis=1)
         
-        rcost = T.mean([(p*p).sum() for p in self.params])
+        rcost = reg*T.mean([(p*p).sum() for p in self.params])
         if train_inner_nodes:
+            # won't work for binary classification
             cost = -T.mean(T.log(py_x[T.arange(labels.shape[0]), labels])) + rcost
         else:
+            # print "K is:", K
+            # premean = T.log(py_x[-1])
+            # target = T.zeros(K)
+            # target = T.set_subtensor(target[labels[-1]], 1)            
+            # cost = -T.mean(target * premean)
+
             cost = -T.mean(T.log(py_x[-1, labels[-1]])) + rcost
         grads = T.grad(cost, self.params)
         dparams = [theano.shared(p.get_value()*0) for p in self.params]
@@ -96,7 +112,7 @@ class RecursiveNN:
 
         self.train_op = theano.function(
             inputs=[words, parents, relations, labels],
-            outputs=[cost, prediction],
+            outputs=[h, cost, prediction],
             updates=updates
         )
 
@@ -114,7 +130,14 @@ class RecursiveNN:
             it = 0
             for j in sequence_indexes:
                 words, par, rel, lab = trees[j]
-                c, p = self.train_op(words, par, rel, lab)
+                # print "len(words):", len(words)
+                _, c, p = self.train_op(words, par, rel, lab)
+                # if h.shape[0] < 10:
+                #     print h
+                # print "py_x.shape:", y.shape
+                # print "pre-mean shape:", pm.shape
+                # print "target shape:", t.shape
+                # exit()
                 if np.isnan(c):
                     print "Cost is nan! Let's stop here. Why don't you try decreasing the learning rate?"
                     exit()
@@ -133,12 +156,15 @@ class RecursiveNN:
         plt.plot(costs)
         plt.show()
 
-    def score(self, trees):
+    def score(self, trees, idx2word=None):
         n_total = len(trees)
         n_correct = 0
         for words, par, rel, lab in trees:
             _, p = self.cost_predict_op(words, par, rel, lab)
             n_correct += (p[-1] == lab[-1])
+            # if idx2word:
+            #     print_sentence(words, idx2word)
+            #     print "label:", lab[-1], "pred:", p[-1]
         print "n_correct:", n_correct, "n_total:", n_total,
         return float(n_correct) / n_total
 
@@ -185,31 +211,60 @@ def tree2list(tree, parent_idx, is_binary=False, is_left=False, is_right=False):
     return words, parents, relations, labels
 
 
-def main():
+# def get_sentence(tree):
+#     if tree is None:
+#         return []
+#     w = [tree.word] if tree.word is not None else []
+#     return get_sentence(tree.left) + get_sentence(tree.right) + w
+
+
+def print_sentence(words, idx2word):
+    # sentence = ' '.join(get_sentence(tree))
+    # print sentence, "label:", tree.label
+    for w in words:
+        if w >= 0:
+            print idx2word[w],
+
+
+def main(is_binary=True):
     train, test, word2idx = get_ptb_data()
 
     for t in train:
         add_idx_to_tree(t, 0)
-    train = [tree2list(t, -1, is_binary=True) for t in train]
-    train = [t for t in train if t[3][-1] >= 0] # for filtering binary labels
+    train = [tree2list(t, -1, is_binary) for t in train]
+    if is_binary:
+        train = [t for t in train if t[3][-1] >= 0] # for filtering binary labels
+
+    # sanity check
+    # check that last node has no parent
+    # for t in train:
+    #     assert(t[1][-1] == -1 and t[2][-1] == -1)
 
     for t in test:
         add_idx_to_tree(t, 0)
-    test = [tree2list(t, -1, is_binary=True) for t in test]
-    test = [t for t in test if t[3][-1] >= 0] # for filtering binary labels
+    test = [tree2list(t, -1, is_binary) for t in test]
+    if is_binary:
+        test = [t for t in test if t[3][-1] >= 0] # for filtering binary labels
 
     train = shuffle(train)
-    train = train[:1000]
+    train = train[:2000]
+    n_pos = sum(t[3][-1] for t in train)
+    # print "num pos train:", n_pos
+    # idx2word = {v:k for k, v in word2idx.iteritems()}
+    # for i in xrange(4):
+    #     words, _, _, labels = train[i]
+    #     print_sentence(words, idx2word)
+    #     print "label:", labels[-1]
     test = shuffle(test)
-    test = test[:500]
+    test = test[:100]
 
     V = len(word2idx)
     print "vocab size:", V
-    D = 80
-    K = 5
+    D = 10
+    K = 2 if is_binary else 5
 
     model = RecursiveNN(V, D, K)
-    model.fit(train, reg=0, activation=T.nnet.relu)
+    model.fit(train, learning_rate=10e-3, reg=10e-3, mu=0, epochs=30, activation=T.tanh, train_inner_nodes=False)
     print "train accuracy:", model.score(train)
     print "test accuracy:", model.score(test)
 

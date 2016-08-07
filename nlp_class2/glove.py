@@ -1,3 +1,4 @@
+# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
 import os
 import json
 import numpy as np
@@ -12,9 +13,8 @@ from word2vec import get_wikipedia_data, find_analogies
 # Experiments
 # previous results did not make sense b/c X was built incorrectly
 # redo b/c b and c were not being added correctly as 2-D objects
-# can get < 200k cost
 
-# using coordinate descent, what's the least # files to get correct analogies?
+# using ALS, what's the least # files to get correct analogies?
 # use this for word2vec training to make it faster
 # first tried 20 files --> not enough
 # how about 30 files --> some correct but still not enough
@@ -185,7 +185,7 @@ class Glove:
                     # print "updated c"
 
             else:
-                # coordinate descent method
+                # ALS method
 
                 # update W
                 # fast way
@@ -204,7 +204,6 @@ class Glove:
                 #     matrix2 = reg*np.eye(D)
                 #     vector2 = 0
                 #     for j in xrange(V):
-                #         # coordinate descent method
                 #         matrix2 += fX[i,j]*np.outer(U[j], U[j])
                 #         vector2 += fX[i,j]*(logX[i,j] - b[i] - c[j])*U[j]
                 # print "slow way took:", (datetime.now() - t0)
@@ -275,7 +274,7 @@ def main(we_file, w2i_file, n_files=50):
 
     V = len(word2idx)
     model = Glove(80, V, 10)
-    # model.fit(sentences, cc_matrix=cc_matrix, epochs=20) # coordinate descent
+    # model.fit(sentences, cc_matrix=cc_matrix, epochs=20) # ALS
     model.fit(
         sentences,
         cc_matrix=cc_matrix,
@@ -283,7 +282,7 @@ def main(we_file, w2i_file, n_files=50):
         reg=0.01,
         epochs=2000,
         gd=True,
-        use_theano=False
+        use_theano=True
     ) # gradient descent
     model.save(we_file)
 
@@ -298,3 +297,8 @@ if __name__ == '__main__':
         find_analogies('france', 'paris', 'london', concat, we, w2i)
         find_analogies('france', 'paris', 'rome', concat, we, w2i)
         find_analogies('paris', 'france', 'italy', concat, we, w2i)
+        find_analogies('france', 'french', 'english', concat, we, w2i)
+        find_analogies('japan', 'japanese', 'chinese', concat, we, w2i)
+        find_analogies('japan', 'japanese', 'italian', concat, we, w2i)
+        find_analogies('japan', 'japanese', 'australian', concat, we, w2i)
+        find_analogies('december', 'november', 'june', concat, we, w2i)

@@ -1,3 +1,4 @@
+# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
 # data is from: http://nlp.stanford.edu/sentiment/
 
 import sys
@@ -6,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.utils import shuffle
+from datetime import datetime
 from util import init_weight, get_ptb_data, display_tree
 
 
@@ -83,6 +85,8 @@ class RNTN:
             session.run(init)
 
             for i in xrange(epochs):
+                t0 = datetime.now()
+
                 train_ops, costs, predictions, all_labels = shuffle(train_ops, costs, predictions, all_labels)
                 epoch_cost = 0
                 n_correct = 0
@@ -96,9 +100,12 @@ class RNTN:
                     n_correct += np.sum(p == labels)
                     n_total += len(labels)
 
+                    j += 1
                     if j % 10 == 0:
                         sys.stdout.write("j: %d, N: %d, c: %f\r" % (j, N, c))
                         sys.stdout.flush()
+
+                print "epoch:", i, "cost:", epoch_cost, "elapsed time:", (datetime.now() - t0)
 
                 per_epoch_costs.append(epoch_cost)
                 correct_rates.append(n_correct / float(n_total))
@@ -193,8 +200,8 @@ class RNTN:
 def main():
     train, test, word2idx = get_ptb_data()
 
-    train = train[:1000]
-    test = test[:500]
+    train = train[:100]
+    test = test[:100]
 
     V = len(word2idx)
     D = 80

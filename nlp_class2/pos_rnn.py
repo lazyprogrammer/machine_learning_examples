@@ -1,3 +1,4 @@
+# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
 import numpy as np
 import matplotlib.pyplot as plt
 import theano
@@ -127,10 +128,12 @@ class RNN:
 def main():
     Xtrain, Ytrain, Xtest, Ytest, word2idx = get_data(split_sequences=True)
     V = len(word2idx) + 1
-    rnn = RNN(50, [50], V)
+    rnn = RNN(10, [10], V)
     rnn.fit(Xtrain, Ytrain)
     print "train score:", rnn.score(Xtrain, Ytrain)
     print "test score:", rnn.score(Xtest, Ytest)
+    print "train f1:", rnn.f1_score(Xtrain, Ytrain)
+    print "test f1:", rnn.f1_score(Xtest, Ytest)
     
 
 if __name__ == '__main__':

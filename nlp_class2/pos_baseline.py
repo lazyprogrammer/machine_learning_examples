@@ -1,3 +1,5 @@
+# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
+# You can get the data from this URL: http://www.cnts.ua.ac.be/conll2000/chunking/
 # not considering context
 
 import numpy as np
@@ -6,7 +8,7 @@ import theano.tensor as T
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from sklearn.metrics import f1_score
-# from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 
 
 class LogisticRegression:
@@ -20,8 +22,6 @@ class LogisticRegression:
             K = len(set(Y))
         N = len(X)
 
-        # We = np.random.randn(V, D) / np.sqrt(V + D)
-        # W = np.random.randn(D, K) / np.sqrt(D + K)
         W = np.random.randn(V, K) / np.sqrt(V + K)
         b = np.zeros(K)
         self.W = theano.shared(W)
@@ -154,12 +154,13 @@ def main():
     # Xtrain_indicator[np.arange(N), Xtrain] = 1
 
     # decision tree
-    from sklearn.tree import DecisionTreeClassifier
     dt = DecisionTreeClassifier()
 
     # without indicator
     dt.fit(Xtrain.reshape(N, 1), Ytrain)
-    print "dt score:", dt.score(Xtrain.reshape(N, 1), Ytrain)
+    print "dt train score:", dt.score(Xtrain.reshape(N, 1), Ytrain)
+    p = dt.predict(Xtrain.reshape(N, 1))
+    print "dt train f1:", f1_score(Ytrain, p, average=None).mean()
 
     # with indicator -- too slow!!
     # dt.fit(Xtrain_indicator, Ytrain)
@@ -169,7 +170,8 @@ def main():
     model = LogisticRegression()
     model.fit(Xtrain, Ytrain, V=V)
     print "training complete"
-    print "train score:", model.score(Xtrain, Ytrain)
+    print "lr train score:", model.score(Xtrain, Ytrain)
+    print "lr train f1:", model.f1_score(Xtrain, Ytrain)
 
 
     Ntest = len(Xtest)
@@ -181,10 +183,13 @@ def main():
 
     # decision tree test score
     print "dt test score:", dt.score(Xtest.reshape(Ntest, 1), Ytest)
+    p = dt.predict(Xtest.reshape(Ntest, 1))
+    print "dt test f1:", f1_score(Ytest, p, average=None).mean()
     # print "dt test score:", dt.score(Xtest_indicator, Ytest) # too slow!
 
     # logistic test score -- too slow!!
-    print "test score:", model.score(Xtest, Ytest)
+    print "lr test score:", model.score(Xtest, Ytest)
+    print "lr test f1:", model.f1_score(Xtest, Ytest)
 
 if __name__ == '__main__':
     main()

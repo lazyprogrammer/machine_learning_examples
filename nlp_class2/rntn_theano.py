@@ -1,3 +1,4 @@
+# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +17,7 @@ class RecursiveNN:
         self.D = D
         self.K = K
 
-    def fit(self, trees, learning_rate=10e-4, mu=0.99, reg=10e-3, epochs=15, activation=T.nnet.relu, train_inner_nodes=False):
+    def fit(self, trees, learning_rate=10e-4, mu=0.5, reg=10e-3, eps=10e-3, epochs=20, activation=T.tanh, train_inner_nodes=False):
         D = self.D
         V = self.V
         K = self.K
@@ -78,22 +79,29 @@ class RecursiveNN:
             non_sequences=[words, left_children, right_children],
         )
 
-        py_x = T.nnet.softmax(h[:,0,:].dot(self.Wo) + self.bo)
+        py_x = T.nnet.softmax(h[-1].dot(self.Wo) + self.bo)
 
         prediction = T.argmax(py_x, axis=1)
         
-        rcost = T.mean([(p*p).sum() for p in self.params])
+        rcost = reg*T.mean([(p*p).sum() for p in self.params])
         if train_inner_nodes:
             cost = -T.mean(T.log(py_x[T.arange(labels.shape[0]), labels])) + rcost
         else:
             cost = -T.mean(T.log(py_x[-1, labels[-1]])) + rcost
         grads = T.grad(cost, self.params)
-        dparams = [theano.shared(p.get_value()*0) for p in self.params]
+        # dparams = [theano.shared(p.get_value()*0) for p in self.params]
+        cache = [theano.shared(p.get_value()*0) for p in self.params]
 
+        # momentum
+        # updates = [
+        #     (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
+        # ] + [
+        #     (dp, mu*dp - learning_rate*g) for dp, g in zip(dparams, grads)
+        # ]
         updates = [
-            (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
+            (c, c + g*g) for c, g in zip(cache, grads)
         ] + [
-            (dp, mu*dp - learning_rate*g) for dp, g in zip(dparams, grads)
+            (p, p - learning_rate*g / T.sqrt(c + eps)) for p, c, g in zip(self.params, cache, grads)
         ]
 
         self.cost_predict_op = theano.function(
@@ -204,35 +212,37 @@ def tree2list(tree, parent_idx, is_binary=False):
     return words, left_child, right_child, labels
 
 
-def main():
+def main(is_binary=True):
     train, test, word2idx = get_ptb_data()
 
     for t in train:
         add_idx_to_tree(t, 0)
-    train = [tree2list(t, -1, True) for t in train]
-    train = [t for t in train if t[3][-1] >= 0] # for filtering binary labels
+    train = [tree2list(t, -1, is_binary) for t in train]
+    if is_binary:
+        train = [t for t in train if t[3][-1] >= 0] # for filtering binary labels
 
     for t in test:
         add_idx_to_tree(t, 0)
-    test = [tree2list(t, -1, True) for t in test]
-    test = [t for t in test if t[3][-1] >= 0] # for filtering binary labels
+    test = [tree2list(t, -1, is_binary) for t in test]
+    if is_binary:
+        test = [t for t in test if t[3][-1] >= 0] # for filtering binary labels
 
     train = shuffle(train)
-    train = train[:1000]
+    train = train[:5000]
     # n_pos = sum(t[3][-1] for t in train)
     # print "n_pos train:", n_pos
     test = shuffle(test)
-    test = test[:100]
+    test = test[:1000]
     # n_pos = sum(t[3][-1] for t in test)
     # print "n_pos test:", n_pos
 
     V = len(word2idx)
     print "vocab size:", V
-    D = 80
-    K = 5
+    D = 20
+    K = 2 if is_binary else 5
 
     model = RecursiveNN(V, D, K)
-    model.fit(train, epochs=3, activation=T.nnet.relu)
+    model.fit(train)
     print "train accuracy:", model.score(train)
     print "test accuracy:", model.score(test)
     print "train f1:", model.f1_score(train)
