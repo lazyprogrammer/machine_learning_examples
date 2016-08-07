@@ -53,7 +53,7 @@ def my_tokenizer(s):
     s = s.lower() # downcase
     return s.split()
 
-def get_wikipedia_data(n_files, n_vocab):
+def get_wikipedia_data(n_files, n_vocab, by_paragraph=False):
     prefix = '../large_files/'
     input_files = [f for f in os.listdir(prefix) if f.startswith('enwiki') and f.endswith('txt')]
 
@@ -73,7 +73,10 @@ def get_wikipedia_data(n_files, n_vocab):
             line = line.strip()
             # don't count headers, structured data, lists, etc...
             if line and line[0] not in ('[', '*', '-', '|', '=', '{', '}'):
-                sentence_lines = line.split('. ')
+                if by_paragraph:
+                    sentence_lines = [line]
+                else:
+                    sentence_lines = line.split('. ')
                 for sentence in sentence_lines:
                     tokens = my_tokenizer(sentence)
                     for t in tokens:
