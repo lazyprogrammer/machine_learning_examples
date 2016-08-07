@@ -49,7 +49,7 @@ class RBM(object):
         # but we would like to see how this cost function changes
         # as we do contrastive divergence
         X_hat = self.forward_output(X_in)
-        cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).sum() / N
+        cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).sum() / (batch_sz * D)
         cost_op = theano.function(
             inputs=[X_in],
             outputs=cost,

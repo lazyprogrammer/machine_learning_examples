@@ -118,9 +118,6 @@ class ANN(object):
 
 def main():
     Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()
-    # dnn = DNN([1000, 750, 500])
-    # dnn.fit(Xtrain, Ytrain, Xtest, Ytest, epochs=3)
-    # vs
     dnn = ANN([1000, 750, 500])
     dnn.fit(Xtrain, Ytrain)
 

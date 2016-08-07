@@ -43,7 +43,7 @@ class AutoEncoder(object):
         )
 
         # cost = ((X_in - X_hat) * (X_in - X_hat)).sum() / N
-        cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).sum() / N
+        cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).sum() / (batch_sz * D)
         cost_op = theano.function(
             inputs=[X_in],
             outputs=cost,
