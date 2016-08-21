@@ -19,7 +19,7 @@ def get_labels(tree):
     return get_labels(tree.left) + get_labels(tree.right) + [tree.label]
 
 
-class RNTN:
+class TNN:
     def __init__(self, V, D, K, activation):
         self.D = D
         self.f = activation
@@ -207,7 +207,7 @@ def main():
     D = 80
     K = 5
 
-    model = RNTN(V, D, K, tf.nn.relu)
+    model = TNN(V, D, K, tf.nn.relu)
     model.fit(train)
     print "train accuracy:", model.score(None)
     print "test accuracy:", model.score(test)
