@@ -13,7 +13,7 @@ X = []
 Y = []
 for line in open('data_2d.csv'):
     x1, x2, y = line.split(',')
-    X.append([1, float(x1), float(x2)]) # add the bias term x0 = 1
+    X.append([float(x1), float(x2), 1]) # add the bias term
     Y.append(float(y))
 
 # let's turn X and Y into numpy arrays since that will be useful later
