@@ -94,7 +94,7 @@ class TreeNode:
         # Note: optimal split is only on the boundaries between 2 classes
 
         # if boundaries[i] is true
-        # then boundaries[i] != boundaries[i+1]
+        # then y_values[i] != y_values[i+1]
         # nonzero() gives us indices where arg is true
         # but for some reason it returns a tuple of size 1
         boundaries = np.nonzero(y_values[:-1] != y_values[1:])[0]
