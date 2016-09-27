@@ -1,3 +1,7 @@
+# The corresponding tutorial for this code was released EXCLUSIVELY as a bonus
+# If you want to learn about future bonuses, please sign up for my newsletter at:
+# https://lazyprogrammer.me
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
