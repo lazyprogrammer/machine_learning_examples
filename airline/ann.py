@@ -156,24 +156,15 @@ for D in (2,3,4,5,6,7):
         X[:,d] = series[d:d+n]
     Y = series[D:D+n]
 
-    # print "X.shape:", X.shape
-    # print "Y.shape:", Y.shape
-
     print "series length:", n
     Xtrain = X[:n/2]
     Ytrain = Y[:n/2]
     Xtest = X[n/2:]
     Ytest = Y[n/2:]
 
-    # print "Xtrain.shape:", Xtrain.shape
-    # print "Ytrain.shape:", Ytrain.shape
-
     model = ANN([200])
     model.fit(Xtrain, Ytrain, activation=T.tanh)
     print "train score:", model.score(Xtrain, Ytrain)
-
-    # print "Xtest.shape:", Xtest.shape
-    # print "Ytest.shape:", Ytest.shape
     print "test score:", model.score(Xtest, Ytest)
 
     # plot the prediction with true values

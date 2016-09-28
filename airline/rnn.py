@@ -86,10 +86,6 @@ class RNN(object):
                 
                 c = self.train_op(learning_rate, X[j], Y[j])
                 cost += c
-
-                # if (j+1) % 200 == 0:
-                #     sys.stdout.write("j/N: %d/%d cost so far: %f\r" % (j, N, cost))
-                #     sys.stdout.flush()
             if i % 10 == 0:
                 print "i:", i, "cost:", cost, "time for epoch:", (datetime.now() - t0)
             if (i+1) % 500 == 0:
@@ -145,9 +141,6 @@ for D in (2,3,4,5):
         X[:,d] = series[d:d+n]
     Y = series[D:D+n]
 
-    # print "X.shape:", X.shape
-    # print "Y.shape:", Y.shape
-
     print "series length:", n
     Xtrain = X[:n/2]
     Ytrain = Y[:n/2]
@@ -159,15 +152,9 @@ for D in (2,3,4,5):
     Ntest = len(Xtest)
     Xtest = Xtest.reshape(Ntest, D, 1)
 
-    # print "Xtrain.shape:", Xtrain.shape
-    # print "Ytrain.shape:", Ytrain.shape
-
     model = RNN([50])
     model.fit(Xtrain, Ytrain, activation=T.tanh)
     print "train score:", model.score(Xtrain, Ytrain)
-
-    # print "Xtest.shape:", Xtest.shape
-    # print "Ytest.shape:", Ytest.shape
     print "test score:", model.score(Xtest, Ytest)
 
     # plot the prediction with true values
