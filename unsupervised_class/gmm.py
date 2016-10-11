@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import multivariate_normal
 
 
-def gmm(X, K, max_iter=20):
+def gmm(X, K, max_iter=20, smoothing=10e-3):
     N, D = X.shape
     M = np.zeros((K, D))
     R = np.zeros((N, K))
@@ -34,7 +34,7 @@ def gmm(X, K, max_iter=20):
             Nk = R[:,k].sum()
             pi[k] = Nk / N
             M[k] = R[:,k].dot(X) / Nk
-            C[k] = np.sum(R[n,k]*np.outer(X[n] - M[k], X[n] - M[k]) for n in xrange(N)) / Nk + np.eye(D)*0.001
+            C[k] = np.sum(R[n,k]*np.outer(X[n] - M[k], X[n] - M[k]) for n in xrange(N)) / Nk + np.eye(D)*smoothing
 
 
         costs[i] = np.log(weighted_pdfs.sum(axis=1)).sum()
@@ -54,7 +54,7 @@ def gmm(X, K, max_iter=20):
     print "pi:", pi
     print "means:", M
     print "covariances:", C
-
+    return R
 
 
 def main():
