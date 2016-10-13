@@ -33,7 +33,7 @@ def convpool(X, W, b):
     conv_out = tf.nn.conv2d(X, W, strides=[1, 1, 1, 1], padding='SAME')
     conv_out = tf.nn.bias_add(conv_out, b)
     pool_out = tf.nn.max_pool(conv_out, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-    return pool_out
+    return tf.nn.relu(pool_out)
 
 
 def init_filter(shape, poolsz):
@@ -73,7 +73,7 @@ def main():
     Ytest_ind  = y2indicator(Ytest)
 
     # gradient descent params
-    max_iter = 20
+    max_iter = 6
     print_period = 10
     N = Xtrain.shape[0]
     batch_sz = 500
