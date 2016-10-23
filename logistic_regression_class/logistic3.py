@@ -54,6 +54,7 @@ def plot_w(linestyle, label):
     return plt.plot(x_axis, y_axis, linestyle=linestyle, label=label)
 
 legend = []
+legend.append(plot_w('--', 'start')[0])
 # let's do gradient descent 100 times
 learning_rate = 0.1
 for i in xrange(100):
