@@ -26,7 +26,7 @@ ones = np.array([[1]*N]).T
 Xb = np.concatenate((ones, X), axis=1)
 
 # randomly initialize the weights
-w = np.random.randn(D + 1)
+w = [0, -1, 1]
 
 # calculate the model output
 z = Xb.dot(w)
