@@ -53,7 +53,7 @@ def plot_w(linestyle, label):
     y_axis = w[0] + x_axis * (-w[2] / w[1])
     return plt.plot(x_axis, y_axis, linestyle=linestyle, label=label)
 
-legend1, = plot_w('--', 'start')
+legend = []
 # let's do gradient descent 100 times
 learning_rate = 0.1
 for i in xrange(100):
@@ -73,7 +73,7 @@ print "Final w:", w
 # plot the data and separating line
 plt.scatter(X[:,0], X[:,1], c=T, s=100, alpha=0.5)
 
-legend2, = plot_w('-', 'final')
-plt.legend([legend1, legend2])
+legend.append(plot_w('-', 'final')[0])
+plt.legend(legend)
 plt.show()
 
