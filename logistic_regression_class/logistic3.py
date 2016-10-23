@@ -48,12 +48,12 @@ def cross_entropy(T, Y):
     return E
 
 
-def plot_w(linestyle):
+def plot_w(linestyle, label):
     x_axis = np.linspace(-6, 6, 100)
     y_axis = w[0] + x_axis * (-w[2] / w[1])
-    plt.plot(x_axis, y_axis, linestyle=linestyle)
+    return plt.plot(x_axis, y_axis, linestyle=linestyle, label=label)
 
-plot_w('--')
+legend1, = plot_w('--', 'start')
 # let's do gradient descent 100 times
 learning_rate = 0.1
 for i in xrange(100):
@@ -61,7 +61,8 @@ for i in xrange(100):
         print cross_entropy(T, Y)
 
     # gradient descent weight udpate
-    w += learning_rate * np.dot((T - Y).T, Xb)
+    derivatives = np.dot((T - Y).T, Xb)
+    w += learning_rate * derivatives
 
     # recalculate Y
     Y = sigmoid(Xb.dot(w))
@@ -72,6 +73,7 @@ print "Final w:", w
 # plot the data and separating line
 plt.scatter(X[:,0], X[:,1], c=T, s=100, alpha=0.5)
 
-plot_w('-')
+legend2, = plot_w('-', 'final')
+plt.legend([legend1, legend2])
 plt.show()
 
