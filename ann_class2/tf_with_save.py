@@ -58,7 +58,6 @@ class TFLogistic:
     train_op = tf.train.MomentumOptimizer(lr, momentum=mu).minimize(cost)
 
     costs = []
-    self.saver = tf.train.Saver()
     init = tf.initialize_all_variables()
     with tf.Session() as session:
         session.run(init)
@@ -79,8 +78,6 @@ class TFLogistic:
         # save the model
         self.saver.save(session, self.savefile)
 
-    
-
     # save dimensions for later
     self.D = D
     self.K = K
@@ -90,8 +87,6 @@ class TFLogistic:
 
 
   def predict(self, X):
-    # if not hasattr(self, 'saver'):
-    #   self.saver = tf.train.Saver()
     with tf.Session() as session:
       # restore the model
       self.saver.restore(session, self.savefile)
