@@ -31,7 +31,8 @@ plt.show()
 
 
 # add a column of ones
-ones = np.array([[1]*N]).T
+# ones = np.array([[1]*N]).T # old
+ones = np.ones((N, 1))
 
 # add a column of r = sqrt(x^2 + y^2)
 r = np.zeros((N,1))
@@ -73,7 +74,8 @@ for i in xrange(5000):
         print e
 
     # gradient descent weight udpate with regularization
-    w += learning_rate * ( np.dot((T - Y).T, Xb) - 0.01*w )
+    # w += learning_rate * ( np.dot((T - Y).T, Xb) - 0.01*w ) # old
+    w += learning_rate * ( Xb.T.dot(T - Y) - 0.1*w )
 
     # recalculate Y
     Y = sigmoid(Xb.dot(w))

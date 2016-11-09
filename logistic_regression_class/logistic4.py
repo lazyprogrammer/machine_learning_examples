@@ -22,7 +22,8 @@ X[50:,:] = X[50:,:] + 2*np.ones((50,D))
 T = np.array([0]*50 + [1]*50)
 
 # add a column of ones
-ones = np.array([[1]*N]).T
+# ones = np.array([[1]*N]).T
+ones = np.ones((N, 1))
 Xb = np.concatenate((ones, X), axis=1)
 
 # randomly initialize the weights
@@ -55,7 +56,8 @@ for i in xrange(100):
         print cross_entropy(T, Y)
 
     # gradient descent weight udpate with regularization
-    w += learning_rate * ( np.dot((T - Y).T, Xb) - 0.1*w )
+    # w += learning_rate * ( np.dot((T - Y).T, Xb) - 0.1*w ) # old
+    w += learning_rate * ( Xb.T.dot(T - Y) - 0.1*w )
 
     # recalculate Y
     Y = sigmoid(Xb.dot(w))

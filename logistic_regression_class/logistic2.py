@@ -22,7 +22,8 @@ X[50:,:] = X[50:,:] + 2*np.ones((50,D))
 T = np.array([0]*50 + [1]*50)
 
 # add a column of ones
-ones = np.array([[1]*N]).T
+# ones = np.array([[1]*N]).T # old
+ones = np.ones((N, 1))
 Xb = np.concatenate((ones, X), axis=1)
 
 # randomly initialize the weights

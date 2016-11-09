@@ -19,7 +19,8 @@ X = np.array([
 T = np.array([0, 1, 1, 0])
 
 # add a column of ones
-ones = np.array([[1]*N]).T
+# ones = np.array([[1]*N]).T
+ones = np.ones((N, 1))
 
 # add a column of xy = x*y
 xy = np.matrix(X[:,0] * X[:,1]).T
@@ -51,14 +52,15 @@ def cross_entropy(T, Y):
 # let's do gradient descent 100 times
 learning_rate = 0.001
 error = []
-for i in xrange(5000):
+for i in xrange(10000):
     e = cross_entropy(T, Y)
     error.append(e)
     if i % 100 == 0:
         print e
 
     # gradient descent weight udpate with regularization
-    w += learning_rate * ( np.dot((T - Y).T, Xb) - 0.01*w )
+    # w += learning_rate * ( np.dot((T - Y).T, Xb) - 0.01*w )
+    w += learning_rate * ( Xb.T.dot(T - Y) - 0.01*w )
 
     # recalculate Y
     Y = sigmoid(Xb.dot(w))
