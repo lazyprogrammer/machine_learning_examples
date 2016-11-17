@@ -1,6 +1,6 @@
 """
 Code for Bayesian Bandit tutorial, which can be found here:
-http://lazyprogrammer.tumblr.com/post/93446998489/bayesian-bandit-tutorial
+https://lazyprogrammer.me/bayesian-bandit-tutorial/
 """
 
 import matplotlib.pyplot as plt
