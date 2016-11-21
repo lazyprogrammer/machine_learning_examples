@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.utils import shuffle
-from util import init_weight, all_parity_pairs
+from util import init_weight, all_parity_pairs_with_sequence_labels
 
 
 class SimpleRNN:
@@ -86,6 +86,8 @@ class SimpleRNN:
             print "shape y:", rout.shape
             print "i:", i, "cost:", cost, "classification rate:", (float(n_correct)/N)
             costs.append(cost)
+            if n_correct == N:
+                break
 
         if show_fig:
             plt.plot(costs)
@@ -94,25 +96,10 @@ class SimpleRNN:
 
 
 def parity(B=12, learning_rate=10e-5, epochs=200):
-    X, Y = all_parity_pairs(B)
-    N, t = X.shape
-
-    # we want every time step to have a label
-    Y_t = np.zeros(X.shape, dtype=np.int32)
-    for n in xrange(N):
-        ones_count = 0
-        for i in xrange(t):
-            if X[n,i] == 1:
-                ones_count += 1
-            if ones_count % 2 == 1:
-                Y_t[n,i] = 1
-
-    # for x, y in zip(X, Y_t):
-    #     print "x:", x, "y:", y
-    X = X.reshape(N, t, 1).astype(np.float32)
+    X, Y = all_parity_pairs_with_sequence_labels(B)
 
     rnn = SimpleRNN(4)
-    rnn.fit(X, Y_t, learning_rate=learning_rate, epochs=epochs, activation=T.nnet.sigmoid, show_fig=True)
+    rnn.fit(X, Y, learning_rate=learning_rate, epochs=epochs, activation=T.nnet.sigmoid, show_fig=False)
 
 
 if __name__ == '__main__':
