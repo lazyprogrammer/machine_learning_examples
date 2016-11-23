@@ -57,7 +57,7 @@ class ANN(object):
         # set up theano functions and variables
         inputs = tf.placeholder(tf.float32, shape=(None, D), name='inputs')
         labels = tf.placeholder(tf.int64, shape=(None,), name='labels')
-        logits = self.forward_train(inputs)
+        logits = self.forward(inputs)
 
         cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
         train_op = tf.train.RMSPropOptimizer(lr, decay=decay, momentum=mu).minimize(cost)
@@ -86,7 +86,9 @@ class ANN(object):
         plt.plot(costs)
         plt.show()
 
-    def forward_train(self, X):
+    def forward(self, X):
+        # no need to define different functions for train and predict
+        # tf.nn.dropout takes care of the differences for us
         Z = X
         Z = tf.nn.dropout(Z, self.dropout_rates[0])
         for h, p in zip(self.hidden_layers, self.dropout_rates[1:]):
@@ -94,14 +96,8 @@ class ANN(object):
             Z = tf.nn.dropout(Z, p)
         return tf.matmul(Z, self.W) + self.b
 
-    def forward_predict(self, X):
-        Z = X * self.dropout_rates[0]
-        for h, p in zip(self.hidden_layers, self.dropout_rates[1:]):
-            Z = h.forward(Z) * p
-        return tf.matmul(Z, self.W) + self.b
-
     def predict(self, X):
-        pY = self.forward_predict(X)
+        pY = self.forward(X)
         return tf.argmax(pY, 1)
 
 
