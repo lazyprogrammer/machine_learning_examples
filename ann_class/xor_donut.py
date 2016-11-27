@@ -10,10 +10,8 @@ import matplotlib.pyplot as plt
 # for binary classification! no softmax here
 
 def forward(X, W1, b1, W2, b2):
-    # assume we will use tanh() on hidden
-    # and softmax on output
-    Z = 1 / (1 + np.exp( -(X.dot(W1) + b1) ))
-    # Z = np.tanh(X.dot(W1) + b1)
+    # Z = 1 / (1 + np.exp( -(X.dot(W1) + b1) ))
+    Z = np.tanh(X.dot(W1) + b1)
     activation = Z.dot(W2) + b2
     Y = 1 / (1 + np.exp(-activation))
     return Y, Z
@@ -33,13 +31,14 @@ def derivative_b2(T, Y):
 
 
 def derivative_w1(X, Z, T, Y, W2):
-    dZ = np.outer(T-Y, W2) * Z * (1 - Z)
-    # dZ = np.outer(T-Y, W2) * (1 - Z * Z)
+    # dZ = np.outer(T-Y, W2) * Z * (1 - Z) # this is for sigmoid activation
+    dZ = np.outer(T-Y, W2) * (1 - Z * Z) # this is for tanh activation
     return X.T.dot(dZ)
 
 
 def derivative_b1(Z, T, Y, W2):
-    dZ = np.outer(T-Y, W2) * (1 - Z * Z)
+    # dZ = np.outer(T-Y, W2) * Z * (1 - Z) # this is for sigmoid activation
+    dZ = np.outer(T-Y, W2) * (1 - Z * Z) # this is for tanh activation
     return dZ.sum(axis=0)
 
 
