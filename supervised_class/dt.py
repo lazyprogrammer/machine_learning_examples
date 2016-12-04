@@ -102,7 +102,7 @@ class TreeNode:
         max_ig = 0
         # print "num boundaries:", len(boundaries), "out of:", len(Y)
         for i in xrange(len(boundaries)):
-            split = (x_values[i] + x_values[i+1]) / 2
+            split = (x_values[boundaries[i]] + x_values[boundaries[i]+1]) / 2
             ig = self.information_gain(x_values, y_values, split)
             if ig > max_ig:
                 max_ig = ig
