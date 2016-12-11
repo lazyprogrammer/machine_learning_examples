@@ -1,3 +1,4 @@
+# https://www.udemy.com/cluster-analysis-unsupervised-machine-learning-python
 import numpy as np
 import matplotlib.pyplot as plt
 from kmeans import plot_k_means, get_simple_data, cost
