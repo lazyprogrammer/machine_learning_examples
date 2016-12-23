@@ -52,7 +52,7 @@ b2 = init_weights([K])
 
 py_x = forward(tfX, W1, b1, W2, b2)
 
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, T)) # compute costs
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, tfY)) # compute costs
 # WARNING: This op expects unscaled logits,
 # since it performs a softmax on logits
 # internally for efficiency.
