@@ -38,20 +38,33 @@ class GRU:
         self.h0  = theano.shared(h0)
         self.params = [self.Wxr, self.Whr, self.br, self.Wxz, self.Whz, self.bz, self.Wxh, self.Whh, self.bh, self.h0]
 
-    def recurrence(self, x_t, h_t1):
-        r = T.nnet.sigmoid(x_t.dot(self.Wxr) + h_t1.dot(self.Whr) + self.br)
-        z = T.nnet.sigmoid(x_t.dot(self.Wxz) + h_t1.dot(self.Whz) + self.bz)
-        hhat = self.f(x_t.dot(self.Wxh) + (r * h_t1).dot(self.Whh) + self.bh)
-        h = (1 - z) * h_t1 + z * hhat
-        return h
+    def get_ht(self, xWxr_t, xWxz_t, xWxh_t, h_t1):
+      r = T.nnet.sigmoid(xWxr_t + h_t1.dot(self.Whr) + self.br)
+      z = T.nnet.sigmoid(xWxz_t + h_t1.dot(self.Whz) + self.bz)
+      hhat = self.f(xWxh_t + (r * h_t1).dot(self.Whh) + self.bh)
+      h = (1 - z) * h_t1 + z * hhat
+      return h
 
-    def output(self, x):
-        # input X should be a matrix (2-D)
-        # rows index time
+    def recurrence(self, xWxr_t, xWxz_t, xWxh_t, is_start, h_t1, h0):
+        h_t = T.switch(
+          T.eq(is_start, 1),
+          self.get_ht(xWxr_t, xWxz_t, xWxh_t, h0),
+          self.get_ht(xWxr_t, xWxz_t, xWxh_t, h_t1)
+        )
+        return h_t
+
+    def output(self, Xflat, startPoints):
+        # Xflat should be (NT, D)
+        # calculate X after multiplying input weights
+        XWxr = Xflat.dot(self.Wxr)
+        XWxz = Xflat.dot(self.Wxz)
+        XWxh = Xflat.dot(self.Wxh)
+
         h, _ = theano.scan(
             fn=self.recurrence,
-            sequences=x,
+            sequences=[XWxr, XWxz, XWxh, startPoints],
             outputs_info=[self.h0],
-            n_steps=x.shape[0],
+            non_sequences=[self.h0],
+            n_steps=Xflat.shape[0],
         )
         return h

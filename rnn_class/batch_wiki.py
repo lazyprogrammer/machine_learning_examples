@@ -9,8 +9,8 @@ import json
 
 from datetime import datetime
 from sklearn.utils import shuffle
-from gru import GRU
-from lstm import LSTM
+from batch_gru import GRU
+# from batch_lstm import LSTM
 from util import init_weight, get_wikipedia_data
 
 
@@ -20,7 +20,7 @@ class RNN:
         self.D = D
         self.V = V
 
-    def fit(self, X, learning_rate=10e-5, mu=0.99, epochs=10, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU, normalize=True):
+    def fit(self, X, learning_rate=10e-5, mu=0.99, epochs=10, batch_sz=100, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU):
         D = self.D
         V = self.V
         N = len(X)
@@ -39,86 +39,80 @@ class RNN:
         self.We = theano.shared(We)
         self.Wo = theano.shared(Wo)
         self.bo = theano.shared(bo)
-        self.params = [self.Wo, self.bo]
+        self.params = [self.We, self.Wo, self.bo]
         for ru in self.hidden_layers:
             self.params += ru.params
 
-        thX = T.ivector('X')
-        thY = T.ivector('Y')
+        thX = T.ivector('X') # will represent multiple batches concatenated
+        thY = T.ivector('Y') # represents next word
+        thStartPoints = T.ivector('start_points')
 
         Z = self.We[thX]
         for ru in self.hidden_layers:
-            Z = ru.output(Z)
+            Z = ru.output(Z, thStartPoints)
         py_x = T.nnet.softmax(Z.dot(self.Wo) + self.bo)
-
         prediction = T.argmax(py_x, axis=1)
-        # let's return py_x too so we can draw a sample instead
-        self.predict_op = theano.function(
-            inputs=[thX],
-            outputs=[py_x, prediction],
-            allow_input_downcast=True,
-        )
-        
+
         cost = -T.mean(T.log(py_x[T.arange(thY.shape[0]), thY]))
         grads = T.grad(cost, self.params)
         dparams = [theano.shared(p.get_value()*0) for p in self.params]
-
-        dWe = theano.shared(self.We.get_value()*0)
-        gWe = T.grad(cost, self.We)
-        dWe_update = mu*dWe - learning_rate*gWe
-        We_update = self.We + dWe_update
-        if normalize:
-            We_update /= We_update.norm(2)
 
         updates = [
             (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
         ] + [
             (dp, mu*dp - learning_rate*g) for dp, g in zip(dparams, grads)
-        ] + [
-            (self.We, We_update), (dWe, dWe_update)
         ]
 
+        # self.predict_op = theano.function(inputs=[thX, thStartPoints], outputs=prediction)
         self.train_op = theano.function(
-            inputs=[thX, thY],
+            inputs=[thX, thY, thStartPoints],
             outputs=[cost, prediction],
             updates=updates
         )
 
         costs = []
+        n_batches = N / batch_sz
         for i in xrange(epochs):
             t0 = datetime.now()
             X = shuffle(X)
             n_correct = 0
             n_total = 0
             cost = 0
-            for j in xrange(N):
-                if np.random.random() < 0.01 or len(X[j]) <= 1:
-                    input_sequence = [0] + X[j]
-                    output_sequence = X[j] + [1]
-                else:
-                    input_sequence = [0] + X[j][:-1]
-                    output_sequence = X[j]
+
+            for j in xrange(n_batches):
+                # construct input sequence and output sequence as
+                # concatenatation of multiple input sequences and output sequences
+                # input X should be a list of 2-D arrays or one 3-D array
+                # N x T(n) x D - batch size x sequence length x num features
+                # sequence length can be variable
+                sequenceLengths = []
+                input_sequence = []
+                output_sequence = []
+                for k in xrange(j*batch_sz, (j+1)*batch_sz):
+                    # don't always add the end token
+                    if np.random.random() < 0.01 or len(X[k]) <= 1:
+                        input_sequence += [0] + X[k]
+                        output_sequence += X[k] + [1]
+                        sequenceLengths.append(len(X[k]) + 1)
+                    else:
+                        input_sequence += [0] + X[k][:-1]
+                        output_sequence += X[k]
+                        sequenceLengths.append(len(X[k]))
                 n_total += len(output_sequence)
 
-                # test:
-                
-                try:
-                    # we set 0 to start and 1 to end
-                    c, p = self.train_op(input_sequence, output_sequence)
-                except Exception as e:
-                    PYX, pred = self.predict_op(input_sequence)
-                    print "input_sequence len:", len(input_sequence)
-                    print "PYX.shape:",PYX.shape
-                    print "pred.shape:", pred.shape
-                    raise e
-                # print "p:", p
+                startPoints = np.zeros(len(output_sequence), dtype=np.int32)
+                last = 0
+                for length in sequenceLengths:
+                  startPoints[last] = 1
+                  last += length
+
+                c, p = self.train_op(input_sequence, output_sequence, startPoints)
                 cost += c
-                # print "j:", j, "c:", c/len(X[j]+1)
                 for pj, xj in zip(p, output_sequence):
                     if pj == xj:
                         n_correct += 1
-                if j % 200 == 0:
-                    sys.stdout.write("j/N: %d/%d correct rate so far: %f\r" % (j, N, float(n_correct)/n_total))
+                if j % 1 == 0:
+                    sys.stdout.write("j/n_batches: %d/%d correct rate so far: %f\r" % (j, n_batches, float(n_correct)/n_total))
                     sys.stdout.flush()
             print "i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total), "time for epoch:", (datetime.now() - t0)
             costs.append(cost)
@@ -128,20 +122,20 @@ class RNN:
             plt.show()
 
 
+
 def train_wikipedia(we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.json', RecurrentUnit=GRU):
     # there are 32 files
-    sentences, word2idx = get_wikipedia_data(n_files=1, n_vocab=2000)
+    sentences, word2idx = get_wikipedia_data(n_files=10, n_vocab=2000)
     print "finished retrieving data"
     print "vocab size:", len(word2idx), "number of sentences:", len(sentences)
     rnn = RNN(30, [30], len(word2idx))
-    rnn.fit(sentences, learning_rate=10e-6, epochs=10, show_fig=True, activation=T.nnet.relu)
+    rnn.fit(sentences, learning_rate=2*10e-5, epochs=10, show_fig=True, activation=T.nnet.relu)
 
     np.save(we_file, rnn.We.get_value())
     with open(w2i_file, 'w') as f:
         json.dump(word2idx, f)
 
-def generate_wikipedia():
-    pass
+
 
 def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.json'):
     We = np.load(we_file)
@@ -171,16 +165,14 @@ def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedi
         print "closest match by", name, "distance:", best_word
         print w1, "-", w2, "=", best_word, "-", w3
 
+
+
 if __name__ == '__main__':
-    # train_wikipedia() # GRU
-    we = 'lstm_word_embeddings2.npy'
-    w2i = 'lstm_wikipedia_word2idx2.json'
+    we = 'working_files/batch_gru_word_embeddings.npy'
+    w2i = 'working_files/batch_wikipedia_word2idx.json'
     train_wikipedia(we, w2i, RecurrentUnit=GRU)
     find_analogies('king', 'man', 'woman', we, w2i)
     find_analogies('france', 'paris', 'london', we, w2i)
     find_analogies('france', 'paris', 'rome', we, w2i)
     find_analogies('paris', 'france', 'italy', we, w2i)
-
-
-
 
