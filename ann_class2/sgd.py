@@ -10,7 +10,8 @@
 # (but not actually waiting for convergence) and what the cost looks like at
 # each iteration.
 #
-# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFLow
+# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFlow
+# https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 # https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
 
 import numpy as np

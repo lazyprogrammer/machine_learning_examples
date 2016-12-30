@@ -1,5 +1,6 @@
 # Some utility functions we need for the class.
-# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFLow
+# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFlow
+# https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 # https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
 
 # Note: run this from the current folder it is in.
@@ -23,6 +24,8 @@ def get_transformed_data():
     pca = PCA()
     Z = pca.fit_transform(X)
     Y = data[:, 0]
+
+    plot_cumulative_variance(pca)
 
     return Z, Y, pca, mu
 

@@ -2,7 +2,8 @@
 # This code is not optimized for speed.
 # It's just to get something working, using the principles we know.
 
-# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFLow
+# For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFlow
+# https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 # https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
 
 import numpy as np
