@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/unsupervised-machine-learning-hidden-markov-models-in-python
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
 # Discrete Hidden Markov Model (HMM)
@@ -83,7 +84,7 @@ class HMM:
                 # print "den shape:", den.shape
                 # test = (alphas[n][:-1] * betas[n][:-1]).sum(axis=0, keepdims=True).T
                 # print "shape (alphas[n][:-1] * betas[n][:-1]).sum(axis=0): ", test.shape
-                den1 += (alphas[n][:-1] * betas[n][:-1]).sum(axis=0, keepdims=True).T / P[n]
+                den1 += (alphas[n][:-1] * betas[n][1:]).sum(axis=0, keepdims=True).T / P[n]
                 den2 += (alphas[n] * betas[n]).sum(axis=0, keepdims=True).T / P[n]
 
                 # tmp2 = np.zeros((self.M, 1))

@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/unsupervised-machine-learning-hidden-markov-models-in-python
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
 # Continuous-observation HMM with scaling and multiple observations
@@ -67,17 +68,22 @@ class HMM:
 
                 component = np.zeros((self.M, self.K, T)) # we'll need these later
                 C = np.zeros(T)
+                # for j in xrange(self.M):
+                #     for t in xrange(T):
+                #         for k in xrange(self.K):
+                #             # print "sigma:", self.sigma[j,k]
+                #             p = self.R[j,k] * mvn.pdf(x[t], self.mu[j,k], self.sigma[j,k])
+                #             # tmp = self.R[j,k] * mvn_pdf(x[t], self.mu[j,k], self.sigma[j,k])
+                #             # print "p - tmp:", (p - tmp)
+                #             # assert(np.abs(tmp - p).sum() < 10e-10)
+                #             # p = tmp
+                #             component[j,k,t] = p
+                #             B[j,t] += p
                 for j in xrange(self.M):
-                    for t in xrange(T):
-                        for k in xrange(self.K):
-                            # print "sigma:", self.sigma[j,k]
-                            p = self.R[j,k] * mvn.pdf(x[t], self.mu[j,k], self.sigma[j,k])
-                            # tmp = self.R[j,k] * mvn_pdf(x[t], self.mu[j,k], self.sigma[j,k])
-                            # print "p - tmp:", (p - tmp)
-                            # assert(np.abs(tmp - p).sum() < 10e-10)
-                            # p = tmp
-                            component[j,k,t] = p
-                            B[j,t] += p
+                    for k in xrange(self.K):
+                        p = self.R[j,k] * mvn.pdf(x, self.mu[j,k], self.sigma[j,k])
+                        component[j,k,:] = p
+                        B[j,:] += p
                 # components.append(component)
                 Bs.append(B)
                 # assert(np.all(B <= 1))
@@ -149,6 +155,8 @@ class HMM:
                             r_den_n[j] += gamma[t,j,k]
                 r_num += r_num_n * (-logP[n])
                 r_den += r_den_n * (-logP[n])
+                # r_num += np.exp(np.log(r_num_n) - logP[n])
+                # r_den += np.exp(np.log(r_den_n) - logP[n])
 
                 mu_num_n = np.zeros((self.M, self.K, D))
                 sigma_num_n = np.zeros((self.M, self.K, D, D))
@@ -162,6 +170,9 @@ class HMM:
                             sigma_num_n[j,k] += gamma[t,j,k] * np.outer(x[t] - self.mu[j,k], x[t] - self.mu[j,k])
                 mu_num += mu_num_n * (-logP[n])
                 sigma_num += sigma_num_n * (-logP[n])
+                # mu_num += np.exp(np.log(mu_num_n) - logP[n])
+                # print "sigma_num_n:", sigma_num_n
+                # sigma_num += np.exp(np.log(sigma_num_n) - logP[n])
                 
             self.A = a_num / a_den
             # tmp2 = np.zeros(a_num.shape)
@@ -170,6 +181,8 @@ class HMM:
             #         tmp2[i,j] = a_num[i,j] / a_den[i]
             #         if tmp2[i,j] > 1:
             #             print "A(%s,%s) = %s" % (i, j, tmp2[i,j])
+            # print "sigma_num:", sigma_num
+            # print "r_num:", r_num
 
             # update R, mu, sigma
             for j in xrange(self.M):
@@ -265,6 +278,6 @@ def fake_signal(init=big_init):
     print "LL for actual params:", L
 
 if __name__ == '__main__':
-    real_signal()
-    # fake_signal()
+    # real_signal()
+    fake_signal()
 

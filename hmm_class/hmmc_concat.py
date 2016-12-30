@@ -1,7 +1,8 @@
 # https://deeplearningcourses.com/c/unsupervised-machine-learning-hidden-markov-models-in-python
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
-# Continuous-observation HMM with no scaling, but allowing multiple observations
+# Continuous-observation HMM with no scaling, but treats multiple observations
+# as a concatenated single observation
 import wave
 import numpy as np
 import matplotlib.pyplot as plt
