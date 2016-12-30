@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/data-science-supervised-machine-learning-in-python
 # https://www.udemy.com/data-science-supervised-machine-learning-in-python
 # This is an example of a K-Nearest Neighbors classifier on MNIST data.
 # We try k=1...5 to show how we might choose the best k.

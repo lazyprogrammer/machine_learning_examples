@@ -1,3 +1,5 @@
+# https://deeplearningcourses.com/c/data-science-supervised-machine-learning-in-python
+# https://www.udemy.com/data-science-supervised-machine-learning-in-python
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.neighbors import KNeighborsRegressor
