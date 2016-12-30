@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/deep-learning-prerequisites-the-numpy-stack-in-python
 # https://www.udemy.com/deep-learning-prerequisites-the-numpy-stack-in-python
 import numpy as np
 from datetime import datetime
