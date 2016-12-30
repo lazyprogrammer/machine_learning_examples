@@ -1,6 +1,7 @@
 # demonstration of L2 regularization
 #
 # notes for this course can be found at:
+# https://deeplearningcourses.com/c/data-science-linear-regression-in-python
 # https://www.udemy.com/data-science-linear-regression-in-python
 
 import numpy as np
