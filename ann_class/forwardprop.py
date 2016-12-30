@@ -1,6 +1,7 @@
 # forward propagation example for deep learning in python class.
 #
 # the notes for this class can be found at: 
+# https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 # https://www.udemy.com/data-science-deep-learning-in-python
 
 import numpy as np

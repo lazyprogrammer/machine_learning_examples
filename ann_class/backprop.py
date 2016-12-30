@@ -2,10 +2,13 @@
 # with sigmoid activation
 #
 # the notes for this class can be found at: 
+# https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 # https://www.udemy.com/data-science-deep-learning-in-python
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+np.random.seed(1)
 
 def forward(X, W1, b1, W2, b2):
     Z = 1 / (1 + np.exp(-X.dot(W1) - b1))
@@ -136,6 +139,7 @@ def main():
 
         # this is gradient ASCENT, not DESCENT
         # be comfortable with both!
+        # oldW2 = W2.copy()
         W2 += learning_rate * derivative_w2(hidden, T, output)
         b2 += learning_rate * derivative_b2(T, output)
         W1 += learning_rate * derivative_w1(X, hidden, T, output, W2)

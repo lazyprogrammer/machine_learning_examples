@@ -5,6 +5,7 @@
 # we can consistently get up to the high 90s with this method.
 #
 # the notes for this class can be found at: 
+# https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 # https://www.udemy.com/data-science-deep-learning-in-python
 
 import numpy as np
@@ -46,13 +47,14 @@ def derivative_b1(Z, T, Y, W2):
 
 
 def cost(T, Y):
-    tot = 0
-    for n in xrange(len(T)):
-        if T[n] == 1:
-            tot += np.log(Y[n])
-        else:
-            tot += np.log(1 - Y[n])
-    return tot
+    # tot = 0
+    # for n in xrange(len(T)):
+    #     if T[n] == 1:
+    #         tot += np.log(Y[n])
+    #     else:
+    #         tot += np.log(1 - Y[n])
+    # return tot
+    return np.sum(T*np.log(Y) + (1-T)*np.log(1-Y))
 
 def test_donut():
     # donut example
