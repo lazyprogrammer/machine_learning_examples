@@ -86,7 +86,7 @@ class HMM:
                 # print "den shape:", den.shape
                 # test = (alphas[n][:-1] * betas[n][:-1]).sum(axis=0, keepdims=True).T
                 # print "shape (alphas[n][:-1] * betas[n][:-1]).sum(axis=0): ", test.shape
-                den1 += (alphas[n][:-1] * betas[n][1:]).sum(axis=0, keepdims=True).T
+                den1 += (alphas[n][:-1] * betas[n][:-1]).sum(axis=0, keepdims=True).T
                 den2 += (alphas[n] * betas[n]).sum(axis=0, keepdims=True).T
 
                 # numerator for A
