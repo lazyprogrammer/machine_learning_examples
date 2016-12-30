@@ -4,6 +4,7 @@
 #   since not doing that caused us to start swapping
 # - the output after convpool is a different size (8,8) here, (5,5) in Theano
 
+# https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 # https://udemy.com/deep-learning-convolutional-neural-networks-theano-tensorflow
 
 import numpy as np
