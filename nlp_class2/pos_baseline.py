@@ -1,4 +1,7 @@
-# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
+# Course URL:
+# https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
+# https://udemy.com/natural-language-processing-with-deep-learning-in-python
+
 # You can get the data from this URL: http://www.cnts.ua.ac.be/conll2000/chunking/
 # not considering context
 

@@ -1,4 +1,6 @@
-# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
+# Course URL:
+# https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
+# https://udemy.com/natural-language-processing-with-deep-learning-in-python
 import numpy as np
 import matplotlib.pyplot as plt
 import theano
