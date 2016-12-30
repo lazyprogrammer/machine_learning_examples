@@ -1,3 +1,5 @@
+# https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
+# https://www.udemy.com/unsupervised-deep-learning-in-python
 import nltk
 import numpy as np
 import matplotlib.pyplot as plt
