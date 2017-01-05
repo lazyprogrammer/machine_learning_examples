@@ -420,7 +420,7 @@ if __name__ == '__main__':
       print t
     play_game(p1, p2, Environment())
 
-  # plot things to help us understand how well the agent has learned
+  # TODO: plot things to help us understand how well the agent has learned
 
 
   # play human vs. agent
@@ -430,6 +430,9 @@ if __name__ == '__main__':
   while True:
     p1.set_verbose(True)
     play_game(p1, human, Environment(), draw=2)
+    # I made the agent player 1 because I wanted to see if it would
+    # select the center as its starting move. If you want the agent
+    # to go second you can switch the human and AI.
     answer = raw_input("Play again? [Y/n]: ")
     if answer and answer.lower()[0] == 'n':
       break
