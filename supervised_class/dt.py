@@ -101,9 +101,8 @@ class TreeNode:
         boundaries = np.nonzero(y_values[:-1] != y_values[1:])[0]
         best_split = None
         max_ig = 0
-        # print "num boundaries:", len(boundaries), "out of:", len(Y)
-        for i in xrange(len(boundaries)):
-            split = (x_values[i] + x_values[i+1]) / 2
+        for b in boundaries:
+            split = (x_values[b] + x_values[b+1]) / 2
             ig = self.information_gain(x_values, y_values, split)
             if ig > max_ig:
                 max_ig = ig
