@@ -100,10 +100,12 @@ class Agent:
     # make the move
     env.board[next_move[0], next_move[1]] = self.sym
 
-    # update state history
-    if best_state is None:
-      best_state = env.get_state()
-    self.state_history.append(best_state)
+  def update_state_history(self, s):
+    # cannot put this in take_action, because take_action only happens
+    # once every other iteration for each player
+    # state history needs to be updated every iteration
+    # s = env.get_state() # don't want to do this twice so pass it in
+    self.state_history.append(s)
 
   def update(self, env):
     # update value function based on the reward just received and the most recent
@@ -267,10 +269,15 @@ class Human:
   def update(self, env):
     pass
 
+  def update_state_history(self, s):
+    pass
+
 
 # recursive function that will return all
 # possible states (as ints) and who the corresponding winner is for those states (if any)
 # (i, j) refers to the next cell on the board to permute (we need to try -1, 0, 1)
+# impossible games are ignored, i.e. 3x's and 3o's in a row simultaneously
+# since that will never happen in a real game
 def get_state_hash_and_winner(env, i=0, j=0):
   results = []
 
@@ -386,14 +393,17 @@ def play_game(p1, p2, env, draw=False):
     # current player makes a move
     current_player.take_action(env)
 
+    # update state histories
+    state = env.get_state()
+    p1.update_state_history(state)
+    p2.update_state_history(state)
+
   if draw:
     env.draw_board()
 
   # do the value function update
   p1.update(env)
   p2.update(env)
-
-  # TODO: return useful stats
 
 
 if __name__ == '__main__':
@@ -415,13 +425,11 @@ if __name__ == '__main__':
   p1.set_symbol(env.x)
   p2.set_symbol(env.o)
 
-  for t in xrange(10000):
+  T = 10000
+  for t in xrange(T):
     if t % 200 == 0:
       print t
-    play_game(p1, p2, Environment())
-
-  # TODO: plot things to help us understand how well the agent has learned
-
+    winner = play_game(p1, p2, Environment())
 
   # play human vs. agent
   # do you think the agent learned to play the game well?
