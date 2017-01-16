@@ -425,7 +425,7 @@ if __name__ == '__main__':
   for t in xrange(T):
     if t % 200 == 0:
       print t
-    winner = play_game(p1, p2, Environment())
+    play_game(p1, p2, Environment())
 
   # play human vs. agent
   # do you think the agent learned to play the game well?
