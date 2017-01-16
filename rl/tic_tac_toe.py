@@ -108,10 +108,6 @@ class Agent:
     self.state_history.append(s)
 
   def update(self, env):
-    # update value function based on the reward just received and the most recent
-    # state transition
-    # this should always be called after taking an action
-    # technically, we could make it all one function...
     # we want to BACKTRACK over the states, so that:
     # V(prev_state) = V(prev_state) + alpha*(V(next_state) - V(prev_state))
     # where V(next_state) = reward if it's the most current state
