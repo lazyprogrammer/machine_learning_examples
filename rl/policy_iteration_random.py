@@ -15,6 +15,7 @@ if __name__ == '__main__':
   # this grid gives you a reward of -0.1 for every non-terminal state
   # we want to see if this will encourage finding a shorter path to the goal
   grid = negative_grid(step_cost=-1.0)
+  # grid = standard_grid()
 
   # print rewards
   print "rewards:"

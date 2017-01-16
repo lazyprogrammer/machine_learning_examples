@@ -67,6 +67,7 @@ if __name__ == '__main__':
 
     if biggest_change < SMALL_ENOUGH:
       break
+  print "values for uniformly random actions:"
   print_values(V, grid)
   print "\n\n"
 
@@ -108,4 +109,5 @@ if __name__ == '__main__':
 
     if biggest_change < SMALL_ENOUGH:
       break
+  print "values for fixed policy:"
   print_values(V, grid)
