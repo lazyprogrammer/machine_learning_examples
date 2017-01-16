@@ -1,4 +1,5 @@
 # notes for this course can be found at:
+# https://deeplearningcourses.com/c/data-science-logistic-regression-in-python
 # https://www.udemy.com/data-science-logistic-regression-in-python
 
 import numpy as np
