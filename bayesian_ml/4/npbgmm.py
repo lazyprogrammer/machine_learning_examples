@@ -104,7 +104,7 @@ def gmm(X, T=500):
     # phi = np.empty((N, K))
     list_of_cluster_indices = range(K)
     next_cluster_index = K
-    phi = [] # TODO: do we need this at all?
+    # phi = [] # TODO: do we need this at all?
     for i in xrange(N):
       phi_i = {}
       for j in list_of_cluster_indices:
