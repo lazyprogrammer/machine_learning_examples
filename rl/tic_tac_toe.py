@@ -1,3 +1,4 @@
+# https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
 # Simple reinforcement learning algorithm for learning tic-tac-toe
 # Use the update rule: V(s) = V(s) + alpha*(V(s') - V(s))
 # Use the epsilon-greedy policy:
@@ -177,7 +178,6 @@ class Environment:
     for i in xrange(LENGTH):
       for player in (self.x, self.o):
         if self.board[i].sum() == player*LENGTH:
-          # self.win_type = 'row'
           self.winner = player
           self.ended = True
           return True
@@ -186,7 +186,6 @@ class Environment:
     for j in xrange(LENGTH):
       for player in (self.x, self.o):
         if self.board[:,j].sum() == player*LENGTH:
-          # self.win_type = 'col, j = %s\n%s' % (j, self.board.astype(np.int32))
           self.winner = player
           self.ended = True
           return True
@@ -195,13 +194,11 @@ class Environment:
     for player in (self.x, self.o):
       # top-left -> bottom-right diagonal
       if self.board.trace() == player*LENGTH:
-        # self.win_type = 'diag1'
         self.winner = player
         self.ended = True
         return True
       # top-right -> bottom-left diagonal
       if np.fliplr(self.board).trace() == player*LENGTH:
-        # self.win_type = 'diag2'
         self.winner = player
         self.ended = True
         return True

@@ -1,6 +1,6 @@
+# https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
 import numpy as np
-import matplotlib.pyplot as plt
-from grid_world import Grid, standard_grid, negative_grid
+from grid_world import standard_grid, negative_grid
 from iterative_policy_evaluation import print_values, print_policy
 
 SMALL_ENOUGH = 10e-4
@@ -15,6 +15,7 @@ if __name__ == '__main__':
   # this grid gives you a reward of -0.1 for every non-terminal state
   # we want to see if this will encourage finding a shorter path to the goal
   grid = negative_grid(step_cost=-1.0)
+  # grid = negative_grid(step_cost=-0.1)
   # grid = standard_grid()
 
   # print rewards

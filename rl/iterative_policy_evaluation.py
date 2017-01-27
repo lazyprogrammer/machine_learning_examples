@@ -1,6 +1,6 @@
+# https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
 import numpy as np
-import matplotlib.pyplot as plt
-from grid_world import Grid, standard_grid
+from grid_world import standard_grid
 
 SMALL_ENOUGH = 10e-4 # threshold for convergence
 
