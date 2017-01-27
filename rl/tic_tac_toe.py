@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
 # Simple reinforcement learning algorithm for learning tic-tac-toe
 # Use the update rule: V(s) = V(s) + alpha*(V(s') - V(s))
