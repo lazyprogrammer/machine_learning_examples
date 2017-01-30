@@ -53,6 +53,6 @@ import matplotlib.pyplot as plt
 data = np.array(points)
 plt.scatter(data[:,0], data[:,1])
 x = np.linspace(0, 11, 100)
-y = value(a)*x + value(c)
+y = value(a)*x - value(c)
 plt.plot(x, y)
 plt.show()
