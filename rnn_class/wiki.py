@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import sys
 import theano
@@ -174,7 +175,7 @@ if __name__ == '__main__':
     # train_wikipedia() # GRU
     we = 'lstm_word_embeddings2.npy'
     w2i = 'lstm_wikipedia_word2idx2.json'
-    train_wikipedia(we, w2i, RecurrentUnit=LSTM)
+    train_wikipedia(we, w2i, RecurrentUnit=GRU)
     find_analogies('king', 'man', 'woman', we, w2i)
     find_analogies('france', 'paris', 'london', we, w2i)
     find_analogies('france', 'paris', 'rome', we, w2i)

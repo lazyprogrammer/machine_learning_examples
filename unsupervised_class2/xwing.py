@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
 # https://www.udemy.com/unsupervised-deep-learning-in-python
 import numpy as np
 import theano
@@ -7,6 +8,12 @@ import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from util import relu, error_rate, getKaggleMNIST, init_weights
 
+# new additions used to compare purity measure using GMM
+import os
+import sys
+sys.path.append(os.path.abspath('..'))
+from unsupervised_class.kmeans_mnist import purity
+from unsupervised_class.gmm import gmm
 
 class Layer(object):
     def __init__(self, m1, m2):
@@ -102,6 +109,12 @@ def main():
     mapping = dae.map2center(Xtrain)
     plt.scatter(mapping[:,0], mapping[:,1], c=Ytrain, s=100, alpha=0.5)
     plt.show()
+
+    # purity measure from unsupervised machine learning pt 1
+    _, Rfull = gmm(X, 10, max_iter=30)
+    print "full purity:", purity(Y, Rfull)
+    _, Rreduced = plot_k_means(Z, 10, max_iter=30)
+    print "reduced purity:", purity(Y, Rreduced)
 
 
 if __name__ == '__main__':

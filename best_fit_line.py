@@ -45,3 +45,14 @@ print "\ta:", value(a)
 # print "\tb:", value(b)
 print "\tc:", value(c)
 print "\tz:", value(z)
+
+
+# extra part to plot everything
+import numpy as np
+import matplotlib.pyplot as plt
+data = np.array(points)
+plt.scatter(data[:,0], data[:,1])
+x = np.linspace(0, 11, 100)
+y = value(a)*x - value(c)
+plt.plot(x, y)
+plt.show()

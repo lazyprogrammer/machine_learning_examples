@@ -1,4 +1,7 @@
-# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
+# Course URL:
+# https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
+# https://udemy.com/natural-language-processing-with-deep-learning-in-python
+
 # data from https://github.com/aritter/twitter_nlp/blob/master/data/annotated/ner.txt
 # data2 from http://schwa.org/projects/resources/wiki/Wikiner#WikiGold
 

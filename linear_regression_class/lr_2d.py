@@ -1,6 +1,7 @@
 # shows how linear regression analysis can be applied to 2-dimensional data
 #
-# notes for this course can be founda at:
+# notes for this course can be found at:
+# https://deeplearningcourses.com/c/data-science-linear-regression-in-python
 # https://www.udemy.com/data-science-linear-regression-in-python
 
 import numpy as np

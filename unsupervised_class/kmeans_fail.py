@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/cluster-analysis-unsupervised-machine-learning-python
 # https://www.udemy.com/cluster-analysis-unsupervised-machine-learning-python
 import numpy as np
 from kmeans import plot_k_means

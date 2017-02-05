@@ -1,4 +1,6 @@
-# Course URL: https://udemy.com/natural-language-processing-with-deep-learning-in-python
+# Course URL:
+# https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
+# https://udemy.com/natural-language-processing-with-deep-learning-in-python
 import json
 import numpy as np
 import theano
@@ -26,6 +28,8 @@ class Model(object):
     def __init__(self, D, V, context_sz):
         self.D = D # embedding dimension
         self.V = V # vocab size
+        # NOTE: we will look context_sz to the right AND context_sz to the left
+        #       so the total number of targets is 2*context_sz
         self.context_sz = context_sz
 
     def _get_pnw(self, X):
@@ -93,56 +97,58 @@ class Model(object):
 
                 cj = []
                 n = len(x)
-                for jj in xrange(n):
+                # for jj in xrange(n):
+                ########## try one random window per sentence ###########
+                jj = np.random.choice(n)
                 
-                    # do the updates manually
-                    Z = self.W1[x[jj],:] # note: paper uses linear activation function
+                # do the updates manually
+                Z = self.W1[x[jj],:] # note: paper uses linear activation function
 
-                    start = max(0, jj - self.context_sz)
-                    end = min(n, jj + 1 + self.context_sz)
-                    context = np.concatenate([x[start:jj], x[(jj+1):end]])
-                    # NOTE: context can contain DUPLICATES!
-                    # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
-                    context = np.array(list(set(context)), dtype=np.int32)
-                    # print "context:", context
+                start = max(0, jj - self.context_sz)
+                end = min(n, jj + 1 + self.context_sz)
+                context = np.concatenate([x[start:jj], x[(jj+1):end]])
+                # NOTE: context can contain DUPLICATES!
+                # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
+                context = np.array(list(set(context)), dtype=np.int32)
+                # print "context:", context
 
-                    posA = Z.dot(self.W2[:,context])
-                    pos_pY = sigmoid(posA)
+                posA = Z.dot(self.W2[:,context])
+                pos_pY = sigmoid(posA)
 
-                    neg_samples = self._get_negative_samples(context, num_neg_samples)
+                neg_samples = self._get_negative_samples(context, num_neg_samples)
 
-                    # technically can remove this line now but leave for sanity checking
-                    # neg_samples = np.setdiff1d(neg_samples, Y[j])
-                    # print "number of negative samples:", len(neg_samples)
-                    negA = Z.dot(self.W2[:,neg_samples])
-                    neg_pY = sigmoid(-negA)
-                    c = -np.log(pos_pY).sum() - np.log(neg_pY).sum()
-                    cj.append(c / (num_neg_samples + len(context)))
+                # technically can remove this line now but leave for sanity checking
+                # neg_samples = np.setdiff1d(neg_samples, Y[j])
+                # print "number of negative samples:", len(neg_samples)
+                negA = Z.dot(self.W2[:,neg_samples])
+                neg_pY = sigmoid(-negA)
+                c = -np.log(pos_pY).sum() - np.log(neg_pY).sum()
+                cj.append(c / (num_neg_samples + len(context)))
 
-                    # positive samples
-                    pos_err = pos_pY - 1
-                    dW2[:, context] = mu*dW2[:, context] - learning_rate*(np.outer(Z, pos_err) + reg*self.W2[:, context])
+                # positive samples
+                pos_err = pos_pY - 1
+                dW2[:, context] = mu*dW2[:, context] - learning_rate*(np.outer(Z, pos_err) + reg*self.W2[:, context])
 
-                    # negative samples
-                    neg_err = 1 - neg_pY
-                    dW2[:, neg_samples] = mu*dW2[:, neg_samples] - learning_rate*(np.outer(Z, neg_err) + reg*self.W2[:, neg_samples])
+                # negative samples
+                neg_err = 1 - neg_pY
+                dW2[:, neg_samples] = mu*dW2[:, neg_samples] - learning_rate*(np.outer(Z, neg_err) + reg*self.W2[:, neg_samples])
 
-                    self.W2[:, context] += dW2[:, context]
-                    # self.W2[:, context] /= np.linalg.norm(self.W2[:, context], axis=1, keepdims=True)
-                    self.W2[:, neg_samples] += dW2[:, neg_samples]
-                    # self.W2[:, neg_samples] /= np.linalg.norm(self.W2[:, neg_samples], axis=1, keepdims=True)
+                self.W2[:, context] += dW2[:, context]
+                # self.W2[:, context] /= np.linalg.norm(self.W2[:, context], axis=1, keepdims=True)
+                self.W2[:, neg_samples] += dW2[:, neg_samples]
+                # self.W2[:, neg_samples] /= np.linalg.norm(self.W2[:, neg_samples], axis=1, keepdims=True)
 
-                    # input weights
-                    gradW1 = pos_err.dot(self.W2[:, context].T) + neg_err.dot(self.W2[:, neg_samples].T)
-                    dW1[x[jj], :] = mu*dW1[x[jj], :] - learning_rate*(gradW1 + reg*self.W1[x[jj], :])
+                # input weights
+                gradW1 = pos_err.dot(self.W2[:, context].T) + neg_err.dot(self.W2[:, neg_samples].T)
+                dW1[x[jj], :] = mu*dW1[x[jj], :] - learning_rate*(gradW1 + reg*self.W1[x[jj], :])
 
-                    self.W1[x[jj], :] += dW1[x[jj], :]
-                    # self.W1[x[jj], :] /= np.linalg.norm(self.W1[x[jj], :])
+                self.W1[x[jj], :] += dW1[x[jj], :]
+                # self.W1[x[jj], :] /= np.linalg.norm(self.W1[x[jj], :])
 
                 cj = np.mean(cj)
                 cost_per_epoch_i.append(cj)
                 costs.append(cj)
-                if it % 100 == 0:
+                if it % 500 == 0:
                     sys.stdout.write("epoch: %d j: %d/ %d cost: %f\r" % (i, it, N, cj))
                     sys.stdout.flush()
 
@@ -220,18 +226,33 @@ class Model(object):
 
                 cj = []
                 n = len(x)
-                for jj in xrange(n):
+                # for jj in xrange(n):
 
-                    start = max(0, jj - self.context_sz)
-                    end = min(n, jj + 1 + self.context_sz)
-                    context = np.concatenate([x[start:jj], x[(jj+1):end]])
-                    # NOTE: context can contain DUPLICATES!
-                    # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
-                    context = np.array(list(set(context)), dtype=np.int32)
-                    neg_samples = self._get_negative_samples(context, num_neg_samples)
+                #     start = max(0, jj - self.context_sz)
+                #     end = min(n, jj + 1 + self.context_sz)
+                #     context = np.concatenate([x[start:jj], x[(jj+1):end]])
+                #     # NOTE: context can contain DUPLICATES!
+                #     # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
+                #     context = np.array(list(set(context)), dtype=np.int32)
+                #     neg_samples = self._get_negative_samples(context, num_neg_samples)
 
-                    c = train_op(x[jj], context, neg_samples)
-                    cj.append(c / (num_neg_samples + len(context)))
+                #     c = train_op(x[jj], context, neg_samples)
+                #     cj.append(c / (num_neg_samples + len(context)))
+
+                ########## try one random window per sentence ###########
+                jj = np.random.choice(n)
+                start = max(0, jj - self.context_sz)
+                end = min(n, jj + 1 + self.context_sz)
+                context = np.concatenate([x[start:jj], x[(jj+1):end]])
+                # NOTE: context can contain DUPLICATES!
+                # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
+                context = np.array(list(set(context)), dtype=np.int32)
+                neg_samples = self._get_negative_samples(context, num_neg_samples)
+
+                c = train_op(x[jj], context, neg_samples)
+                cj.append(c / (num_neg_samples + len(context)))
+                #########################################################
+
 
                 cj = np.mean(cj)
                 cost_per_epoch_i.append(cj)
@@ -266,8 +287,8 @@ def main():
         json.dump(word2idx, f)
 
     V = len(word2idx)
-    model = Model(80, V, 10)
-    model.fitt(sentences, learning_rate=10e-4, mu=0, epochs=5)
+    model = Model(50, V, 5)
+    model.fit(sentences, learning_rate=10e-4, mu=0, epochs=300, num_neg_samples=5)
     model.save('w2v_model.npz')
 
 

@@ -1,4 +1,5 @@
 # Naive Bayes spam detection for NLP class, which can be found at:
+# https://deeplearningcourses.com/c/data-science-natural-language-processing-in-python
 # https://www.udemy.com/data-science-natural-language-processing-in-python
 # dataset: https://archive.ics.uci.edu/ml/datasets/Spambase
 

@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 # https://udemy.com/deep-learning-convolutional-neural-networks-theano-tensorflow
 
 import numpy as np
@@ -27,7 +28,7 @@ def convolve2d(X, W):
 #     Y = np.zeros((n1 + m1 - 1, n2 + m2 - 1))
 #     for i in xrange(n1):
 #         for j in xrange(n2):
-#             Y[i:i+m1,j:j+m1] += X[i,j]*W
+#             Y[i:i+m1,j:j+m2] += X[i,j]*W
 #     print "elapsed time:", (datetime.now() - t0)
 #     return Y
 
@@ -38,7 +39,7 @@ def convolve2d(X, W):
 #     Y = np.zeros((n1 + m1 - 1, n2 + m2 - 1))
 #     for i in xrange(n1):
 #         for j in xrange(n2):
-#             Y[i:i+m1,j:j+m1] += X[i,j]*W
+#             Y[i:i+m1,j:j+m2] += X[i,j]*W
 #     ret = Y[m1/2:-m1/2+1,m2/2:-m2/2+1]
 #     assert(ret.shape == X.shape)
 #     return ret
@@ -50,7 +51,7 @@ def convolve2d(X, W):
 #     Y = np.zeros((n1 + m1 - 1, n2 + m2 - 1))
 #     for i in xrange(n1):
 #         for j in xrange(n2):
-#             Y[i:i+m1,j:j+m1] += X[i,j]*W
+#             Y[i:i+m1,j:j+m2] += X[i,j]*W
 #     ret = Y[m1-1:-m1+1,m2-1:-m2+1]
 #     return ret
 

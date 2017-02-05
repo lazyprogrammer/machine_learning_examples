@@ -1,17 +1,10 @@
-# notes for this course can be founda at:
+# notes for this course can be found at:
+# https://deeplearningcourses.com/c/data-science-linear-regression-in-python
 # https://www.udemy.com/data-science-linear-regression-in-python
 
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-# make up some data and plot it
-N = 100
-X = np.linspace(0, 6*np.pi, N)
-Y = np.sin(X)
-
-plt.plot(X, Y)
-plt.show()
 
 
 def make_poly(X, deg):
@@ -47,9 +40,6 @@ def fit_and_display(X, Y, sample, deg):
     plt.scatter(Xtrain, Ytrain)
     plt.title("deg = %d" % deg)
     plt.show()
-
-for deg in (5, 6, 7, 8, 9):
-    fit_and_display(X, Y, 10, deg)
 
 
 def get_mse(Y, Yhat):
@@ -92,4 +82,15 @@ def plot_train_vs_test_curves(X, Y, sample=20, max_deg=20):
     plt.legend()
     plt.show()
 
-plot_train_vs_test_curves(X, Y)
+if __name__ == "__main__":
+    # make up some data and plot it
+    N = 100
+    X = np.linspace(0, 6*np.pi, N)
+    Y = np.sin(X)
+
+    plt.plot(X, Y)
+    plt.show()
+
+    for deg in (5, 6, 7, 8, 9):
+        fit_and_display(X, Y, 10, deg)
+    plot_train_vs_test_curves(X, Y)

@@ -1,6 +1,7 @@
 # generates 1-dimensional polynomial data for linear regression analysis
 #
-# notes for this course can be founda at:
+# notes for this course can be found at:
+# https://deeplearningcourses.com/c/data-science-linear-regression-in-python
 # https://www.udemy.com/data-science-linear-regression-in-python
 
 

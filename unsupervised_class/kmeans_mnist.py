@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/cluster-analysis-unsupervised-machine-learning-python
 # https://www.udemy.com/cluster-analysis-unsupervised-machine-learning-python
 
 # data is from https://www.kaggle.com/c/digit-recognizer

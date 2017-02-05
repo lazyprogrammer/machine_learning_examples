@@ -67,7 +67,7 @@ for i in xrange(10000):
 
     # gradient descent
     W2 -= learning_rate*Ztrain.T.dot(pYtrain - Ytrain_ind)
-    b2 -= learning_rate*(pYtrain - Ytrain_ind).sum()
+    b2 -= learning_rate*(pYtrain - Ytrain_ind).sum(axis=0)
     dZ = (pYtrain - Ytrain_ind).dot(W2.T) * (1 - Ztrain*Ztrain)
     W1 -= learning_rate*Xtrain.T.dot(dZ)
     b1 -= learning_rate*dZ.sum(axis=0)

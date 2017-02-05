@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/data-science-linear-regression-in-python
 # need to sudo pip install xlrd to use pd.read_excel
 # data is from:
 # http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/mlr02.html

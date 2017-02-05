@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/cluster-analysis-unsupervised-machine-learning-python
 # https://www.udemy.com/cluster-analysis-unsupervised-machine-learning-python
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,6 +29,11 @@ def gmm(X, K, max_iter=20, smoothing=10e-3):
         for k in xrange(K):
             for n in xrange(N):
                 R[n,k] = weighted_pdfs[n,k] / weighted_pdfs[n,:].sum()
+
+        # a faster way to do step 1: "vectorization"
+        # for k in xrange(K):
+        #     weighted_pdfs[:,k] = pi[k]*multivariate_normal.pdf(X, M[k], C[k])
+        # R = weighted_pdfs / weighted_pdfs.sum(axis=1, keepdims=True)
 
         # step 2: recalculate params
         for k in xrange(K):

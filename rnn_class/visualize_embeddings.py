@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
 import json
 import numpy as np

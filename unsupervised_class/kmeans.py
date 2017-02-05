@@ -1,3 +1,4 @@
+# https://deeplearningcourses.com/c/cluster-analysis-unsupervised-machine-learning-python
 # https://www.udemy.com/cluster-analysis-unsupervised-machine-learning-python
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,7 +26,8 @@ def cost(X, R, M):
 def plot_k_means(X, K, max_iter=20, beta=1.0, show_plots=True):
     N, D = X.shape
     M = np.zeros((K, D))
-    R = np.zeros((N, K))
+    # R = np.zeros((N, K))
+    exponents = np.empty((N, K))
 
     # initialize M to random
     for k in xrange(K):
@@ -37,7 +39,11 @@ def plot_k_means(X, K, max_iter=20, beta=1.0, show_plots=True):
         # is this inefficient?
         for k in xrange(K):
             for n in xrange(N):
-                R[n,k] = np.exp(-beta*d(M[k], X[n])) / np.sum( np.exp(-beta*d(M[j], X[n])) for j in xrange(K) )
+                # R[n,k] = np.exp(-beta*d(M[k], X[n])) / np.sum( np.exp(-beta*d(M[j], X[n])) for j in xrange(K) )
+                exponents[n,k] = np.exp(-beta*d(M[k], X[n]))
+
+        R = exponents / exponents.sum(axis=1, keepdims=True)
+        # assert(np.abs(R - R2).sum() < 10e-10)
 
         # step 2: recalculate means
         for k in xrange(K):

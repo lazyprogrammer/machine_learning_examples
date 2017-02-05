@@ -1,5 +1,5 @@
 # Vanilla deep network
-
+# https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 # https://udemy.com/deep-learning-convolutional-neural-networks-theano-tensorflow
 
 import numpy as np

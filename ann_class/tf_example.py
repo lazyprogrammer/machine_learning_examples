@@ -1,6 +1,7 @@
 # neural network in TensorFlow very simple example.
 #
 # the notes for this class can be found at: 
+# https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 # https://www.udemy.com/data-science-deep-learning-in-python
 
 import tensorflow as tf
@@ -52,7 +53,7 @@ b2 = init_weights([K])
 
 py_x = forward(tfX, W1, b1, W2, b2)
 
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, T)) # compute costs
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, tfY)) # compute costs
 # WARNING: This op expects unscaled logits,
 # since it performs a softmax on logits
 # internally for efficiency.

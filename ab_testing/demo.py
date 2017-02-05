@@ -1,4 +1,5 @@
 # From the course: Bayesin Machine Learning in Python: A/B Testing
+# https://deeplearningcourses.com/c/bayesian-machine-learning-in-python-ab-testing
 # https://www.udemy.com/bayesian-machine-learning-in-python-ab-testing
 import numpy as np
 import matplotlib.pyplot as plt

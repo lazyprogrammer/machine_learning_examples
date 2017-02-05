@@ -1,4 +1,5 @@
 # This code is for my NLP Udemy class, which can be found at:
+# https://deeplearningcourses.com/c/data-science-natural-language-processing-in-python
 # https://www.udemy.com/data-science-natural-language-processing-in-python
 # It is written in such a way that tells a story.
 # i.e. So you can follow a thought process of starting from a
