@@ -99,6 +99,7 @@ def gradb(t, y):
 
 def y2indicator(y):
     N = len(y)
+    y = y.astype(np.int32)
     ind = np.zeros((N, 10))
     for i in xrange(N):
         ind[i, y[i]] = 1
