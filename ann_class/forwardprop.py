@@ -29,8 +29,11 @@ b1 = np.random.randn(M)
 W2 = np.random.randn(M, K)
 b2 = np.random.randn(K)
 
+def sigmoid(a):
+    return 1 / (1 + np.exp(-a))
+
 def forward(X, W1, b1, W2, b2):
-    Z = 1 / (1 + np.exp(-X.dot(W1) - b1))
+    Z = sigmoid(X.dot(W1) + b1)
     A = Z.dot(W2) + b2
     expA = np.exp(A)
     Y = expA / expA.sum(axis=1, keepdims=True)

@@ -55,3 +55,6 @@ https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-pyt
 
 Advanced Natural Language Processing: Deep Learning in Python
 https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
+
+Artificial Intelligence: Reinforcement Learning in Python
+https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python

@@ -70,7 +70,7 @@ def main():
     # softmax_cross_entropy_with_logits take in the "logits"
     # if you wanted to know the actual output of the neural net,
     # you could pass "Yish" into tf.nn.softmax(logits)
-    cost = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(Yish, T))
+    cost = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(logits=Yish, labels=T))
 
     # we choose the optimizer but don't implement the algorithm ourselves
     # let's go with RMSprop, since we just learned about it.
