@@ -51,9 +51,14 @@ b1 = init_weights([M])
 W2 = init_weights([M, K])
 b2 = init_weights([K])
 
-py_x = forward(tfX, W1, b1, W2, b2)
+logits = forward(tfX, W1, b1, W2, b2)
 
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, tfY)) # compute costs
+cost = tf.reduce_mean(
+  tf.nn.softmax_cross_entropy_with_logits(
+    labels=tfY,
+    logits=logits
+  )
+) # compute costs
 # WARNING: This op expects unscaled logits,
 # since it performs a softmax on logits
 # internally for efficiency.
@@ -63,7 +68,7 @@ cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, tfY)) # comp
 train_op = tf.train.GradientDescentOptimizer(0.05).minimize(cost) # construct an optimizer
 # input parameter is the learning rate
 
-predict_op = tf.argmax(py_x, 1)
+predict_op = tf.argmax(logits, 1)
 # input parameter is the axis on which to choose the max
 
 # just stuff that has to be done
@@ -74,6 +79,6 @@ sess.run(init)
 for i in range(1000):
     sess.run(train_op, feed_dict={tfX: X, tfY: T})
     pred = sess.run(predict_op, feed_dict={tfX: X, tfY: T})
-    if i % 10 == 0:
-        print np.mean(Y == pred)
+    if i % 100 == 0:
+        print "Accuracy:", np.mean(Y == pred)
 
