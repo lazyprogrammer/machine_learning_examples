@@ -81,7 +81,7 @@ def main():
     predict_op = tf.argmax(Yish, 1)
 
     LL = []
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
     with tf.Session() as session:
         session.run(init)
 

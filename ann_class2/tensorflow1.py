@@ -51,7 +51,7 @@ x = tf.Variable(tf.random_normal(shape))
 t = tf.Variable(0) # a scalar
 
 # you need to "initialize" the variables first
-init = tf.initialize_all_variables()
+init = tf.global_variables_initializer()
 
 with tf.Session() as session:
     out = session.run(init) # and then "run" the init operation
@@ -72,7 +72,7 @@ cost = u*u + u + 1.0
 train_op = tf.train.GradientDescentOptimizer(0.3).minimize(cost)
 
 # let's run a session again
-init = tf.initialize_all_variables()
+init = tf.global_variables_initializer()
 with tf.Session() as session:
     session.run(init)
 

@@ -59,7 +59,7 @@ class TFLogistic:
     train_op = tf.train.MomentumOptimizer(lr, momentum=mu).minimize(cost)
 
     costs = []
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
     with tf.Session() as session:
         session.run(init)
 

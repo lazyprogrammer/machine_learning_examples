@@ -130,7 +130,12 @@ def main():
     Z3 = tf.nn.relu( tf.matmul(Z2r, W3) + b3 )
     Yish = tf.matmul(Z3, W4) + b4
 
-    cost = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(Yish, T))
+    cost = tf.reduce_sum(
+        tf.nn.softmax_cross_entropy_with_logits(
+            logits=Yish,
+            labels=T
+        )
+    )
 
     train_op = tf.train.RMSPropOptimizer(0.0001, decay=0.99, momentum=0.9).minimize(cost)
 
@@ -139,7 +144,7 @@ def main():
 
     t0 = datetime.now()
     LL = []
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
     with tf.Session() as session:
         session.run(init)
 

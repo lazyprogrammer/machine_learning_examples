@@ -5,8 +5,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # from tensorflow.python.ops import rnn as rnn_module
-from tensorflow.python.ops.rnn import rnn as get_rnn_output
-from tensorflow.python.ops.rnn_cell import BasicRNNCell, GRUCell
+
+######## This only works for pre-1.0 versions ##########
+# from tensorflow.python.ops.rnn import rnn as get_rnn_output
+# from tensorflow.python.ops.rnn_cell import BasicRNNCell, GRUCell
+########################################################
+
+########## This works for TensorFlow v1.0 ##############
+from tensorflow.contrib.rnn import static_rnn as get_rnn_output
+from tensorflow.contrib.rnn import BasicRNNCell, GRUCell
+########################################################
+
 from sklearn.utils import shuffle
 from util import init_weight, all_parity_pairs_with_sequence_labels, all_parity_pairs
 
@@ -17,7 +26,8 @@ def x2sequence(x, T, D, batch_sz):
   # Reshaping to (n_steps*batch_size, n_input)
   x = tf.reshape(x, (T*batch_sz, D))
   # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
-  x = tf.split(0, T, x)
+  # x = tf.split(0, T, x) # v0.1
+  x = tf.split(x, T) # v1.0
   # print "type(x):", type(x)
   return x
 
@@ -66,13 +76,18 @@ class SimpleRNN:
     predict_op = tf.argmax(logits, 1)
     targets = tf.reshape(tfY, (T*batch_sz,))
 
-    cost_op = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, targets))
+    cost_op = tf.reduce_mean(
+      tf.nn.sparse_softmax_cross_entropy_with_logits(
+        logits=logits,
+        labels=targets
+      )
+    )
     train_op = tf.train.MomentumOptimizer(learning_rate, momentum=mu).minimize(cost_op)
 
     costs = []
     n_batches = N / batch_sz
     
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
     with tf.Session() as session:
       session.run(init)
       for i in xrange(epochs):

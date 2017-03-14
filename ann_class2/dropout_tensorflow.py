@@ -60,13 +60,18 @@ class ANN(object):
         labels = tf.placeholder(tf.int64, shape=(None,), name='labels')
         logits = self.forward(inputs)
 
-        cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
+        cost = tf.reduce_mean(
+            tf.nn.sparse_softmax_cross_entropy_with_logits(
+                logits=logits,
+                labels=labels
+            )
+        )
         train_op = tf.train.RMSPropOptimizer(lr, decay=decay, momentum=mu).minimize(cost)
         prediction = self.predict(inputs)
 
         n_batches = N / batch_sz
         costs = []
-        init = tf.initialize_all_variables()
+        init = tf.global_variables_initializer()
         with tf.Session() as session:
             session.run(init)
             for i in xrange(epochs):

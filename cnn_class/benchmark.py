@@ -106,7 +106,7 @@ def main():
 
     t0 = datetime.now()
     LL = []
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
     with tf.Session() as session:
         session.run(init)
 
