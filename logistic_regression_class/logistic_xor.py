@@ -24,8 +24,8 @@ T = np.array([0, 1, 1, 0])
 ones = np.ones((N, 1))
 
 # add a column of xy = x*y
-xy = np.matrix(X[:,0] * X[:,1]).T
-Xb = np.array(np.concatenate((ones, xy, X), axis=1))
+xy = (X[:,0] * X[:,1]).reshape(N, 1)
+Xb = np.concatenate((ones, xy, X), axis=1)
 
 # randomly initialize the weights
 w = np.random.randn(D + 2)
@@ -60,7 +60,6 @@ for i in xrange(10000):
         print e
 
     # gradient descent weight udpate with regularization
-    # w += learning_rate * ( np.dot((T - Y).T, Xb) - 0.01*w )
     w += learning_rate * ( Xb.T.dot(T - Y) - 0.01*w )
 
     # recalculate Y
