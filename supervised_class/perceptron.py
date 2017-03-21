@@ -100,6 +100,7 @@ if __name__ == '__main__':
     print ""
     print "XOR results:"
     X, Y = get_simple_xor()
+    Y[Y == 0] = -1
     model.fit(X, Y)
     print "XOR accuracy:", model.score(X, Y)
 
