@@ -88,7 +88,7 @@ def main():
         outputs=[cost, prediction],
     )
 
-    LL = []
+    costs = []
     for i in xrange(max_iter):
         for j in xrange(n_batches):
             Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
@@ -99,9 +99,9 @@ def main():
                 cost_val, prediction_val = get_prediction(Xtest, Ytest_ind)
                 err = error_rate(prediction_val, Ytest)
                 print "Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, cost_val, err)
-                LL.append(cost_val)
+                costs.append(cost_val)
 
-    plt.plot(LL)
+    plt.plot(costs)
     plt.show()
 
     # how would you incorporate momentum into the gradient descent procedure?
