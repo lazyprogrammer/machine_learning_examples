@@ -58,3 +58,7 @@ https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning
 
 Artificial Intelligence: Reinforcement Learning in Python
 https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
+
+Advanced AI: Deep Reinforcement Learning in Python
+https://deeplearningcourses.com/c/deep-reinforcement-learning-in-python
+
