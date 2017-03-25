@@ -140,6 +140,8 @@ class DQN:
   def add_experience(self, s, a, r, s2):
     if len(self.experience) >= self.max_experiences:
       self.experience.pop(0)
+    if len(s) != 4 or len(s2) != 4:
+      print("BAD STATE")
     self.experience.append((s, a, r, s2))
 
   def sample_action(self, x, eps):
@@ -191,8 +193,9 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
       reward = -200
 
     # update the model
-    model.add_experience(prev_state, action, reward, state)
-    model.train(tmodel)
+    if len(state) == 4 and len(prev_state) == 4:
+      model.add_experience(prev_state, action, reward, state)
+      model.train(tmodel)
 
     iters += 1
     eps = max(eps - eps_step, 0.1)
