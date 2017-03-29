@@ -3,6 +3,10 @@
 # the notes for this class can be found at: 
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 # https://www.udemy.com/data-science-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import tensorflow as tf
 import numpy as np
@@ -29,7 +33,7 @@ plt.show()
 N = len(Y)
 # turn Y into an indicator matrix for training
 T = np.zeros((N, K))
-for i in xrange(N):
+for i in range(N):
     T[i, Y[i]] = 1
 
 
@@ -73,12 +77,12 @@ predict_op = tf.argmax(logits, 1)
 
 # just stuff that has to be done
 sess = tf.Session()
-init = tf.initialize_all_variables()
+init = tf.global_variables_initializer()
 sess.run(init)
 
 for i in range(1000):
     sess.run(train_op, feed_dict={tfX: X, tfY: T})
     pred = sess.run(predict_op, feed_dict={tfX: X, tfY: T})
     if i % 100 == 0:
-        print "Accuracy:", np.mean(Y == pred)
+        print("Accuracy:", np.mean(Y == pred))
 
