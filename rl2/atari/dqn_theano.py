@@ -257,8 +257,6 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
     update_state(state, observation)
 
     totalreward += reward
-    if done:
-      reward = -200
 
     # update the model
     if len(state) == 4 and len(prev_state) == 4:
