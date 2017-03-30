@@ -13,7 +13,8 @@ import os
 import sys
 sys.path.append(os.path.abspath('..'))
 from unsupervised_class.kmeans_mnist import purity
-from unsupervised_class.gmm import gmm
+# from unsupervised_class.gmm import gmm
+from sklearn.mixture import GaussianMixture
 
 class Layer(object):
     def __init__(self, m1, m2):
@@ -111,10 +112,14 @@ def main():
     plt.show()
 
     # purity measure from unsupervised machine learning pt 1
-    _, Rfull = gmm(X, 10, max_iter=30)
-    print "full purity:", purity(Y, Rfull)
-    _, Rreduced = plot_k_means(Z, 10, max_iter=30)
-    print "reduced purity:", purity(Y, Rreduced)
+    gmm = GaussianMixture(n_components=10)
+    gmm.fit(Xtrain)
+    responsibilities_full = gmm.predict_proba(Xtrain)
+    print "full purity:", purity(Ytrain, responsibilities_full)
+
+    gmm.fit(mapping)
+    responsibilities_reduced = gmm.predict_proba(mapping)
+    print "reduced purity:", purity(Ytrain, responsibilities_reduced)
 
 
 if __name__ == '__main__':

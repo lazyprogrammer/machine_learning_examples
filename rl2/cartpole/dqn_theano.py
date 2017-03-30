@@ -98,7 +98,7 @@ class DQN:
     )
 
     # create replay memory
-    self.experience = {'s': [], 'a': [], 'r': [], 's2': []}
+    self.experience = {'s': [], 'a': [], 'r': [], 's2': [], 'done': []}
     self.max_experiences = max_experiences
     self.min_experiences = min_experiences
     self.batch_sz = batch_sz
@@ -129,22 +129,25 @@ class DQN:
     actions = [self.experience['a'][i] for i in idx]
     rewards = [self.experience['r'][i] for i in idx]
     next_states = [self.experience['s2'][i] for i in idx]
+    dones = [self.experience['done'][i] for i in idx]
     next_Q = np.max(target_network.predict(next_states), axis=1)
-    targets = [r + self.gamma*next_q for r, next_q in zip(rewards, next_Q)]
+    targets = [r + self.gamma*next_q if not done else r for r, next_q, done in zip(rewards, next_Q, dones)]
 
     # call optimizer
     self.train_op(states, targets, actions)
 
-  def add_experience(self, s, a, r, s2):
+  def add_experience(self, s, a, r, s2, done):
     if len(self.experience['s']) >= self.max_experiences:
       self.experience['s'].pop(0)
       self.experience['a'].pop(0)
       self.experience['r'].pop(0)
       self.experience['s2'].pop(0)
+      self.experience['done'].pop(0)
     self.experience['s'].append(s)
     self.experience['a'].append(a)
     self.experience['r'].append(r)
     self.experience['s2'].append(s2)
+    self.experience['done'].append(done)
 
   def sample_action(self, x, eps):
     if np.random.random() < eps:
@@ -171,7 +174,7 @@ def play_one(env, model, tmodel, eps, gamma, copy_period):
       reward = -200
 
     # update the model
-    model.add_experience(prev_observation, action, reward, observation)
+    model.add_experience(prev_observation, action, reward, observation, done)
     model.train(tmodel)
 
     iters += 1
