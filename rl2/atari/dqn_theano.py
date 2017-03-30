@@ -5,6 +5,7 @@ from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
+import copy
 import gym
 import os
 import sys
@@ -210,6 +211,11 @@ class DQN:
       self.experience.pop(0)
     if len(s) != 4 or len(s2) != 4:
       print("BAD STATE")
+
+    # make copies
+    s = copy.copy(s)
+    s2 = copy.copy(s2)
+
     self.experience.append((s, a, r, s2, done))
 
   def sample_action(self, x, eps):
