@@ -25,4 +25,5 @@ if __name__ == '__main__':
     # main(Model=TSNE)
 
     # D=80, M=80
-    main(we_file='gru_nonorm_part1_word_embeddings.npy', w2i_file='gru_nonorm_part1_wikipedia_word2idx.json', Model=TSNE)
+    # main(we_file='gru_nonorm_part1_word_embeddings.npy', w2i_file='gru_nonorm_part1_wikipedia_word2idx.json', Model=TSNE)
+    main(we_file='working_files/batch_gru_word_embeddings.npy', w2i_file='working_files/batch_wikipedia_word2idx.json', Model=TSNE)

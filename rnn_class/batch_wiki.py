@@ -12,6 +12,7 @@ from sklearn.utils import shuffle
 from batch_gru import GRU
 # from batch_lstm import LSTM
 from util import init_weight, get_wikipedia_data
+from brown import get_sentences_with_word2idx_limit_vocab
 
 
 class RNN:
@@ -125,11 +126,14 @@ class RNN:
 
 def train_wikipedia(we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.json', RecurrentUnit=GRU):
     # there are 32 files
-    sentences, word2idx = get_wikipedia_data(n_files=10, n_vocab=2000)
+    ### note: you can pick between Wikipedia data and Brown corpus
+    ###       just comment one out, and uncomment the other!
+    # sentences, word2idx = get_wikipedia_data(n_files=100, n_vocab=2000)
+    sentences, word2idx = get_sentences_with_word2idx_limit_vocab()
     print "finished retrieving data"
     print "vocab size:", len(word2idx), "number of sentences:", len(sentences)
     rnn = RNN(30, [30], len(word2idx))
-    rnn.fit(sentences, learning_rate=2*10e-5, epochs=10, show_fig=True, activation=T.nnet.relu)
+    rnn.fit(sentences, learning_rate=2*1e-4, epochs=10, show_fig=True, activation=T.nnet.relu)
 
     np.save(we_file, rnn.We.get_value())
     with open(w2i_file, 'w') as f:

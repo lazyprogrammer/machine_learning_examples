@@ -21,7 +21,7 @@ class RNN:
         self.D = D
         self.V = V
 
-    def fit(self, X, learning_rate=10e-5, mu=0.99, epochs=10, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU, normalize=True):
+    def fit(self, X, learning_rate=1e-5, mu=0.99, epochs=10, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU, normalize=True):
         D = self.D
         V = self.V
         N = len(X)
@@ -139,7 +139,7 @@ def train_wikipedia(we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.
     print "finished retrieving data"
     print "vocab size:", len(word2idx), "number of sentences:", len(sentences)
     rnn = RNN(30, [30], len(word2idx))
-    rnn.fit(sentences, learning_rate=10e-6, epochs=10, show_fig=True, activation=T.nnet.relu)
+    rnn.fit(sentences, learning_rate=1e-5, epochs=10, show_fig=True, activation=T.nnet.relu)
 
     np.save(we_file, rnn.We.get_value())
     with open(w2i_file, 'w') as f:
