@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 from sklearn.utils import shuffle
-from word2vec import get_wikipedia_data, find_analogies
+from word2vec import get_wikipedia_data, find_analogies, get_sentences_with_word2idx_limit_vocab
 
 # Experiments
 # previous results did not make sense b/c X was built incorrectly
@@ -260,8 +260,11 @@ class Glove:
         np.savez(fn, *arrays)
 
 
-def main(we_file, w2i_file, n_files=50):
-    cc_matrix = "cc_matrix_%s.npy" % n_files
+def main(we_file, w2i_file, use_brown=True, n_files=50):
+    if use_brown:
+        cc_matrix = "cc_matrix_brown.npy"
+    else:
+        cc_matrix = "cc_matrix_%s.npy" % n_files
 
     # hacky way of checking if we need to re-load the raw data or not
     # remember, only the co-occurrence matrix is needed for training
@@ -270,7 +273,19 @@ def main(we_file, w2i_file, n_files=50):
             word2idx = json.load(f)
         sentences = [] # dummy - we won't actually use it
     else:
-        sentences, word2idx = get_wikipedia_data(n_files=n_files, n_vocab=2000)
+        if use_brown:
+            keep_words = set([
+                'king', 'man', 'woman',
+                'france', 'paris', 'london', 'rome', 'italy', 'britain', 'england',
+                'french', 'english', 'japan', 'japanese', 'chinese', 'italian',
+                'australia', 'australian', 'december', 'november', 'june',
+                'january', 'february', 'march', 'april', 'may', 'july', 'august',
+                'september', 'october',
+            ])
+            sentences, word2idx = get_sentences_with_word2idx_limit_vocab(keep_words=keep_words)
+        else:
+            sentences, word2idx = get_wikipedia_data(n_files=n_files, n_vocab=2000)
+        
         with open(w2i_file, 'w') as f:
             json.dump(word2idx, f)
 
@@ -282,17 +297,19 @@ def main(we_file, w2i_file, n_files=50):
         cc_matrix=cc_matrix,
         learning_rate=3*10e-5,
         reg=0.01,
-        epochs=2000,
-        gd=True,
-        use_theano=True
+        epochs=10,
+        gd=False,
+        use_theano=False
     ) # gradient descent
     model.save(we_file)
 
 
 if __name__ == '__main__':
-    we = 'glove_model_50.npz'
-    w2i = 'glove_word2idx_50.json'
-    main(we, w2i)
+    # we = 'glove_model_50.npz'
+    # w2i = 'glove_word2idx_50.json'
+    we = 'glove_model_brown.npz'
+    w2i = 'glove_word2idx_brown.json'
+    main(we, w2i, use_brown=True)
     for concat in (True, False):
         print "** concat:", concat
         find_analogies('king', 'man', 'woman', concat, we, w2i)

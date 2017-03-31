@@ -1,6 +1,12 @@
 from nltk.corpus import brown
 import operator
 
+KEEP_WORDS = set([
+  'king', 'man', 'queen', 'woman',
+  'italy', 'rome', 'france', 'paris',
+  'london', 'britain', 'england',
+])
+
 
 def get_sentences():
   # returns 57340 of the Brown corpus
@@ -29,7 +35,7 @@ def get_sentences_with_word2idx():
   return indexed_sentences, word2idx
 
 
-def get_sentences_with_word2idx_limit_vocab(n_vocab=2000):
+def get_sentences_with_word2idx_limit_vocab(n_vocab=2000, keep_words=KEEP_WORDS):
   sentences = get_sentences()
   indexed_sentences = []
 
@@ -65,14 +71,8 @@ def get_sentences_with_word2idx_limit_vocab(n_vocab=2000):
   # set all the words I want to keep to infinity
   # so that they are included when I pick the most
   # common words
-  word_idx_count[word2idx['king']] = float('inf')
-  word_idx_count[word2idx['queen']] = float('inf')
-  word_idx_count[word2idx['man']] = float('inf')
-  word_idx_count[word2idx['woman']] = float('inf')
-  word_idx_count[word2idx['italy']] = float('inf')
-  word_idx_count[word2idx['rome']] = float('inf')
-  word_idx_count[word2idx['france']] = float('inf')
-  word_idx_count[word2idx['paris']] = float('inf')
+  for word in keep_words:
+    word_idx_count[word2idx[word]] = float('inf')
 
   sorted_word_idx_count = sorted(word_idx_count.items(), key=operator.itemgetter(1), reverse=True)
   word2idx_small = {}
@@ -90,14 +90,8 @@ def get_sentences_with_word2idx_limit_vocab(n_vocab=2000):
 
   assert('START' in word2idx_small)
   assert('END' in word2idx_small)
-  assert('king' in word2idx_small)
-  assert('queen' in word2idx_small)
-  assert('man' in word2idx_small)
-  assert('woman' in word2idx_small)
-  assert('italy' in word2idx_small)
-  assert('rome' in word2idx_small)
-  assert('france' in word2idx_small)
-  assert('paris' in word2idx_small)
+  for word in keep_words:
+    assert(word in word2idx_small)
 
   # map old idx to new idx
   sentences_small = []
