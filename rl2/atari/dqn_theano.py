@@ -24,8 +24,11 @@ if '../cartpole' not in sys.path:
 from q_learning_bins import plot_running_avg
 
 # constants
-IM_WIDTH = 80
-IM_HEIGHT = 80
+IM_WIDTH = 84
+IM_HEIGHT = 84
+
+# globals
+global_step = 0
 
 
 def init_filter(shape):
@@ -177,16 +180,11 @@ class DQN:
     self.gamma = gamma
 
   def copy_from(self, other):
-    # collect all the ops
-    ops = []
     my_params = self.params
     other_params = other.params
     for p, q in zip(my_params, other_params):
-      actual = self.session.run(q)
-      op = p.assign(actual)
-      ops.append(op)
-    # now run them all
-    self.session.run(ops)
+      actual = q.get_value()
+      p.set_value(actual)
 
   def predict(self, X):
     return self.predict_op(X)
@@ -234,6 +232,8 @@ def update_state(state, observation):
 
 
 def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
+  global global_step
+
   observation = env.reset()
   done = False
   totalreward = 0
@@ -272,8 +272,9 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
     iters += 1
     eps = max(eps - eps_step, 0.1)
 
-    if iters % copy_period == 0:
+    if global_step % copy_period == 0:
       tmodel.copy_from(model)
+    global_step += 1
 
   return totalreward, eps, iters
 

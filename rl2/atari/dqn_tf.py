@@ -22,8 +22,11 @@ if '../cartpole' not in sys.path:
 from q_learning_bins import plot_running_avg
 
 # constants
-IM_WIDTH = 80
-IM_HEIGHT = 80
+IM_WIDTH = 84
+IM_HEIGHT = 84
+
+# globals
+global_step = 0
 
 
 def downsample_image(A):
@@ -83,11 +86,11 @@ class DQN:
       )
 
       cost = tf.reduce_sum(tf.square(self.G - selected_action_values))
-      # self.train_op = tf.train.AdamOptimizer(10e-3).minimize(cost)
-      # self.train_op = tf.train.AdagradOptimizer(10e-3).minimize(cost)
+      # self.train_op = tf.train.AdamOptimizer(1e-2).minimize(cost)
+      # self.train_op = tf.train.AdagradOptimizer(1e-2).minimize(cost)
       self.train_op = tf.train.RMSPropOptimizer(2.5e-4, decay=0.99, epsilon=10e-3).minimize(cost)
-      # self.train_op = tf.train.MomentumOptimizer(10e-4, momentum=0.9).minimize(cost)
-      # self.train_op = tf.train.GradientDescentOptimizer(10e-5).minimize(cost)
+      # self.train_op = tf.train.MomentumOptimizer(1e-3, momentum=0.9).minimize(cost)
+      # self.train_op = tf.train.GradientDescentOptimizer(1e-4).minimize(cost)
 
     # create replay memory
     self.experience = []
@@ -104,7 +107,7 @@ class DQN:
 
     ops = []
     for p, q in zip(mine, theirs):
-      actual = session.run(q)
+      actual = self.session.run(q)
       op = p.assign(actual)
       ops.append(op)
 
@@ -166,6 +169,8 @@ def update_state(state, observation):
 
 
 def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
+  global global_step
+
   observation = env.reset()
   done = False
   totalreward = 0
@@ -204,8 +209,9 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
     iters += 1
     eps = max(eps - eps_step, 0.1)
 
-    if iters % copy_period == 0:
+    if global_step % copy_period == 0:
       tmodel.copy_from(model)
+    global_step += 1
 
   return totalreward, eps, iters
 

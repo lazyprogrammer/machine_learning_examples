@@ -22,8 +22,11 @@ if '../cartpole' not in sys.path:
 from q_learning_bins import plot_running_avg
 
 # constants
-IM_WIDTH = 80
-IM_HEIGHT = 80
+IM_WIDTH = 84
+IM_HEIGHT = 84
+
+# globals
+global_step = 0
 
 
 class ConvLayer:
@@ -91,8 +94,8 @@ class DQN:
       num_input_filters = num_output_filters
 
       # calculate final output size for input into fully connected layers
-      final_height //= stride
-      final_width //= stride
+      final_height = int(np.ceil(final_height / stride))
+      final_width = int(np.ceil(final_width / stride))
 
     self.layers = []
     flattened_ouput_size = final_height * final_width * num_input_filters
@@ -219,6 +222,8 @@ def update_state(state, observation):
 
 
 def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
+  global global_step
+
   observation = env.reset()
   done = False
   totalreward = 0
@@ -257,8 +262,9 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
     iters += 1
     eps = max(eps - eps_step, 0.1)
 
-    if iters % copy_period == 0:
+    if global_step % copy_period == 0:
       tmodel.copy_from(model)
+    global_step += 1
 
   return totalreward, eps, iters
 
