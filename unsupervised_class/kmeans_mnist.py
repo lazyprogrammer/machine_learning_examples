@@ -72,7 +72,7 @@ def DBI(X, M, R):
 
 
 def main():
-    X, Y = get_data(1000)
+    X, Y = get_data(10000)
 
     # simple data
     # X = get_simple_data()
@@ -88,6 +88,13 @@ def main():
     # Exercise: Try different values of K and compare the evaluation metrics
     print "Purity:", purity(Y, R)
     print "DBI:", DBI(X, M, R)
+
+    # plot the mean images
+    # they should look like digits
+    for k in xrange(len(M)):
+        im = M[k].reshape(28, 28)
+        plt.imshow(im, cmap='gray')
+        plt.show()
 
 
 if __name__ == "__main__":
