@@ -20,7 +20,7 @@ class HiddenLayer(object):
         self.id = an_id
         self.M1 = M1
         self.M2 = M2
-        W = np.random.randn(M1, M2) / np.sqrt(M1 + M2)
+        W = np.random.randn(M1, M2) / np.sqrt(M1)
         b = np.zeros(M2)
         self.W = theano.shared(W, 'W_%s' % self.id)
         self.b = theano.shared(b, 'b_%s' % self.id)
@@ -35,7 +35,7 @@ class ANN(object):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.dropout_rates = p_keep
 
-    def fit(self, X, Y, learning_rate=10e-7, mu=0.99, decay=0.999, epochs=300, batch_sz=100, show_fig=False):
+    def fit(self, X, Y, learning_rate=1e-6, mu=0.99, decay=0.999, epochs=300, batch_sz=100, show_fig=False):
         # make a validation set
         X, Y = shuffle(X, Y)
         X = X.astype(np.float32)
@@ -56,7 +56,7 @@ class ANN(object):
             self.hidden_layers.append(h)
             M1 = M2
             count += 1
-        W = np.random.randn(M1, K) / np.sqrt(M1 + K)
+        W = np.random.randn(M1, K) / np.sqrt(M1)
         b = np.zeros(K)
         self.W = theano.shared(W, 'W_logreg')
         self.b = theano.shared(b, 'b_logreg')
@@ -83,9 +83,9 @@ class ANN(object):
         updates = [
             (c, decay*c + (1-decay)*T.grad(cost, p)*T.grad(cost, p)) for p, c in zip(self.params, cache)
         ] + [
-            (p, p + mu*dp - learning_rate*T.grad(cost, p)/T.sqrt(c + 10e-10)) for p, c, dp in zip(self.params, cache, dparams)
+            (p, p + mu*dp - learning_rate*T.grad(cost, p)/T.sqrt(c + 1e-10)) for p, c, dp in zip(self.params, cache, dparams)
         ] + [
-            (dp, mu*dp - learning_rate*T.grad(cost, p)/T.sqrt(c + 10e-10)) for p, c, dp in zip(self.params, cache, dparams)
+            (dp, mu*dp - learning_rate*T.grad(cost, p)/T.sqrt(c + 1e-10)) for p, c, dp in zip(self.params, cache, dparams)
         ]
 
         # momentum only
