@@ -28,7 +28,7 @@ class Glove:
         self.V = V
         self.context_sz = context_sz
 
-    def fit(self, sentences, cc_matrix=None, learning_rate=10e-5, reg=0.1, xmax=100, alpha=0.75, epochs=10, gd=False, use_theano=True):
+    def fit(self, sentences, cc_matrix=None, learning_rate=1e-4, reg=0.1, xmax=100, alpha=0.75, epochs=10, gd=False, use_theano=True):
         # build co-occurrence matrix
         # paper calls it X, so we will call it X, instead of calling
         # the training data X

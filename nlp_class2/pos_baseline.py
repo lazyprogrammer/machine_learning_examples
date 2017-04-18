@@ -18,7 +18,7 @@ class LogisticRegression:
     def __init__(self):
         pass
 
-    def fit(self, X, Y, V=None, K=None, D=50, lr=10e-1, mu=0.99, batch_sz=100, epochs=6):
+    def fit(self, X, Y, V=None, K=None, D=50, lr=1e-1, mu=0.99, batch_sz=100, epochs=6):
         if V is None:
             V = len(set(X))
         if K is None:

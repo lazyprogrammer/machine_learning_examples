@@ -18,7 +18,7 @@ class RecursiveNN:
         self.D = D
         self.K = K
 
-    def fit(self, trees, learning_rate=3*10e-4, mu=0.99, reg=10e-5, epochs=15, activation=T.nnet.relu, train_inner_nodes=False):
+    def fit(self, trees, learning_rate=3*1e-3, mu=0.99, reg=1e-4, epochs=15, activation=T.nnet.relu, train_inner_nodes=False):
         D = self.D
         V = self.V
         K = self.K
@@ -266,7 +266,7 @@ def main(is_binary=True):
     K = 2 if is_binary else 5
 
     model = RecursiveNN(V, D, K)
-    model.fit(train, learning_rate=10e-3, reg=10e-3, mu=0, epochs=30, activation=T.tanh, train_inner_nodes=False)
+    model.fit(train, learning_rate=1e-2, reg=1e-2, mu=0, epochs=30, activation=T.tanh, train_inner_nodes=False)
     print "train accuracy:", model.score(train)
     print "test accuracy:", model.score(test)
 

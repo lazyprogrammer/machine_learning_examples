@@ -22,7 +22,7 @@ class RNN:
         self.D = D
         self.V = V
 
-    def fit(self, X, Y, learning_rate=10e-5, mu=0.99, epochs=30, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU, normalize=False):
+    def fit(self, X, Y, learning_rate=1e-4, mu=0.99, epochs=30, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU, normalize=False):
         D = self.D
         V = self.V
         N = len(X)

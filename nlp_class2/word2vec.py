@@ -14,6 +14,7 @@ import os
 import sys
 sys.path.append(os.path.abspath('..'))
 from rnn_class.util import get_wikipedia_data
+from rnn_class.brown import get_sentences_with_word2idx_limit_vocab, get_sentences_with_word2idx
 
 
 def sigmoid(x):
@@ -68,7 +69,7 @@ class Model(object):
         assert(np.all(self.Pnw[2:] > 0))
         return neg_samples
 
-    def fit(self, X, num_neg_samples=10, learning_rate=10e-5, mu=0.99, reg=0.1, epochs=10):
+    def fit(self, X, num_neg_samples=10, learning_rate=1e-4, mu=0.99, reg=0.1, epochs=10):
         N = len(X)
         V = self.V
         D = self.D
@@ -163,7 +164,7 @@ class Model(object):
         plt.title("Numpy cost at each epoch")
         plt.show()
 
-    def fitt(self, X, num_neg_samples=10, learning_rate=10e-5, mu=0.99, reg=0.1, epochs=10):
+    def fitt(self, X, num_neg_samples=10, learning_rate=1e-4, mu=0.99, reg=0.1, epochs=10):
         N = len(X)
         V = self.V
         D = self.D
@@ -281,14 +282,18 @@ class Model(object):
         np.savez(fn, *arrays)
 
 
-def main():
-    sentences, word2idx = get_wikipedia_data(n_files=1, n_vocab=2000)
+def main(use_brown=True):
+    if use_brown:
+        # sentences, word2idx = get_sentences_with_word2idx_limit_vocab()
+        sentences, word2idx = get_sentences_with_word2idx()
+    else:
+        sentences, word2idx = get_wikipedia_data(n_files=1, n_vocab=2000)
     with open('w2v_word2idx.json', 'w') as f:
         json.dump(word2idx, f)
 
     V = len(word2idx)
     model = Model(50, V, 5)
-    model.fit(sentences, learning_rate=10e-4, mu=0, epochs=300, num_neg_samples=5)
+    model.fit(sentences, learning_rate=1e-3, mu=0, epochs=3, num_neg_samples=5)
     model.save('w2v_model.npz')
 
 
@@ -312,7 +317,7 @@ def find_analogies(w1, w2, w3, concat=True, we_file='w2v_model.npz', w2i_file='w
     _find_analogies(w1, w2, w3, We, word2idx)
 
 if __name__ == '__main__':
-    main()
+    main(use_brown=True)
     for concat in (True, False):
         print "** concat:", concat
         find_analogies('king', 'man', 'woman', concat=concat)

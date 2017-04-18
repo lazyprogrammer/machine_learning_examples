@@ -19,7 +19,7 @@ class RecursiveNN:
         self.D = D
         self.K = K
 
-    def fit(self, trees, learning_rate=10e-4, mu=0.5, reg=10e-3, eps=10e-3, epochs=20, activation=T.tanh, train_inner_nodes=False):
+    def fit(self, trees, learning_rate=1e-3, mu=0.5, reg=1e-2, eps=1e-2, epochs=20, activation=T.tanh, train_inner_nodes=False):
         D = self.D
         V = self.V
         K = self.K

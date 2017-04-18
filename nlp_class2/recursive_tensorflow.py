@@ -49,7 +49,7 @@ class TNN:
         self.bo = tf.Variable(bo.astype(np.float32))
         self.params = [self.We, self.W1, self.W2, self.Wo]
 
-    def fit(self, trees, lr=10e-2, mu=0.9, reg=0.1, epochs=5):
+    def fit(self, trees, lr=1e-1, mu=0.9, reg=0.1, epochs=5):
         train_ops = []
         costs = []
         predictions = []

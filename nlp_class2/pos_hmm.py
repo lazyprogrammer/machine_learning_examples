@@ -36,7 +36,7 @@ def total_f1_score(T, Y):
 #     return [item for sublist in l for item in sublist]
 
 
-def main(smoothing=10e-2):
+def main(smoothing=1e-1):
     # X = words, Y = POS tags
     Xtrain, Ytrain, Xtest, Ytest, word2idx = get_data(split_sequences=True)
     V = len(word2idx) + 1
