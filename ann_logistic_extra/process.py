@@ -1,11 +1,15 @@
 import numpy as np
 import pandas as pd
+import os
+
+# so scripts from other folders can import this file
+dir_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
 # normalize numerical columns
 # one-hot categorical columns
 
 def get_data():
-    df = pd.read_csv('ecommerce_data.csv')
+    df = pd.read_csv(dir_path + '/ecommerce_data.csv')
 
     # just in case you're curious what's in it
     # df.head()
@@ -34,7 +38,7 @@ def get_data():
     # Z = np.zeros((N, 4))
     # Z[np.arange(N), X[:,D-1].astype(np.int32)] = 1
     # # assign: X2[:,-4:] = Z
-    # assert(np.abs(X2[:,-4:] - Z).sum() < 10e-10)
+    # assert(np.abs(X2[:,-4:] - Z).sum() < 1e-10)
 
     return X2, Y
 
