@@ -88,7 +88,8 @@ class DQN:
       cost = tf.reduce_sum(tf.square(self.G - selected_action_values))
       # self.train_op = tf.train.AdamOptimizer(1e-2).minimize(cost)
       # self.train_op = tf.train.AdagradOptimizer(1e-2).minimize(cost)
-      self.train_op = tf.train.RMSPropOptimizer(2.5e-4, decay=0.99, epsilon=10e-3).minimize(cost)
+      # self.train_op = tf.train.RMSPropOptimizer(2.5e-4, decay=0.99, epsilon=10e-3).minimize(cost)
+      self.train_op = tf.train.RMSPropOptimizer(0.00025, 0.99, 0.0, 1e-6).minimize(cost)
       # self.train_op = tf.train.MomentumOptimizer(1e-3, momentum=0.9).minimize(cost)
       # self.train_op = tf.train.GradientDescentOptimizer(1e-4).minimize(cost)
 
@@ -119,9 +120,12 @@ class DQN:
   def predict(self, X):
     return self.session.run(self.predict_op, feed_dict={self.X: X})
 
+  def is_training(self):
+    return len(self.experience) >= self.min_experiences
+
   def train(self, target_network):
     # sample a random batch from buffer, do an iteration of GD
-    if len(self.experience) < self.min_experiences:
+    if not self.is_training():
       # don't do anything if we don't have enough experience
       return
 
@@ -205,9 +209,10 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
     if len(state) == 4 and len(prev_state) == 4:
       model.add_experience(prev_state, action, reward, state, done)
       model.train(tmodel)
+      if model.is_training():
+        eps = max(eps - eps_step, 0.1)
 
     iters += 1
-    eps = max(eps - eps_step, 0.1)
 
     if global_step % copy_period == 0:
       tmodel.copy_from(model)
@@ -222,7 +227,7 @@ def main():
   copy_period = 10000
 
   D = len(env.observation_space.sample())
-  K = env.action_space.n
+  K = 4 #env.action_space.n ### NO! returns 6 but only 4 valid actions
   conv_sizes = [(32, 8, 4), (64, 4, 2), (64, 3, 1)]
   hidden_sizes = [512]
   model = DQN(K, conv_sizes, hidden_sizes, gamma, scope='main')
