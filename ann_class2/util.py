@@ -77,7 +77,7 @@ def get_transformed_data():
     X = X - mu # center the data
     pca = PCA()
     Z = pca.fit_transform(X)
-    Y = data[:, 0]
+    Y = data[:, 0].astype(np.int32)
 
     plot_cumulative_variance(pca)
 
