@@ -12,12 +12,15 @@ import os
 import sys
 sys.path.append(os.path.abspath('..'))
 from rnn_class.util import get_wikipedia_data
+from rnn_class.brown import get_sentences_with_word2idx_limit_vocab, get_sentences_with_word2idx
+
 from util import find_analogies
 from sklearn.feature_extraction.text import TfidfTransformer
 
 
 def main():
-    sentences, word2idx = get_wikipedia_data(n_files=10, n_vocab=1500, by_paragraph=True)
+    sentences, word2idx = get_sentences_with_word2idx_limit_vocab(n_vocab=1500)
+    # sentences, word2idx = get_wikipedia_data(n_files=10, n_vocab=1500, by_paragraph=True)
     with open('w2v_word2idx.json', 'w') as f:
         json.dump(word2idx, f)
 
