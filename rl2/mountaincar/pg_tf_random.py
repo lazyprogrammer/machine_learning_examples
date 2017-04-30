@@ -213,7 +213,7 @@ def random_search(env, pmodel, gamma):
   best_avg_totalreward = float('-inf')
   best_pmodel = pmodel
   num_episodes_per_param_test = 3
-  for t in xrange(100):
+  for t in range(100):
     tmp_pmodel = best_pmodel.copy()
 
     tmp_pmodel.perturb_params()
