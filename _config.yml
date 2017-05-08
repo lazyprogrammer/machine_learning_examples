@@ -1,8 +1,0 @@
-title: Machine Learning Tutorials
-description: A collection of machine learning examples and tutorials.
-google_analytics: UA-61072324-1
-show_downloads: true
-theme: jekyll-theme-cayman
-
-gems:
-  - jekyll-mentions
