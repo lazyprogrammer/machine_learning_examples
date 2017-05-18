@@ -22,8 +22,8 @@ if '../cartpole' not in sys.path:
 from q_learning_bins import plot_running_avg
 
 # constants
-IM_WIDTH = 84
-IM_HEIGHT = 84
+IM_WIDTH = 80
+IM_HEIGHT = 80
 
 # globals
 global_step = 0
@@ -32,7 +32,8 @@ global_step = 0
 def downsample_image(A):
   B = A[31:195] # select the important parts of the image
   B = B.mean(axis=2) # convert to grayscale
-  B = B / 255.0 # scale to 0..1
+  # B = B / 255.0 # scale to 0..1
+  # imresize scales it back to 255
 
   # downsample image
   # changing aspect ratio doesn't significantly distort the image
@@ -61,7 +62,7 @@ class DQN:
       # convolutional layers
       # these built-in layers are faster and don't require us to
       # calculate the size of the output of the final conv layer!
-      Z = self.X
+      Z = self.X / 255.0
       Z = tf.transpose(Z, [0, 2, 3, 1])
       for num_output_filters, filtersz, poolsz in conv_layer_sizes:
         Z = tf.contrib.layers.conv2d(
@@ -85,7 +86,7 @@ class DQN:
         reduction_indices=[1]
       )
 
-      cost = tf.reduce_sum(tf.square(self.G - selected_action_values))
+      cost = tf.reduce_mean(tf.square(self.G - selected_action_values))
       # self.train_op = tf.train.AdamOptimizer(1e-2).minimize(cost)
       # self.train_op = tf.train.AdagradOptimizer(1e-2).minimize(cost)
       # self.train_op = tf.train.RMSPropOptimizer(2.5e-4, decay=0.99, epsilon=10e-3).minimize(cost)
@@ -133,7 +134,8 @@ class DQN:
     sample = random.sample(self.experience, self.batch_sz)
     states, actions, rewards, next_states, dones = map(np.array, zip(*sample))
     next_Q = np.max(target_network.predict(next_states), axis=1)
-    targets = [r + self.gamma*next_q if done is False else r for r, next_q, done in zip(rewards, next_Q, dones)]
+    # targets = [r + self.gamma*next_q if done is False else r for r, next_q, done in zip(rewards, next_Q, dones)]
+    targets = rewards + np.invert(dones) * self.gamma * next_Q
 
     # call optimizer
     self.session.run(
@@ -167,9 +169,19 @@ class DQN:
 def update_state(state, observation):
   # downsample and grayscale observation
   observation_small = downsample_image(observation)
-  state.append(observation_small)
-  if len(state) > 4:
-    state.pop(0)
+  
+  # list method
+  # state.append(observation_small)
+  # if len(state) > 4:
+  #   state.pop(0)
+  # return state
+
+  # numpy method
+  # expect state to be of shape (4,80,80)
+  # print("state.shape:", state.shape)
+  # B = np.expand_dims(observation_small, 0)
+  # print("B.shape:", B.shape)
+  return np.append(state[1:], np.expand_dims(observation_small, 0), axis=0)
 
 
 def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
@@ -179,9 +191,17 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
   done = False
   totalreward = 0
   iters = 0
-  state = []
-  prev_state = []
-  update_state(state, observation) # add the first observation
+  # state = []
+  # prev_state = []
+  # update_state(state, observation) # add the first observation
+  state = [downsample_image(observation)]*4
+  # prev_state = np.copy(state)
+  prev_state = None
+
+  total_time_training = 0
+  n_training_steps = 0
+
+
   while not done and iters < 2000:
     # if we reach 2000, just quit, don't want this going forever
     # the 200 limit seems a bit early
@@ -193,23 +213,30 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
       action = model.sample_action(state, eps)
 
     # copy state to prev state
-    prev_state.append(state[-1])
-    if len(prev_state) > 4:
-      prev_state.pop(0)
+    # prev_state.append(state[-1])
+    # if len(prev_state) > 4:
+    #   prev_state.pop(0)
+    prev_state = np.copy(state)
 
     # perform the action
     observation, reward, done, info = env.step(action)
 
     # add the new frame to the state
-    update_state(state, observation)
+    state = update_state(state, observation)
 
     totalreward += reward
 
     # update the model
     if len(state) == 4 and len(prev_state) == 4:
       model.add_experience(prev_state, action, reward, state, done)
+
+      t0 = datetime.now()
       model.train(tmodel)
+
       if model.is_training():
+        dt = (datetime.now() - t0).total_seconds()
+        total_time_training += dt
+        n_training_steps += 1
         eps = max(eps - eps_step, 0.1)
 
     iters += 1
@@ -217,6 +244,9 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
     if global_step % copy_period == 0:
       tmodel.copy_from(model)
     global_step += 1
+
+  if n_training_steps > 0:
+    print("Training time per step:", total_time_training / n_training_steps)
 
   return totalreward, eps, iters
 

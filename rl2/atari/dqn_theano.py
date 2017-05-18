@@ -60,7 +60,7 @@ class ConvLayer(object):
 
 def downsample_image(A):
   B = A[31:195] # select the important parts of the image
-  B = B / 255.0 # scale to 0..1
+  # B = B / 255.0 # scale to 0..1
   B = B.mean(axis=2) # convert to grayscale
 
   # downsample image
@@ -74,7 +74,7 @@ def downsample_image(A):
 # a version of HiddenLayer that keeps track of params
 class HiddenLayer:
   def __init__(self, M1, M2, f=T.tanh, use_bias=True):
-    W = np.random.randn(M1, M2) / np.sqrt(M1+M2)
+    W = np.random.randn(M1, M2) * np.sqrt(2 / M1)
     self.W = theano.shared(W.astype(np.float32))
     self.params = [self.W]
     self.use_bias = use_bias
@@ -112,7 +112,7 @@ class DQN:
       num_input_filters = num_output_filters
 
     # get conv output size
-    Z = X
+    Z = X / 255.0
     for layer in self.conv_layers:
       Z = layer.forward(Z)
     conv_out = Z.flatten(ndim=2)
@@ -149,7 +149,7 @@ class DQN:
     Y_hat = Z
 
     selected_action_values = Y_hat[T.arange(actions.shape[0]), actions]
-    cost = T.sum((G - selected_action_values)**2) 
+    cost = T.mean((G - selected_action_values)**2)
 
     # create train function
     grads = T.grad(cost, self.params)

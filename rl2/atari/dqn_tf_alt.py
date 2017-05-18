@@ -22,8 +22,8 @@ if '../cartpole' not in sys.path:
 from q_learning_bins import plot_running_avg
 
 # constants
-IM_WIDTH = 84
-IM_HEIGHT = 84
+IM_WIDTH = 80
+IM_HEIGHT = 80
 
 # globals
 global_step = 0
@@ -48,7 +48,7 @@ class ConvLayer:
 
 def downsample_image(A):
   B = A[31:195] # select the important parts of the image
-  B = B / 255.0 # scale to 0..1
+  # B = B / 255.0 # scale to 0..1
   B = B.mean(axis=2) # convert to grayscale
 
   # downsample image
@@ -94,6 +94,9 @@ class DQN:
       num_input_filters = num_output_filters
 
       # calculate final output size for input into fully connected layers
+      old_height = final_height
+      new_height = int(np.ceil(old_height / stride))
+      print("new_height (%s) = old_height (%s) / stride (%s)" % (new_height, old_height, stride))
       final_height = int(np.ceil(final_height / stride))
       final_width = int(np.ceil(final_width / stride))
 
@@ -123,7 +126,7 @@ class DQN:
     self.actions = tf.placeholder(tf.int32, shape=(None,), name='actions')
 
     # calculate output and cost
-    Z = self.X
+    Z = self.X / 255.0
     Z = tf.transpose(Z, [0, 2, 3, 1]) # TF wants the "color" channel to be last
     for layer in self.conv_layers:
       Z = layer.forward(Z)
@@ -133,15 +136,24 @@ class DQN:
     Y_hat = Z
     self.predict_op = Y_hat
 
-    selected_action_values = tf.reduce_sum(
-      Y_hat * tf.one_hot(self.actions, K),
-      reduction_indices=[1]
+    # selected_action_values = tf.reduce_sum(
+    #   Y_hat * tf.one_hot(self.actions, K),
+    #   reduction_indices=[1]
+    # )
+
+    # we would like to do this, but it doesn't work in TF:
+    # selected_action_values = Y_hat[tf.range(batch_sz), self.actions]
+    # instead we do:
+    indices = tf.range(batch_sz) * tf.shape(Y_hat)[1] + self.actions
+    selected_action_values = tf.gather(
+      tf.reshape(Y_hat, [-1]), # flatten
+      indices
     )
 
-    cost = tf.reduce_sum(tf.square(self.G - selected_action_values))
+    cost = tf.reduce_mean(tf.square(self.G - selected_action_values))
     # self.train_op = tf.train.AdamOptimizer(10e-3).minimize(cost)
     # self.train_op = tf.train.AdagradOptimizer(10e-3).minimize(cost)
-    self.train_op = tf.train.RMSPropOptimizer(10e-3, decay=0.99, epsilon=10e-3).minimize(cost)
+    self.train_op = tf.train.RMSPropOptimizer(0.00025, 0.99, 0.0, 1e-6).minimize(cost)
     # self.train_op = tf.train.MomentumOptimizer(10e-4, momentum=0.9).minimize(cost)
     # self.train_op = tf.train.GradientDescentOptimizer(10e-5).minimize(cost)
 
@@ -182,8 +194,10 @@ class DQN:
     # randomly select a batch
     sample = random.sample(self.experience, self.batch_sz)
     states, actions, rewards, next_states, dones = map(np.array, zip(*sample))
-    next_Q = np.max(target_network.predict(next_states), axis=1)
-    targets = [r + self.gamma*next_q if done is False else r for r, next_q, done in zip(rewards, next_Q, dones)]
+    next_Q = np.amax(target_network.predict(next_states), axis=1)
+    # targets = [r + self.gamma*next_q if done is False else r for r, next_q, done in zip(rewards, next_Q, dones)]
+    # equivalent
+    targets = rewards + np.invert(dones) * self.gamma * next_Q
 
     # print("train start")
     # call optimizer
@@ -215,13 +229,29 @@ class DQN:
     else:
       return np.argmax(self.predict([x])[0])
 
+  def print_var_sizes(self):
+    # print all variable sizes
+    mine = self.session.run(self.params)
+    for v in mine:
+      print(v.shape)
+
 
 def update_state(state, observation):
   # downsample and grayscale observation
   observation_small = downsample_image(observation)
-  state.append(observation_small)
-  if len(state) > 4:
-    state.pop(0)
+
+  # list method
+  # state.append(observation_small)
+  # if len(state) > 4:
+  #   state.pop(0)
+  # return state
+
+  # numpy method
+  # expect state to be of shape (4,80,80)
+  # print("state.shape:", state.shape)
+  # B = np.expand_dims(observation_small, 0)
+  # print("B.shape:", B.shape)
+  return np.append(state[1:], np.expand_dims(observation_small, 0), axis=0)
 
 
 def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
@@ -231,9 +261,16 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
   done = False
   totalreward = 0
   iters = 0
-  state = []
-  prev_state = []
-  update_state(state, observation) # add the first observation
+  # state = []
+  # prev_state = []
+  # update_state(state, observation) # add the first observation
+  # state = np.array([downsample_image(observation)]*4)
+  state = [downsample_image(observation)]*4
+  prev_state = None
+
+  total_time_training = 0
+  n_training_steps = 0
+
   while not done and iters < 2000:
     # if we reach 2000, just quit, don't want this going forever
     # the 200 limit seems a bit early
@@ -245,22 +282,30 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
       action = model.sample_action(state, eps)
 
     # copy state to prev state
-    prev_state.append(state[-1])
-    if len(prev_state) > 4:
-      prev_state.pop(0)
+    # prev_state.append(state[-1])
+    # if len(prev_state) > 4:
+    #   prev_state.pop(0)
+    prev_state = np.copy(state)
 
     # perform the action
     observation, reward, done, info = env.step(action)
 
     # add the new frame to the state
-    update_state(state, observation)
+    state = update_state(state, observation)
 
     totalreward += reward
 
     # update the model
     if len(state) == 4 and len(prev_state) == 4:
       model.add_experience(prev_state, action, reward, state, done)
+
+      t0 = datetime.now()
       model.train(tmodel)
+      dt = (datetime.now() - t0).total_seconds()
+
+      total_time_training += dt
+      n_training_steps += 1
+
       if model.is_training():
         eps = max(eps - eps_step, 0.1)
 
@@ -269,6 +314,9 @@ def play_one(env, model, tmodel, eps, eps_step, gamma, copy_period):
     if global_step % copy_period == 0:
       tmodel.copy_from(model)
     global_step += 1
+
+  if n_training_steps > 0:
+    print("Training time per step:", total_time_training / n_training_steps)
 
   return totalreward, eps, iters
 
@@ -290,6 +338,7 @@ def main():
   model.set_session(session)
   tmodel.set_session(session)
 
+  model.print_var_sizes()
 
   if 'monitor' in sys.argv:
     filename = os.path.basename(__file__).split('.')[0]
