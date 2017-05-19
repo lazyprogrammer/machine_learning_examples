@@ -29,11 +29,13 @@ def play_game(grid, policy):
   # each triple is s(t), a(t), r(t)
   # but r(t) results from taking action a(t-1) from s(t-1) and landing in s(t)
   states_actions_rewards = [(s, a, 0)]
+  seen_states = set()
   while True:
     old_s = grid.current_state()
     r = grid.move(a)
     s = grid.current_state()
-    if old_s == s:
+
+    if s in seen_states:
       # hack so that we don't end up in an infinitely long episode
       # bumping into the wall repeatedly
       states_actions_rewards.append((s, None, -100))
@@ -44,6 +46,7 @@ def play_game(grid, policy):
     else:
       a = policy[s]
       states_actions_rewards.append((s, a, r))
+    seen_states.add(s)
 
   # calculate the returns by working backwards from the terminal state
   G = 0
@@ -80,7 +83,7 @@ if __name__ == '__main__':
   # grid = standard_grid()
   # try the negative grid too, to see if agent will learn to go past the "bad spot"
   # in order to minimize number of steps
-  grid = negative_grid(step_cost=-0.1)
+  grid = negative_grid(step_cost=-0.9)
 
   # print rewards
   print "rewards:"
@@ -109,7 +112,7 @@ if __name__ == '__main__':
   # repeat until convergence
   deltas = []
   for t in xrange(2000):
-    if t % 1000 == 0:
+    if t % 100 == 0:
       print t
 
     # generate an episode using pi
