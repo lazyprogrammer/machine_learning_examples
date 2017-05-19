@@ -4,7 +4,7 @@ import numpy as np
 from grid_world import standard_grid, negative_grid
 from iterative_policy_evaluation import print_values, print_policy
 
-SMALL_ENOUGH = 10e-4
+SMALL_ENOUGH = 1e-3
 GAMMA = 0.9
 ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
 

@@ -3,7 +3,7 @@
 import numpy as np
 from grid_world import standard_grid
 
-SMALL_ENOUGH = 10e-4 # threshold for convergence
+SMALL_ENOUGH = 1e-3 # threshold for convergence
 
 def print_values(V, g):
   for i in xrange(g.width):

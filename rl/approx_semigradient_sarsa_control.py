@@ -116,7 +116,7 @@ if __name__ == '__main__':
   deltas = []
   for it in xrange(20000):
     if it % 100 == 0:
-      t += 10e-3
+      t += 0.01
       t2 += 0.01
     if it % 1000 == 0:
       print "it:", it

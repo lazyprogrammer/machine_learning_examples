@@ -1,5 +1,6 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+# https://books.google.ca/books?id=_ATpBwAAQBAJ&lpg=PA201&ots=rinZM8jQ6s&dq=hoeffding%20bound%20gives%20probability%20%22greater%20than%201%22&pg=PA201#v=onepage&q&f=false
 import numpy as np
 import matplotlib.pyplot as plt
 from comparing_epsilons import run_experiment as run_experiment_eps
@@ -20,7 +21,7 @@ class Bandit:
 
 
 def ucb(mean, n, nj):
-  return mean + np.sqrt(2*np.log(n) / (nj + 10e-3))
+  return mean + np.sqrt(2*np.log(n) / (nj + 1e-2))
 
 
 def run_experiment(m1, m2, m3, N):
