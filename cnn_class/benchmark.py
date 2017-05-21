@@ -1,7 +1,9 @@
 # Vanilla deep network
 # https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 # https://udemy.com/deep-learning-convolutional-neural-networks-theano-tensorflow
+# get the data: http://ufldl.stanford.edu/housenumbers/
 
+import os
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -48,9 +50,23 @@ def flatten(X):
 # In [13]: test['y'].shape
 # Out[13]: (26032, 1)
 
-def main():
+
+def get_data():
+    if not os.path.exists('../large_files/train_32x32.mat'):
+        print('Looking for ../large_files/train_32x32.mat')
+        print('You have not downloaded the data and/or not placed the files in the correct location.')
+        print('Please get the data from: http://ufldl.stanford.edu/housenumbers')
+        print('Place train_32x32.mat and test_32x32.mat in the folder large_files adjacent to the class folder')
+        exit()
+
     train = loadmat('../large_files/train_32x32.mat')
     test  = loadmat('../large_files/test_32x32.mat')
+    return train, test
+
+
+def main():
+    train, test = get_data()
+    
 
     # Need to scale! don't leave as 0..255
     # Y is a N x 1 matrix with values 1..10 (MATLAB indexes by 1)
@@ -97,7 +113,9 @@ def main():
     Z2 = tf.nn.relu( tf.matmul(Z1, W2) + b2 )
     Yish = tf.matmul(Z2, W3) + b3
 
-    cost = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(Yish, T))
+    cost = tf.reduce_sum(
+        tf.nn.softmax_cross_entropy_with_logits(logits=Yish, labels=T)
+    )
 
     train_op = tf.train.RMSPropOptimizer(0.0001, decay=0.99, momentum=0.9).minimize(cost)
 

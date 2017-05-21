@@ -14,6 +14,7 @@ from sklearn.utils import shuffle
 
 from datetime import datetime
 
+from benchmark import get_data
 
 def error_rate(p, t):
     return np.mean(p != t)
@@ -67,8 +68,7 @@ def rearrange(X):
 
 def main():
     # step 1: load the data, transform as needed
-    train = loadmat('../large_files/train_32x32.mat')
-    test  = loadmat('../large_files/test_32x32.mat')
+    train, test = get_data()
 
     # Need to scale! don't leave as 0..255
     # Y is a N x 1 matrix with values 1..10 (MATLAB indexes by 1)

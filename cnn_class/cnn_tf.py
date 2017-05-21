@@ -16,6 +16,8 @@ from scipy.signal import convolve2d
 from scipy.io import loadmat
 from sklearn.utils import shuffle
 
+from benchmark import get_data
+
 
 def y2indicator(y):
     N = len(y)
@@ -54,8 +56,7 @@ def rearrange(X):
 
 
 def main():
-    train = loadmat('../large_files/train_32x32.mat') # N = 73257
-    test  = loadmat('../large_files/test_32x32.mat') # N = 26032
+    train, test = get_data()
 
     # Need to scale! don't leave as 0..255
     # Y is a N x 1 matrix with values 1..10 (MATLAB indexes by 1)
