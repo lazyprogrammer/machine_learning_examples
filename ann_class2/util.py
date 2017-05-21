@@ -10,6 +10,7 @@ from builtins import range
 
 # Note: run this from the current folder it is in.
 
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -68,6 +69,14 @@ def get_spiral():
 
 def get_transformed_data():
     print("Reading in and transforming data...")
+
+    if not os.path.exists('../large_files/train.csv'):
+        print('Looking for ../large_files/train.csv')
+        print('You have not downloaded the data and/or not placed the files in the correct location.')
+        print('Please get the data from: https://www.kaggle.com/c/digit-recognizer')
+        print('Place train.csv in the folder large_files adjacent to the class folder')
+        exit()
+
     df = pd.read_csv('../large_files/train.csv')
     data = df.as_matrix().astype(np.float32)
     np.random.shuffle(data)
@@ -86,6 +95,14 @@ def get_transformed_data():
 
 def get_normalized_data():
     print("Reading in and transforming data...")
+
+    if not os.path.exists('../large_files/train.csv'):
+        print('Looking for ../large_files/train.csv')
+        print('You have not downloaded the data and/or not placed the files in the correct location.')
+        print('Please get the data from: https://www.kaggle.com/c/digit-recognizer')
+        print('Place train.csv in the folder large_files adjacent to the class folder')
+        exit()
+
     df = pd.read_csv('../large_files/train.csv')
     data = df.as_matrix().astype(np.float32)
     np.random.shuffle(data)
