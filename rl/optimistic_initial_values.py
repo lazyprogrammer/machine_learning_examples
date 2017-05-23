@@ -9,7 +9,7 @@ class Bandit:
   def __init__(self, m):
     self.m = m
     self.mean = 10
-    self.N = 0
+    self.N = 1
 
   def pull(self):
     return np.random.randn() + self.m
