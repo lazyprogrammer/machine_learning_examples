@@ -1,5 +1,9 @@
 # https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 # https://udemy.com/deep-learning-convolutional-neural-networks-theano-tensorflow
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +26,7 @@ spf = wave.open('helloworld.wav', 'r')
 #Extract Raw Audio from Wav File
 signal = spf.readframes(-1)
 signal = np.fromstring(signal, 'Int16')
-print "numpy signal:", signal.shape
+print("numpy signal:", signal.shape)
 
 plt.plot(signal)
 plt.title("Hello world without echo")
@@ -30,7 +34,7 @@ plt.show()
 
 delta = np.array([1., 0., 0.])
 noecho = np.convolve(signal, delta)
-print "noecho signal:", noecho.shape
+print("noecho signal:", noecho.shape)
 assert(np.abs(noecho[:len(signal)] - signal).sum() < 0.000001)
 
 noecho = noecho.astype(np.int16) # make sure you do this, otherwise, you will get VERY LOUD NOISE

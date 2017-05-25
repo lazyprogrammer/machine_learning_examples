@@ -1,69 +1,22 @@
 # https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 # https://udemy.com/deep-learning-convolutional-neural-networks-theano-tensorflow
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import numpy as np
 import theano
 import theano.tensor as T
 import matplotlib.pyplot as plt
 
-from theano.tensor.nnet import conv2d
-from theano.tensor.signal import downsample
-
 from scipy.io import loadmat
 from sklearn.utils import shuffle
 
 from datetime import datetime
 
-from benchmark import get_data
-
-def error_rate(p, t):
-    return np.mean(p != t)
-
-
-def relu(a):
-    return a * (a > 0)
-
-
-def y2indicator(y):
-    N = len(y)
-    ind = np.zeros((N, 10))
-    for i in xrange(N):
-        ind[i, y[i]] = 1
-    return ind
-
-
-def convpool(X, W, b, poolsize=(2, 2)):
-    conv_out = conv2d(input=X, filters=W)
-
-    # downsample each feature map individually, using maxpooling
-    pooled_out = downsample.max_pool_2d(
-        input=conv_out,
-        ds=poolsize,
-        ignore_border=True
-    )
-
-    # add the bias term. Since the bias is a vector (1D array), we first
-    # reshape it to a tensor of shape (1, n_filters, 1, 1). Each bias will
-    # thus be broadcasted across mini-batches and feature map
-    # width & height
-    # return T.tanh(pooled_out + b.dimshuffle('x', 0, 'x', 'x'))
-    return relu(pooled_out + b.dimshuffle('x', 0, 'x', 'x'))
-
-
-def init_filter(shape, poolsz):
-    w = np.random.randn(*shape) / np.sqrt(np.prod(shape[1:]) + shape[0]*np.prod(shape[2:] / np.prod(poolsz)))
-    return w.astype(np.float32)
-
-
-def rearrange(X):
-    # input is (32, 32, 3, N)
-    # output is (N, 3, 32, 32)
-    N = X.shape[-1]
-    out = np.zeros((N, 3, 32, 32), dtype=np.float32)
-    for i in xrange(N):
-        for j in xrange(3):
-            out[i, j, :, :] = X[:, :, j, i]
-    return out / 255
+from benchmark import get_data, error_rate, y2indicator
+from cnn_theano import convpool, relu, init_filter, rearrange
 
 
 def main():
@@ -95,7 +48,7 @@ def main():
 
     N = Xtrain.shape[0]
     batch_sz = 500
-    n_batches = N / batch_sz
+    n_batches = N // batch_sz
 
     M = 500
     K = 10
@@ -204,8 +157,8 @@ def main():
 
     t0 = datetime.now()
     LL = []
-    for i in xrange(max_iter):
-        for j in xrange(n_batches):
+    for i in range(max_iter):
+        for j in range(n_batches):
             Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
             Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
 
@@ -213,9 +166,9 @@ def main():
             if j % print_period == 0:
                 cost_val, prediction_val = get_prediction(Xtest, Ytest_ind)
                 err = error_rate(prediction_val, Ytest)
-                print "Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, cost_val, err)
+                print("Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, cost_val, err))
                 LL.append(cost_val)
-    print "Elapsed time:", (datetime.now() - t0)
+    print("Elapsed time:", (datetime.now() - t0))
     plt.plot(LL)
     plt.show()
 
@@ -224,8 +177,8 @@ def main():
     grid = np.zeros((8*5, 8*5))
     m = 0
     n = 0
-    for i in xrange(20):
-        for j in xrange(3):
+    for i in range(20):
+        for j in range(3):
             filt = W1_val[i,j]
             grid[m*5:(m+1)*5,n*5:(n+1)*5] = filt
             m += 1
@@ -241,8 +194,8 @@ def main():
     grid = np.zeros((32*5, 32*5))
     m = 0
     n = 0
-    for i in xrange(50):
-        for j in xrange(20):
+    for i in range(50):
+        for j in range(20):
             filt = W2_val[i,j]
             grid[m*5:(m+1)*5,n*5:(n+1)*5] = filt
             m += 1
