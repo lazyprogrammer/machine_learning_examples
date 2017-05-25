@@ -7,7 +7,7 @@ import theano.tensor as T
 import matplotlib.pyplot as plt
 
 from theano.tensor.nnet import conv2d
-from theano.tensor.signal import downsample
+from theano.tensor.signal import pool
 
 from scipy.io import loadmat
 from sklearn.utils import shuffle
@@ -37,9 +37,9 @@ def convpool(X, W, b, poolsize=(2, 2)):
     conv_out = conv2d(input=X, filters=W)
 
     # downsample each feature map individually, using maxpooling
-    pooled_out = downsample.max_pool_2d(
+    pooled_out = pool.pool_2d(
         input=conv_out,
-        ds=poolsize,
+        ws=poolsize,
         ignore_border=True
     )
 
@@ -96,7 +96,7 @@ def main():
 
     N = Xtrain.shape[0]
     batch_sz = 500
-    n_batches = N / batch_sz
+    n_batches = N // batch_sz
 
     M = 500
     K = 10
