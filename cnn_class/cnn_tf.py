@@ -6,6 +6,10 @@
 
 # https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 # https://udemy.com/deep-learning-convolutional-neural-networks-theano-tensorflow
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import numpy as np
 import tensorflow as tf
@@ -16,19 +20,7 @@ from scipy.signal import convolve2d
 from scipy.io import loadmat
 from sklearn.utils import shuffle
 
-from benchmark import get_data
-
-
-def y2indicator(y):
-    N = len(y)
-    ind = np.zeros((N, 10))
-    for i in xrange(N):
-        ind[i, y[i]] = 1
-    return ind
-
-
-def error_rate(p, t):
-    return np.mean(p != t)
+from benchmark import get_data, y2indicator, error_rate
 
 
 def convpool(X, W, b):
@@ -47,12 +39,13 @@ def init_filter(shape, poolsz):
 def rearrange(X):
     # input is (32, 32, 3, N)
     # output is (N, 32, 32, 3)
-    N = X.shape[-1]
-    out = np.zeros((N, 32, 32, 3), dtype=np.float32)
-    for i in xrange(N):
-        for j in xrange(3):
-            out[i, :, :, j] = X[:, :, j, i]
-    return out / 255
+    # N = X.shape[-1]
+    # out = np.zeros((N, 32, 32, 3), dtype=np.float32)
+    # for i in xrange(N):
+    #     for j in xrange(3):
+    #         out[i, :, :, j] = X[:, :, j, i]
+    # return out / 255
+    return (X.transpose(3, 0, 1, 2) / 255).astype(np.float32)
 
 
 def main():
@@ -64,7 +57,7 @@ def main():
     # Also need indicator matrix for cost calculation
     Xtrain = rearrange(train['X'])
     Ytrain = train['y'].flatten() - 1
-    print len(Ytrain)
+    # print len(Ytrain)
     del train
     Xtrain, Ytrain = shuffle(Xtrain, Ytrain)
     Ytrain_ind = y2indicator(Ytrain)
@@ -79,7 +72,7 @@ def main():
     print_period = 10
     N = Xtrain.shape[0]
     batch_sz = 500
-    n_batches = N / batch_sz
+    n_batches = N // batch_sz
 
     # limit samples since input will always have to be same size
     # you could also just do N = N / batch_sz * batch_sz
@@ -149,8 +142,8 @@ def main():
     with tf.Session() as session:
         session.run(init)
 
-        for i in xrange(max_iter):
-            for j in xrange(n_batches):
+        for i in range(max_iter):
+            for j in range(n_batches):
                 Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
                 Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
 
@@ -161,16 +154,16 @@ def main():
                         # so as a result, we have this ugly total cost and prediction computation
                         test_cost = 0
                         prediction = np.zeros(len(Xtest))
-                        for k in xrange(len(Xtest) / batch_sz):
+                        for k in range(len(Xtest) // batch_sz):
                             Xtestbatch = Xtest[k*batch_sz:(k*batch_sz + batch_sz),]
                             Ytestbatch = Ytest_ind[k*batch_sz:(k*batch_sz + batch_sz),]
                             test_cost += session.run(cost, feed_dict={X: Xtestbatch, T: Ytestbatch})
                             prediction[k*batch_sz:(k*batch_sz + batch_sz)] = session.run(
                                 predict_op, feed_dict={X: Xtestbatch})
                         err = error_rate(prediction, Ytest)
-                        print "Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err)
+                        print("Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err))
                         LL.append(test_cost)
-    print "Elapsed time:", (datetime.now() - t0)
+    print("Elapsed time:", (datetime.now() - t0))
     plt.plot(LL)
     plt.show()
 

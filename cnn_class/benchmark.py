@@ -2,6 +2,10 @@
 # https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 # https://udemy.com/deep-learning-convolutional-neural-networks-theano-tensorflow
 # get the data: http://ufldl.stanford.edu/housenumbers/
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import os
 import numpy as np
@@ -16,7 +20,7 @@ from datetime import datetime
 def y2indicator(y):
     N = len(y)
     ind = np.zeros((N, 10))
-    for i in xrange(N):
+    for i in range(N):
         ind[i, y[i]] = 1
     return ind
 
@@ -30,7 +34,7 @@ def flatten(X):
     # output will be (N, 3072)
     N = X.shape[-1]
     flat = np.zeros((N, 3072))
-    for i in xrange(N):
+    for i in range(N):
         flat[i] = X[:,:,:,i].reshape(3072)
     return flat
 
@@ -128,8 +132,8 @@ def main():
     with tf.Session() as session:
         session.run(init)
 
-        for i in xrange(max_iter):
-            for j in xrange(n_batches):
+        for i in range(max_iter):
+            for j in range(n_batches):
                 Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
                 Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
 
@@ -138,9 +142,9 @@ def main():
                     test_cost = session.run(cost, feed_dict={X: Xtest, T: Ytest_ind})
                     prediction = session.run(predict_op, feed_dict={X: Xtest})
                     err = error_rate(prediction, Ytest)
-                    print "Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err)
+                    print("Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err))
                     LL.append(test_cost)
-    print "Elapsed time:", (datetime.now() - t0)
+    print("Elapsed time:", (datetime.now() - t0))
     plt.plot(LL)
     plt.show()
 
