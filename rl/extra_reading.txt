@@ -1,0 +1,2 @@
+Sutton & Barto
+http://incompleteideas.net/sutton/book/the-book-2nd.html
