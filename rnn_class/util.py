@@ -73,7 +73,19 @@ def my_tokenizer(s):
 
 def get_wikipedia_data(n_files, n_vocab, by_paragraph=False):
     prefix = '../large_files/'
+
+    if not os.path.exists(prefix):
+        print "Are you sure you've downloaded, converted, and placed the Wikipedia data into the proper folder?"
+        print "I'm looking for a folder called large_files, adjacent to the class folder, but it does not exist."
+        print "Please download the data from https://dumps.wikimedia.org/"
+        exit()
+
     input_files = [f for f in os.listdir(prefix) if f.startswith('enwiki') and f.endswith('txt')]
+
+    if len(input_files) == 0:
+        print "Looks like you don't have any data files, or they're in the wrong location."
+        print "Please download the data from https://dumps.wikimedia.org/"
+        print "Quitting..."
 
     # return variables
     sentences = []
