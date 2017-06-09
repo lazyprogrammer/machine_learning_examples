@@ -16,8 +16,8 @@ x = tf.placeholder(tf.int32, shape=(None,), name='x')
 
 # thing to do to every element of the sequence
 # notice how it always ignores the last output
-def square(last, x):
-  return x*x
+def square(last, current):
+  return current*current
 
 # this is a "fancy for loop"
 # it says: apply square to every element of x
