@@ -11,8 +11,16 @@ import matplotlib.pyplot as plt
 # for binary classification! no softmax here
 
 def forward(X, W1, b1, W2, b2):
+    # sigmoid
     # Z = 1 / (1 + np.exp( -(X.dot(W1) + b1) ))
-    Z = np.tanh(X.dot(W1) + b1)
+
+    # tanh
+    # Z = np.tanh(X.dot(W1) + b1)
+
+    # relu
+    Z = X.dot(W1) + b1
+    Z = Z * (Z > 0)
+
     activation = Z.dot(W2) + b2
     Y = 1 / (1 + np.exp(-activation))
     return Y, Z
@@ -33,13 +41,15 @@ def derivative_b2(T, Y):
 
 def derivative_w1(X, Z, T, Y, W2):
     # dZ = np.outer(T-Y, W2) * Z * (1 - Z) # this is for sigmoid activation
-    dZ = np.outer(T-Y, W2) * (1 - Z * Z) # this is for tanh activation
+    # dZ = np.outer(T-Y, W2) * (1 - Z * Z) # this is for tanh activation
+    dZ = np.outer(T-Y, W2) * (Z > 0) # this is for relu activation
     return X.T.dot(dZ)
 
 
 def derivative_b1(Z, T, Y, W2):
     # dZ = np.outer(T-Y, W2) * Z * (1 - Z) # this is for sigmoid activation
-    dZ = np.outer(T-Y, W2) * (1 - Z * Z) # this is for tanh activation
+    # dZ = np.outer(T-Y, W2) * (1 - Z * Z) # this is for tanh activation
+    dZ = np.outer(T-Y, W2) * (Z > 0) # this is for relu activation
     return dZ.sum(axis=0)
 
 
@@ -63,7 +73,7 @@ def test_xor():
     W2 = np.random.randn(5)
     b2 = 0
     LL = [] # keep track of likelihoods
-    learning_rate = 10e-3
+    learning_rate = 1e-2
     regularization = 0.
     last_error_rate = None
     for i in xrange(30000):
@@ -137,8 +147,8 @@ def test_donut():
 
 
 if __name__ == '__main__':
-    # test_xor()
-    test_donut()
+    test_xor()
+    # test_donut()
 
     
 
