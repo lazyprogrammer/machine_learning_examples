@@ -120,7 +120,7 @@ class HMM:
 
         alpha, scale = tf.scan(
             fn=recurrence,
-            elems=B,
+            elems=B[1:],
             initializer=(pi*B[0], np.float32(1.0)),
         )
         # note: tensorflow is very strict about what types you pass in to initializer!
