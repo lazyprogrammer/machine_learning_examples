@@ -20,7 +20,7 @@ class HMM:
     def set_session(self, session):
         self.session = session
     
-    def fit(self, X, learning_rate=0.001, max_iter=10, print_period=1):
+    def fit(self, X, max_iter=10, print_period=1):
         # train the HMM model using stochastic gradient descent
 
         N = len(X)
