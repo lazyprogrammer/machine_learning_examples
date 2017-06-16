@@ -13,7 +13,8 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 # original sequence is a noisy sine wave
-X = 2*np.random.randn(300) + np.sin(np.linspace(0, 3*np.pi, 300))
+original = np.sin(np.linspace(0, 3*np.pi, 300))
+X = 2*np.random.randn(300) + original
 plt.plot(X)
 plt.title("original")
 plt.show()
@@ -29,13 +30,14 @@ def recurrence(last, x):
 lpf = tf.scan(
   fn=recurrence,
   elems=sequence,
-  initializer=0.0,
+  initializer=0.0, # sequence[0] to use the first value of the sequence
 )
 
 # run it!
 with tf.Session() as session:
-  Y = session.run(lpf, feed_dict={sequence: X, decay: 0.99})
+  Y = session.run(lpf, feed_dict={sequence: X, decay: 0.97})
 
   plt.plot(Y)
+  plt.plot(original)
   plt.title("filtered")
   plt.show()

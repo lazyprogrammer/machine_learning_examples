@@ -20,7 +20,7 @@ class HMM:
         self.M = M # number of hidden states
         self.K = K # number of Gaussians
     
-    def fit(self, X, max_iter=30, eps=10e-1):
+    def fit(self, X, max_iter=30, eps=1e0):
         # train the HMM model using the Baum-Welch algorithm
         # a specific instance of the expectation-maximization algorithm
 

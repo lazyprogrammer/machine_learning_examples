@@ -19,7 +19,7 @@ class HMM:
         self.M = M # number of hidden states
         self.K = K # number of Gaussians
     
-    def fit(self, X, max_iter=30, eps=10e-1):
+    def fit(self, X, max_iter=30, eps=1e0):
         # train the HMM model using the Baum-Welch algorithm
         # a specific instance of the expectation-maximization algorithm
 
@@ -94,7 +94,6 @@ class HMM:
                         # mixture_j = component[j,:,t].sum()
                         for k in xrange(self.K):
                             gamma[t,j,k] = factor * component[j,k,t] / B[j,t]
-                            # assert(np.abs(mixture_j - B[j,t]).sum() < 10e-10)
                 gammas.append(gamma)
 
             cost = np.log(P).sum()

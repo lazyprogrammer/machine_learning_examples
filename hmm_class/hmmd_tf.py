@@ -2,6 +2,11 @@
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
 # Discrete Hidden Markov Model (HMM) in Tensorflow using gradient descent.
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 
 import numpy as np
 import tensorflow as tf
@@ -19,14 +24,14 @@ class HMM:
         # train the HMM model using stochastic gradient descent
 
         N = len(X)
-        print "number of train samples:", N
+        print("number of train samples:", N)
 
         costs = []
-        for it in xrange(max_iter):
+        for it in range(max_iter):
             if it % print_period == 0:
-                print "it:", it
+                print("it:", it)
             
-            for n in xrange(N):
+            for n in range(N):
                 # this would of course be much faster if we didn't do this on
                 # every iteration of the loop
                 c = self.get_cost_multi(X).sum()
@@ -117,7 +122,7 @@ def fit_coin():
         hmm.set_session(session)
         hmm.fit(X, max_iter=5)
         L = hmm.get_cost_multi(X).sum()
-        print "LL with fitted params:", L
+        print("LL with fitted params:", L)
 
         # try true values
         # remember these must be in their "pre-softmax" forms
@@ -126,7 +131,7 @@ def fit_coin():
         B = np.log( np.array([[0.6, 0.4], [0.3, 0.7]]) ).astype(np.float32)
         hmm.set(pi, A, B)
         L = hmm.get_cost_multi(X).sum()
-        print "LL with true params:", L
+        print("LL with true params:", L)
 
 
 if __name__ == '__main__':

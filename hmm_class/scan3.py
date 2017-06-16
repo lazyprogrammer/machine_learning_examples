@@ -18,19 +18,19 @@ decay = T.scalar('decay')
 sequence = T.vector('sequence')
 
 def recurrence(x, last, decay):
-	return (1-decay)*x + decay*last
+  return (1-decay)*x + decay*last
 
 outputs, _ = theano.scan(
-	fn=recurrence,
-	sequences=sequence,
-	n_steps=sequence.shape[0],
-	outputs_info=[np.float64(0)],
-	non_sequences=[decay]
+  fn=recurrence,
+  sequences=sequence,
+  n_steps=sequence.shape[0],
+  outputs_info=[np.float64(0)],
+  non_sequences=[decay]
 )
 
 lpf = theano.function(
-	inputs=[sequence, decay],
-	outputs=outputs,
+  inputs=[sequence, decay],
+  outputs=outputs,
 )
 
 Y = lpf(X, 0.99)

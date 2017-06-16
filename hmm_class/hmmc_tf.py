@@ -2,6 +2,13 @@
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
 # Continuous-observation HMM in Theano using gradient descent.
+# TODO: seems to be broken on TF v1.2, but fine with TF v1.0
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import wave
 import tensorflow as tf
 import numpy as np
@@ -137,14 +144,14 @@ class HMM:
         # train the HMM model using stochastic gradient descent
 
         N = len(X)
-        print "number of train samples:", N
+        print("number of train samples:", N)
 
         costs = []
-        for it in xrange(max_iter):
+        for it in range(max_iter):
             if it % 1 == 0:
-                print "it:", it
+                print("it:", it)
             
-            for n in xrange(N):
+            for n in range(N):
                 # this would of course be much faster if we didn't do this on
                 # every iteration of the loop
                 c = self.get_cost_multi(X).sum()
@@ -205,7 +212,7 @@ def fake_signal():
 
     hmm.fit(signals, max_iter=30)
     L = hmm.get_cost_multi(signals).sum()
-    print "LL for fitted params:", L
+    print("LL for fitted params:", L)
 
     # test in actual params
     _, _, _, pi, A, R, mu, sigma = big_init()
@@ -222,7 +229,7 @@ def fake_signal():
 
     hmm.set(pi, A, R, mu, logSigma)
     L = hmm.get_cost_multi(signals).sum()
-    print "LL for actual params:", L
+    print("LL for actual params:", L)
 
 if __name__ == '__main__':
     # real_signal()

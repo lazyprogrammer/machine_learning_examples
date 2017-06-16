@@ -25,7 +25,7 @@ class HMMClassifier:
             self.priors.append(np.log(C))
 
             hmm = HMM(5)
-            hmm.fit(thisX, V=V, p_cost=0.1, print_period=1, learning_rate=10e-5, max_iter=100)
+            hmm.fit(thisX, V=V, p_cost=0.1, print_period=1, learning_rate=1e-4, max_iter=100)
             self.models.append(hmm)
 
     def score(self, X, Y):
