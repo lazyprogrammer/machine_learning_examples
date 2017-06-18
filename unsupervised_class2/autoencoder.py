@@ -1,5 +1,10 @@
 # https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
 # https://www.udemy.com/unsupervised-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 import numpy as np
 import theano
 import theano.tensor as T
@@ -16,7 +21,7 @@ class AutoEncoder(object):
 
     def fit(self, X, learning_rate=0.5, mu=0.99, epochs=1, batch_sz=100, show_fig=False):
         N, D = X.shape
-        n_batches = N / batch_sz
+        n_batches = N // batch_sz
 
         W0 = init_weights((D, self.M))
         self.W = theano.shared(W0, 'W_%s' % self.id)
@@ -43,8 +48,15 @@ class AutoEncoder(object):
             outputs=H,
         )
 
+        # save this for later so we can call it to
+        # create reconstructions of input
+        self.predict = theano.function(
+            inputs=[X_in],
+            outputs=X_hat,
+        )
+
         # cost = ((X_in - X_hat) * (X_in - X_hat)).sum() / N
-        cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).sum() / (batch_sz * D)
+        cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).flatten().mean()
         cost_op = theano.function(
             inputs=[X_in],
             outputs=cost,
@@ -61,15 +73,16 @@ class AutoEncoder(object):
         )
 
         costs = []
-        print "training autoencoder: %s" % self.id
-        for i in xrange(epochs):
-            print "epoch:", i
+        print("training autoencoder: %s" % self.id)
+        for i in range(epochs):
+            print("epoch:", i)
             X = shuffle(X)
-            for j in xrange(n_batches):
+            for j in range(n_batches):
                 batch = X[j*batch_sz:(j*batch_sz + batch_sz)]
                 train_op(batch)
-                the_cost = cost_op(X) # technically we could also get the cost for Xtest here
-                print "j / n_batches:", j, "/", n_batches, "cost:", the_cost
+                the_cost = cost_op(batch) # technically we could also get the cost for Xtest here
+                if j % 10 == 0:
+                    print("j / n_batches:", j, "/", n_batches, "cost:", the_cost)
                 costs.append(the_cost)
         if show_fig:
             plt.plot(costs)
@@ -162,19 +175,19 @@ class DNN(object):
             updates=updates,
         )
 
-        n_batches = N / batch_sz
+        n_batches = N // batch_sz
         costs = []
-        print "supervised training..."
-        for i in xrange(epochs):
-            print "epoch:", i
+        print("supervised training...")
+        for i in range(epochs):
+            print("epoch:", i)
             X, Y = shuffle(X, Y)
-            for j in xrange(n_batches):
+            for j in range(n_batches):
                 Xbatch = X[j*batch_sz:(j*batch_sz + batch_sz)]
                 Ybatch = Y[j*batch_sz:(j*batch_sz + batch_sz)]
                 train_op(Xbatch, Ybatch)
                 the_cost, the_prediction = cost_predict_op(Xtest, Ytest)
                 error = error_rate(the_prediction, Ytest)
-                print "j / n_batches:", j, "/", n_batches, "cost:", the_cost, "error:", error
+                print("j / n_batches:", j, "/", n_batches, "cost:", the_cost, "error:", error)
                 costs.append(the_cost)
         plt.plot(costs)
         plt.show()
@@ -202,5 +215,32 @@ def main():
     dnn.fit(Xtrain, Ytrain, Xtest, Ytest, pretrain=False, epochs=10)
 
 
+def test_single_autoencoder():
+    Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()
+
+    autoencoder = AutoEncoder(300, 0)
+    autoencoder.fit(Xtrain, epochs=2, show_fig=True)
+
+    done = False
+    while not done:
+        i = np.random.choice(len(Xtest))
+        x = Xtest[i]
+        y = autoencoder.predict([x])
+        plt.subplot(1,2,1)
+        plt.imshow(x.reshape(28,28), cmap='gray')
+        plt.title('Original')
+
+        plt.subplot(1,2,2)
+        plt.imshow(y.reshape(28,28), cmap='gray')
+        plt.title('Reconstructed')
+
+        plt.show()
+
+        ans = input("Generate another?")
+        if ans and ans[0] in ('n' or 'N'):
+            done = True
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    test_single_autoencoder()
