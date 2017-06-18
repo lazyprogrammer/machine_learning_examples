@@ -32,7 +32,6 @@ class RBM(object):
 
         # data
         self.X_in = tf.placeholder(tf.float32, shape=(None, D))
-        # self.X_sample_pl = tf.placeholder(tf.float32, shape=(None, D))
 
         # conditional probabilities
         # NOTE: tf.contrib.distributions.Bernoulli API has changed in Tensorflow v1.2
@@ -71,7 +70,7 @@ class RBM(object):
             )
         )
 
-    def fit(self, X, learning_rate=0.1, epochs=1, batch_sz=100, show_fig=False):
+    def fit(self, X, epochs=1, batch_sz=100, show_fig=False):
         N, D = X.shape
         n_batches = N // batch_sz
 
