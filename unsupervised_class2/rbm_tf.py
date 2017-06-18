@@ -9,7 +9,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
-from util import relu, error_rate, getKaggleMNIST, init_weights
+from util import getKaggleMNIST
 from autoencoder_tf import DNN
 
 
