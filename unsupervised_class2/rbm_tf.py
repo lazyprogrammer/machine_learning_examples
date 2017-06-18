@@ -95,7 +95,8 @@ class RBM(object):
         first_term = tf.reshape(first_term, (-1,))
 
         second_term = -tf.reduce_sum(
-            tf.log(1 + tf.exp(tf.matmul(V, self.W) + self.c)),
+            # tf.log(1 + tf.exp(tf.matmul(V, self.W) + self.c)),
+            tf.nn.softplus(tf.matmul(V, self.W) + self.c),
             axis=1
         )
 
