@@ -1,7 +1,7 @@
 # https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
 # https://www.udemy.com/unsupervised-deep-learning-in-python
 from __future__ import print_function, division
-from builtins import range
+from builtins import range, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
@@ -45,7 +45,7 @@ class AutoEncoder(object):
         self.train_op = tf.train.AdamOptimizer(1e-1).minimize(self.cost)
         # self.train_op = tf.train.MomentumOptimizer(10e-4, momentum=0.9).minimize(self.cost)
 
-    def fit(self, X, learning_rate=0.5, mu=0.99, epochs=1, batch_sz=100, show_fig=False):
+    def fit(self, X, epochs=1, batch_sz=100, show_fig=False):
         N, D = X.shape
         n_batches = N // batch_sz
 
@@ -69,6 +69,12 @@ class AutoEncoder(object):
         # unlike forward_hidden and forward_output
         # which deal with tensorflow variables
         return self.session.run(self.Z, feed_dict={self.X_in: X})
+
+    def predict(self, X):
+        # accepts and returns a real numpy array
+        # unlike forward_hidden and forward_output
+        # which deal with tensorflow variables
+        return self.session.run(self.X_hat, feed_dict={self.X_in: X})
 
     def forward_hidden(self, X):
         Z = tf.nn.sigmoid(tf.matmul(X, self.W) + self.bh)
@@ -118,7 +124,7 @@ class DNN(object):
         self.train_op = tf.train.AdamOptimizer(1e-2).minimize(self.cost)
         self.prediction = tf.argmax(logits, 1)
 
-    def fit(self, X, Y, Xtest, Ytest, pretrain=True, learning_rate=0.01, mu=0.99, reg=0.1, epochs=1, batch_sz=100):
+    def fit(self, X, Y, Xtest, Ytest, pretrain=True, epochs=1, batch_sz=100):
         N = len(X)
 
         # greedy layer-wise training of autoencoders
@@ -168,7 +174,7 @@ class DNN(object):
         return logits
 
 
-def main():
+def test_pretraining_dnn():
     Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()
     # dnn = DNN([1000, 750, 500])
     # dnn.fit(Xtrain, Ytrain, Xtest, Ytest, epochs=3)
@@ -185,5 +191,40 @@ def main():
         dnn.fit(Xtrain, Ytrain, Xtest, Ytest, pretrain=True, epochs=10)
 
 
+def test_single_autoencoder():
+    Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()
+    Xtrain = Xtrain.astype(np.float32)
+    Xtest = Xtest.astype(np.float32)
+
+    _, D = Xtrain.shape
+    autoencoder = AutoEncoder(D, 300, 0)
+    init_op = tf.global_variables_initializer()
+    with tf.Session() as session:
+        session.run(init_op)
+        autoencoder.set_session(session)
+        autoencoder.fit(Xtrain, show_fig=True)
+
+        done = False
+        while not done:
+            i = np.random.choice(len(Xtest))
+            x = Xtest[i]
+            y = autoencoder.predict([x])
+            plt.subplot(1,2,1)
+            plt.imshow(x.reshape(28,28), cmap='gray')
+            plt.title('Original')
+
+            plt.subplot(1,2,2)
+            plt.imshow(y.reshape(28,28), cmap='gray')
+            plt.title('Reconstructed')
+
+            plt.show()
+
+            ans = input("Generate another?")
+            if ans and ans[0] in ('n' or 'N'):
+                done = True
+
+
+
 if __name__ == '__main__':
-    main()
+    # test_single_autoencoder()
+    test_pretraining_dnn()
