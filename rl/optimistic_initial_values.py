@@ -11,9 +11,9 @@ from comparing_epsilons import run_experiment as run_experiment_eps
 
 
 class Bandit:
-  def __init__(self, m):
+  def __init__(self, m, upper_limit):
     self.m = m
-    self.mean = 10
+    self.mean = upper_limit
     self.N = 1
 
   def pull(self):
@@ -24,8 +24,8 @@ class Bandit:
     self.mean = (1 - 1.0/self.N)*self.mean + 1.0/self.N*x
 
 
-def run_experiment(m1, m2, m3, N):
-  bandits = [Bandit(m1), Bandit(m2), Bandit(m3)]
+def run_experiment(m1, m2, m3, N, upper_limit=10):
+  bandits = [Bandit(m1, upper_limit), Bandit(m2, upper_limit), Bandit(m3, upper_limit)]
 
   data = np.empty(N)
   
