@@ -1,6 +1,11 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
 # https://books.google.ca/books?id=_ATpBwAAQBAJ&lpg=PA201&ots=rinZM8jQ6s&dq=hoeffding%20bound%20gives%20probability%20%22greater%20than%201%22&pg=PA201#v=onepage&q&f=false
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 import numpy as np
 import matplotlib.pyplot as plt
 from comparing_epsilons import run_experiment as run_experiment_eps
@@ -29,7 +34,7 @@ def run_experiment(m1, m2, m3, N):
 
   data = np.empty(N)
   
-  for i in xrange(N):
+  for i in range(N):
     # optimistic initial values
     j = np.argmax([ucb(b.mean, i+1, b.N) for b in bandits])
     x = bandits[j].pull()
@@ -48,7 +53,7 @@ def run_experiment(m1, m2, m3, N):
   plt.show()
 
   for b in bandits:
-    print b.mean
+    print(b.mean)
 
   return cumulative_average
 
