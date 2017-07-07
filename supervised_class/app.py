@@ -1,3 +1,8 @@
+from __future__ import print_function, division
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 # https://deeplearningcourses.com/c/data-science-supervised-machine-learning-in-python
 # https://www.udemy.com/data-science-supervised-machine-learning-in-python
 import pickle
@@ -11,7 +16,7 @@ import tornado.web
 if not os.path.exists('mymodel.pkl'):
     exit("Can't run without the model!")
 
-with open('mymodel.pkl') as f:
+with open('mymodel.pkl', 'rb') as f:
     model = pickle.load(f)
 
 class MainHandler(tornado.web.RequestHandler):
@@ -27,9 +32,9 @@ class PredictionHandler(tornado.web.RequestHandler):
         # body: three=four&one=two
         # arguments: {'three': ['four'], 'one': ['two']}
         params = self.request.arguments
-        x = np.array(map(float, params['input']))
+        x = np.array(list(map(float, params['input'])))
         y = model.predict([x])[0]
-        self.write(json.dumps({'prediction': y}))
+        self.write(json.dumps({'prediction': y.item()}))
         self.finish()
 
 if __name__ == "__main__":
