@@ -11,7 +11,7 @@ from builtins import range
 # Note: gym changed from version 0.7.3 to 0.8.0
 # MountainCar episode length is capped at 200 in later versions.
 # This means your agent can't learn as much in the earlier episodes
-# since they are no longer as long.   
+# since they are no longer as long.
 
 import gym
 import os
@@ -34,10 +34,9 @@ from sklearn.linear_model import SGDRegressor
 # verbose=0, epsilon=0.1, random_state=None, learning_rate='invscaling',
 # eta0=0.01, power_t=0.25, warm_start=False, average=False
 
-
-
+# Inspired by https://github.com/dennybritz/reinforcement-learning
 class FeatureTransformer:
-  def __init__(self, env):
+  def __init__(self, env, n_components=500):
     observation_examples = np.array([env.observation_space.sample() for x in range(10000)])
     scaler = StandardScaler()
     scaler.fit(observation_examples)
@@ -45,10 +44,10 @@ class FeatureTransformer:
     # Used to converte a state to a featurizes represenation.
     # We use RBF kernels with different variances to cover different parts of the space
     featurizer = FeatureUnion([
-            ("rbf1", RBFSampler(gamma=5.0, n_components=500)),
-            ("rbf2", RBFSampler(gamma=2.0, n_components=500)),
-            ("rbf3", RBFSampler(gamma=1.0, n_components=500)),
-            ("rbf4", RBFSampler(gamma=0.5, n_components=500))
+            ("rbf1", RBFSampler(gamma=5.0, n_components=n_components)),
+            ("rbf2", RBFSampler(gamma=2.0, n_components=n_components)),
+            ("rbf3", RBFSampler(gamma=1.0, n_components=n_components)),
+            ("rbf4", RBFSampler(gamma=0.5, n_components=n_components))
             ])
     example_features = featurizer.fit_transform(scaler.transform(observation_examples))
 

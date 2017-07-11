@@ -24,7 +24,7 @@ class HiddenLayer:
     if zeros:
       W = np.zeros((M1, M2))
     else:
-      W = np.random.randn(M1, M2) / np.sqrt(M1+M2)
+      W = np.random.randn(M1, M2) * np.sqrt(2 / M1)
     self.W = theano.shared(W)
     self.params = [self.W]
     self.use_bias = use_bias
@@ -104,13 +104,13 @@ class PolicyModel:
     var = get_output(self.var_layers) + 10e-5 # smoothing
 
     # can't find Theano log pdf, we will make it
-    def log_pdf(actions, mean, var):
-      k1 = T.log(2*np.pi*var)
-      k2 = (actions - mean)**2 / var
-      return -0.5*(k1 + k2)
+    # def log_pdf(actions, mean, var):
+    #   k1 = T.log(2*np.pi*var)
+    #   k2 = (actions - mean)**2 / var
+    #   return -0.5*(k1 + k2)
 
-    log_probs = log_pdf(actions, mean, var)
-    cost = -T.sum(advantages * log_probs + 0.1*T.log(2*np.pi*var)) + 1.0*mean.dot(mean)
+    # log_probs = log_pdf(actions, mean, var)
+    # cost = -T.sum(advantages * log_probs + 0.1*T.log(2*np.pi*var)) + 1.0*mean.dot(mean)
 
     # self.get_log_probs = theano.function(
     #   inputs=[X, actions],
@@ -119,20 +119,20 @@ class PolicyModel:
     # )
     
     # specify update rule
-    grads = T.grad(cost, params)
-    g_update = [(p, p + v) for p, v, g in zip(params, velocities, grads)]
-    c_update = [(c, decay*c + (1 - decay)*g*g) for c, g in zip(caches, grads)]
-    v_update = [(v, mu*v - lr*g / T.sqrt(c)) for v, c, g in zip(velocities, caches, grads)]
+    # grads = T.grad(cost, params)
+    # g_update = [(p, p + v) for p, v, g in zip(params, velocities, grads)]
+    # c_update = [(c, decay*c + (1 - decay)*g*g) for c, g in zip(caches, grads)]
+    # v_update = [(v, mu*v - lr*g / T.sqrt(c)) for v, c, g in zip(velocities, caches, grads)]
     # v_update = [(v, mu*v - lr*g) for v, g in zip(velocities, grads)]
     # c_update = []
-    updates = c_update + g_update + v_update
+    # updates = c_update + g_update + v_update
 
     # compile functions
-    self.train_op = theano.function(
-      inputs=[X, actions, advantages],
-      updates=updates,
-      allow_input_downcast=True
-    )
+    # self.train_op = theano.function(
+    #   inputs=[X, actions, advantages],
+    #   updates=updates,
+    #   allow_input_downcast=True
+    # )
 
     # alternatively, we could create a RandomStream and sample from
     # the Gaussian using Theano code
