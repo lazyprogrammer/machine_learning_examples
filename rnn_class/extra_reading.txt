@@ -1,0 +1,2 @@
+Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling, Chung 2014
+https://arxiv.org/pdf/1412.3555v1.pdf
