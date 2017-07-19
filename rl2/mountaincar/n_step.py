@@ -94,9 +94,14 @@ def play_one(model, eps, gamma, n=5):
     iters += 1
 
   # empty the cache
-  rewards = rewards[-n+1:]
-  states = states[-n+1:]
-  actions = actions[-n+1:]
+  if n == 1:
+    rewards = []
+    states = []
+    actions = []
+  else:
+    rewards = rewards[-n+1:]
+    states = states[-n+1:]
+    actions = actions[-n+1:]
   # unfortunately, new version of gym cuts you off at 200 steps
   # even if you haven't reached the goal.
   # it's not good to do this UNLESS you've reached the goal.
