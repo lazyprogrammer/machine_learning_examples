@@ -80,12 +80,11 @@ class ConvLayer(object):
       input=X,
       filters=self.W,
       subsample=self.stride,
-      border_mode='full',
+      border_mode='half',
     )
     # cut off 1 pixel from each edge
     # to make the output the same size as input
     # like tensorflow
-    conv_out = conv_out[:,:,1:-1,1:-1]
     return self.f(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
 
 class HiddenLayer:
