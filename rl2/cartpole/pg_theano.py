@@ -4,6 +4,7 @@ from __future__ import print_function, division
 from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
+# Inspired by https://github.com/dennybritz/reinforcement-learning
 
 import gym
 import os
@@ -20,7 +21,7 @@ from q_learning_bins import plot_running_avg
 # so you can test different architectures
 class HiddenLayer:
   def __init__(self, M1, M2, f=T.tanh, use_bias=True):
-    self.W = theano.shared(np.random.randn(M1, M2) / np.sqrt(M1+M2))
+    self.W = theano.shared(np.random.randn(M1, M2) * np.sqrt(2 / M1))
     self.params = [self.W]
     self.use_bias = use_bias
     if use_bias:
@@ -217,24 +218,31 @@ def play_one_mc(env, pmodel, vmodel, gamma):
   actions = []
   rewards = []
 
+  reward = 0
   while not done and iters < 2000:
     # if we reach 2000, just quit, don't want this going forever
     # the 200 limit seems a bit early
     action = pmodel.sample_action(observation)
-    prev_observation = observation
-    observation, reward, done, info = env.step(action)
 
-    # if done:
-    #   reward = -200
-
-    states.append(prev_observation)
+    states.append(observation)
     actions.append(action)
     rewards.append(reward)
 
+    prev_observation = observation
+    observation, reward, done, info = env.step(action)
+
+    if done:
+      reward = -200
 
     if reward == 1: # if we changed the reward to -200
       totalreward += reward
     iters += 1
+
+  # save the final (s,a,r) tuple
+  action = pmodel.sample_action(observation)
+  states.append(observation)
+  actions.append(action)
+  rewards.append(reward)
 
   returns = []
   advantages = []
@@ -247,7 +255,7 @@ def play_one_mc(env, pmodel, vmodel, gamma):
   advantages.reverse()
 
   # update the models
-  pmodel.partial_fit(states, actions, advantages)
+  pmodel.partial_fit(states[1:], actions[1:], advantages[1:])
   vmodel.partial_fit(states, returns)
 
   return totalreward

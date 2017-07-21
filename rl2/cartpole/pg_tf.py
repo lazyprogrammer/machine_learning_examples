@@ -4,6 +4,7 @@ from __future__ import print_function, division
 from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
+# Inspired by https://github.com/dennybritz/reinforcement-learning
 
 import gym
 import os
@@ -192,24 +193,31 @@ def play_one_mc(env, pmodel, vmodel, gamma):
   actions = []
   rewards = []
 
+  reward = 0
   while not done and iters < 2000:
     # if we reach 2000, just quit, don't want this going forever
     # the 200 limit seems a bit early
     action = pmodel.sample_action(observation)
+
+    states.append(observation)
+    actions.append(action)
+    rewards.append(reward)
+
     prev_observation = observation
     observation, reward, done, info = env.step(action)
 
     if done:
       reward = -200
 
-    states.append(prev_observation)
-    actions.append(action)
-    rewards.append(reward)
-
-
     if reward == 1: # if we changed the reward to -200
       totalreward += reward
     iters += 1
+
+  # save the final (s,a,r) tuple
+  action = pmodel.sample_action(observation)
+  states.append(observation)
+  actions.append(action)
+  rewards.append(reward)
 
   returns = []
   advantages = []
