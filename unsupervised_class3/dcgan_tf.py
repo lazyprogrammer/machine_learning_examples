@@ -1,3 +1,5 @@
+# https://deeplearningcourses.com/c/deep-learning-gans-and-variational-autoencoders
+# https://www.udemy.com/deep-learning-gans-and-variational-autoencoders
 from __future__ import print_function, division
 from builtins import range, input
 # Note: you may need to update your version of future

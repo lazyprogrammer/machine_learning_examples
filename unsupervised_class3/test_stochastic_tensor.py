@@ -1,3 +1,6 @@
+# https://deeplearningcourses.com/c/deep-learning-gans-and-variational-autoencoders
+# https://www.udemy.com/deep-learning-gans-and-variational-autoencoders
+
 # a simple script to see what StochasticTensor outputs
 from __future__ import print_function, division
 from builtins import range
