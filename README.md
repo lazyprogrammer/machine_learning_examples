@@ -62,3 +62,6 @@ https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning
 Advanced AI: Deep Reinforcement Learning in Python
 https://deeplearningcourses.com/c/deep-reinforcement-learning-in-python
 
+Deep Learning: GANs and Variational Autoencoders
+https://deeplearningcourses.com/c/deep-learning-gans-and-variational-autoencoders
+
