@@ -14,7 +14,7 @@ class SGDRegressor:
     print("Hello Theano!")
     w = np.random.randn(D) / np.sqrt(D)
     self.w = theano.shared(w)
-    self.lr = 10e-2
+    self.lr = 0.1
 
     X = T.matrix('X')
     Y = T.vector('Y')

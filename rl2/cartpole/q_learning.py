@@ -4,6 +4,7 @@ from __future__ import print_function, division
 from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
+# Inspired by https://github.com/dennybritz/reinforcement-learning
 
 # Works best w/ multiply RBF kernels at var=0.05, 0.1, 0.5, 1.0
 
@@ -23,7 +24,7 @@ from q_learning_bins import plot_running_avg
 class SGDRegressor:
   def __init__(self, D):
     self.w = np.random.randn(D) / np.sqrt(D)
-    self.lr = 10e-2
+    self.lr = 0.1
 
   def partial_fit(self, X, Y):
     self.w += self.lr*(Y - X.dot(self.w)).dot(X)

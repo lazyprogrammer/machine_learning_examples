@@ -12,17 +12,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from gym import wrappers
 from datetime import datetime
-from sarsa import FeatureTransformer, plot_running_avg
+from q_learning import FeatureTransformer
+from q_learning_bins import plot_running_avg
 
 
 class SGDRegressor:
   def __init__(self, D):
     self.w = np.random.randn(D) / np.sqrt(D)
 
-  def partial_fit(self, x, y, e, lr=10e-4):
-    # X = np.array(X)
-    # N,D = X.shape
-    # self.w += lr*(Y - X.dot(self.w)).dot(X)
+  def partial_fit(self, x, y, e, lr=1e-4):
     self.w += lr*(y - x.dot(self.w))*e
 
   def predict(self, X):
@@ -47,6 +45,9 @@ class Model:
       self.models.append(model)
     
     self.eligibilities = np.zeros((env.action_space.n, D))
+
+  def reset(self):
+    self.eligibilities = np.zeros_like(self.eligibilities)
 
   def predict(self, s):
     X = self.feature_transformer.transform([s])
@@ -82,6 +83,7 @@ def play_one(model, eps, gamma, lambda_):
   totalreward = 0
   states_actions_rewards = []
   iters = 0
+  model.reset()
   while not done and iters < 1000000:
     action = model.sample_action(observation, eps)
     prev_observation = observation
@@ -113,10 +115,8 @@ if __name__ == '__main__':
   env = gym.make('CartPole-v0')
   ft = FeatureTransformer(env)
   model = Model(env, ft)
-  # learning_rate = 10e-5
-  # eps = 1.0
   gamma = 0.99
-  lambda_ = 0.8
+  lambda_ = 0.7
 
   if 'monitor' in sys.argv:
     filename = os.path.basename(__file__).split('.')[0]
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     env = wrappers.Monitor(env, monitor_dir)
 
 
-  N = 500
+  N = 1500
   totalrewards = np.empty(N)
   # costs = np.empty(N)
   for n in range(N):

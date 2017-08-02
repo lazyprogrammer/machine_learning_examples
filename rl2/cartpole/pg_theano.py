@@ -40,10 +40,8 @@ class HiddenLayer:
 # approximates pi(a | s)
 class PolicyModel:
   def __init__(self, D, K, hidden_layer_sizes):
-    # starting learning rate and other hyperparams
-    lr = 10e-4
-    mu = 0.7
-    decay = 0.999
+    # learning rate and other hyperparams
+    lr = 1e-4
 
     # create the graph
     # K = number of actions
@@ -62,8 +60,6 @@ class PolicyModel:
     params = []
     for layer in self.layers:
       params += layer.params
-    caches = [theano.shared(np.ones_like(p.get_value())*0.1) for p in params]
-    velocities = [theano.shared(p.get_value()*0) for p in params]
 
     # inputs and targets
     X = T.matrix('X')
@@ -82,12 +78,7 @@ class PolicyModel:
     
     # specify update rule
     grads = T.grad(cost, params)
-    g_update = [(p, p + v) for p, v, g in zip(params, velocities, grads)]
-    c_update = [(c, decay*c + (1 - decay)*g*g) for c, g in zip(caches, grads)]
-    v_update = [(v, mu*v - lr*g / T.sqrt(c)) for v, c, g in zip(velocities, caches, grads)]
-    # v_update = [(v, mu*v - lr*g) for v, g in zip(velocities, grads)]
-    # c_update = []
-    updates = c_update + g_update + v_update
+    updates = [(p, p - lr*g) for p, g in zip(params, grads)]
 
     # compile functions
     self.train_op = theano.function(
@@ -122,7 +113,7 @@ class PolicyModel:
 class ValueModel:
   def __init__(self, D, hidden_layer_sizes):
     # constant learning rate is fine
-    lr = 10e-5
+    lr = 1e-4
 
     # create the graph
     self.layers = []

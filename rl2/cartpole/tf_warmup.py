@@ -11,7 +11,7 @@ import q_learning
 class SGDRegressor:
   def __init__(self, D):
     print("Hello TensorFlow!")
-    lr = 10e-2
+    lr = 0.1
 
     # create inputs, targets, params
     # matmul doesn't like when w is 1-D

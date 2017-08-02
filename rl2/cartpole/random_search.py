@@ -45,7 +45,7 @@ def random_search(env):
   episode_lengths = []
   best = 0
   params = None
-  for t in xrange(100):
+  for t in range(100):
     new_params = np.random.random(4)*2 - 1
     avg_length = play_multiple_episodes(env, 100, new_params)
     episode_lengths.append(avg_length)

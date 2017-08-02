@@ -78,10 +78,10 @@ class PolicyModel:
     # self.selected_probs = selected_probs
     cost = -tf.reduce_sum(self.advantages * selected_probs)
     # self.cost = cost
-    # self.train_op = tf.train.AdamOptimizer(10e-2).minimize(cost)
-    self.train_op = tf.train.AdagradOptimizer(10e-2).minimize(cost)
-    # self.train_op = tf.train.MomentumOptimizer(10e-5, momentum=0.9).minimize(cost)
-    # self.train_op = tf.train.GradientDescentOptimizer(10e-5).minimize(cost)
+    # self.train_op = tf.train.AdamOptimizer(1e-1).minimize(cost)
+    self.train_op = tf.train.AdagradOptimizer(1e-1).minimize(cost)
+    # self.train_op = tf.train.MomentumOptimizer(1e-4, momentum=0.9).minimize(cost)
+    # self.train_op = tf.train.GradientDescentOptimizer(1e-4).minimize(cost)
 
   def set_session(self, session):
     self.session = session
@@ -135,9 +135,9 @@ class ValueModel:
     self.predict_op = Y_hat
 
     cost = tf.reduce_sum(tf.square(self.Y - Y_hat))
-    # self.train_op = tf.train.AdamOptimizer(10e-3).minimize(cost)
-    # self.train_op = tf.train.MomentumOptimizer(10e-3, momentum=0.9).minimize(cost)
-    self.train_op = tf.train.GradientDescentOptimizer(10e-5).minimize(cost)
+    # self.train_op = tf.train.AdamOptimizer(1e-2).minimize(cost)
+    # self.train_op = tf.train.MomentumOptimizer(1e-2, momentum=0.9).minimize(cost)
+    self.train_op = tf.train.GradientDescentOptimizer(1e-4).minimize(cost)
 
   def set_session(self, session):
     self.session = session
@@ -254,7 +254,7 @@ def main():
     monitor_dir = './' + filename + '_' + str(datetime.now())
     env = wrappers.Monitor(env, monitor_dir)
 
-  N = 500
+  N = 1000
   totalrewards = np.empty(N)
   costs = np.empty(N)
   for n in range(N):
