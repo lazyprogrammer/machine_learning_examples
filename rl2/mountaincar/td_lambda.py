@@ -10,7 +10,7 @@ from builtins import range
 # This means your agent can't learn as much in the earlier episodes
 # since they are no longer as long.
 #
-# # Adapt Q-Learning script to use TD(lambda) method instead
+# Adapt Q-Learning script to use TD(lambda) method instead
 
 import gym
 import os
@@ -28,7 +28,7 @@ class BaseModel:
   def __init__(self, D):
     self.w = np.random.randn(D) / np.sqrt(D)
 
-  def partial_fit(self, input_, target, eligibility, lr=10e-3):
+  def partial_fit(self, input_, target, eligibility, lr=1e-2):
     self.w += lr*(target - input_.dot(self.w))*eligibility
 
   def predict(self, X):

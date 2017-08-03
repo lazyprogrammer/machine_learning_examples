@@ -151,8 +151,6 @@ if __name__ == '__main__':
   env = gym.make('MountainCar-v0')
   ft = FeatureTransformer(env)
   model = Model(env, ft, "constant")
-  # learning_rate = 10e-5
-  # eps = 1.0
   gamma = 0.99
 
   if 'monitor' in sys.argv:

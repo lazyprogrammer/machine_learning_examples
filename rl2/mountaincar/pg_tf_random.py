@@ -94,19 +94,11 @@ class PolicyModel:
 
     # calculate output and cost
     mean = get_output(self.mean_layers)
-    var = get_output(self.var_layers) + 10e-5 # smoothing
+    var = get_output(self.var_layers) + 1e-4 # smoothing
 
-    # log_probs = log_pdf(self.actions, mean, var)
     norm = tf.contrib.distributions.Normal(mean, var)
     self.predict_op = tf.clip_by_value(norm.sample(), -1, 1)
 
-    # log_probs = norm.log_prob(self.actions)
-    # cost = -tf.reduce_sum(self.advantages * log_probs + 0.1*tf.log(2*np.pi*var)) + 0.1*tf.reduce_sum(mean*mean)
-    # self.cost = cost
-    # self.train_op = tf.train.AdamOptimizer(10e-3).minimize(cost)
-    # self.train_op = tf.train.AdagradOptimizer(10e-3).minimize(cost)
-    # self.train_op = tf.train.MomentumOptimizer(10e-5, momentum=0.9).minimize(cost)
-    # self.train_op = tf.train.GradientDescentOptimizer(10e-5).minimize(cost)
 
   def set_session(self, session):
     self.session = session

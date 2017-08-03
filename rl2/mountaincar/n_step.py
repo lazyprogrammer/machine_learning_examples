@@ -28,7 +28,7 @@ from q_learning import plot_cost_to_go, FeatureTransformer, Model, plot_running_
 class SGDRegressor:
   def __init__(self, **kwargs):
     self.w = None
-    self.lr = 10e-3
+    self.lr = 1e-2
 
   def partial_fit(self, X, Y):
     if self.w is None:

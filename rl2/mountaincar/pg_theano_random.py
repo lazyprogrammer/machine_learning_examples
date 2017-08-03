@@ -44,11 +44,6 @@ class HiddenLayer:
 # approximates pi(a | s)
 class PolicyModel:
   def __init__(self, ft, D, hidden_layer_sizes_mean=[], hidden_layer_sizes_var=[]):
-    # starting learning rate and other hyperparams
-    lr = 10e-3
-    mu = 0.
-    decay = 0.999
-
     # save inputs for copy
     self.ft = ft
     self.D = D
@@ -84,8 +79,6 @@ class PolicyModel:
     params = []
     for layer in (self.mean_layers + self.var_layers):
       params += layer.params
-    caches = [theano.shared(np.ones_like(p.get_value())*0.1) for p in params]
-    velocities = [theano.shared(p.get_value()*0) for p in params]
     self.params = params
 
     # inputs and targets
@@ -101,38 +94,7 @@ class PolicyModel:
       return Z.flatten()
 
     mean = get_output(self.mean_layers)
-    var = get_output(self.var_layers) + 10e-5 # smoothing
-
-    # can't find Theano log pdf, we will make it
-    # def log_pdf(actions, mean, var):
-    #   k1 = T.log(2*np.pi*var)
-    #   k2 = (actions - mean)**2 / var
-    #   return -0.5*(k1 + k2)
-
-    # log_probs = log_pdf(actions, mean, var)
-    # cost = -T.sum(advantages * log_probs + 0.1*T.log(2*np.pi*var)) + 1.0*mean.dot(mean)
-
-    # self.get_log_probs = theano.function(
-    #   inputs=[X, actions],
-    #   outputs=log_probs,
-    #   allow_input_downcast=True,
-    # )
-    
-    # specify update rule
-    # grads = T.grad(cost, params)
-    # g_update = [(p, p + v) for p, v, g in zip(params, velocities, grads)]
-    # c_update = [(c, decay*c + (1 - decay)*g*g) for c, g in zip(caches, grads)]
-    # v_update = [(v, mu*v - lr*g / T.sqrt(c)) for v, c, g in zip(velocities, caches, grads)]
-    # v_update = [(v, mu*v - lr*g) for v, g in zip(velocities, grads)]
-    # c_update = []
-    # updates = c_update + g_update + v_update
-
-    # compile functions
-    # self.train_op = theano.function(
-    #   inputs=[X, actions, advantages],
-    #   updates=updates,
-    #   allow_input_downcast=True
-    # )
+    var = get_output(self.var_layers) + 1e-4 # smoothing
 
     # alternatively, we could create a RandomStream and sample from
     # the Gaussian using Theano code
@@ -141,14 +103,6 @@ class PolicyModel:
       outputs=[mean, var],
       allow_input_downcast=True
     )
-
-  # def partial_fit(self, X, actions, advantages):
-  #   X = np.atleast_2d(X)
-  #   actions = np.atleast_1d(actions)
-  #   advantages = np.atleast_1d(advantages)
-  #   lp = self.get_log_probs(X, actions)
-  #   # print("log_probs.shape:", lp.shape)
-  #   self.train_op(X, actions, advantages)
 
   def predict(self, X):
     X = np.atleast_2d(X)
