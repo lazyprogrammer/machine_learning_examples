@@ -41,7 +41,8 @@ class DataTransformer:
       self.scalers[col] = scaler
 
   def transform(self, df):
-    N, D = df.shape
+    N, _ = df.shape
+    D = len(NUMERICAL_COLS) + len(NO_TRANSFORM)
     X = np.zeros((N, D))
     i = 0
     for col, scaler in self.scalers.iteritems():
