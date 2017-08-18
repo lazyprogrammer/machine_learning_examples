@@ -9,8 +9,7 @@ from scipy.stats import norm
 from scipy.stats import multivariate_normal as mvn
 
 class NaiveBayes(object):
-    def fit(self, X, Y, smoothing=10e-3):
-        # N, D = X.shape
+    def fit(self, X, Y, smoothing=1e-2):
         self.gaussians = dict()
         self.priors = dict()
         labels = set(Y)
@@ -20,10 +19,7 @@ class NaiveBayes(object):
                 'mean': current_x.mean(axis=0),
                 'var': current_x.var(axis=0) + smoothing,
             }
-            # assert(self.gaussians[c]['mean'].shape[0] == D)
             self.priors[c] = float(len(Y[Y == c])) / len(Y)
-        # print "gaussians:", self.gaussians
-        # print "priors:", self.priors
 
     def score(self, X, Y):
         P = self.predict(X)
@@ -34,7 +30,6 @@ class NaiveBayes(object):
         K = len(self.gaussians)
         P = np.zeros((N, K))
         for c, g in self.gaussians.iteritems():
-            # print "c:", c
             mean, var = g['mean'], g['var']
             P[:,c] = mvn.logpdf(X, mean=mean, cov=var) + np.log(self.priors[c])
         return np.argmax(P, axis=1)

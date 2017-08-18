@@ -10,7 +10,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from sklearn.utils import shuffle
-from util import relu, error_rate, getKaggleMNIST, init_weights
+from util import error_rate, getKaggleMNIST
 
 
 class AutoEncoder(object):

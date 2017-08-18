@@ -22,7 +22,7 @@ class TFLogistic:
       self.build(D, K)
 
   def build(self, D, K):
-    W0 = np.random.randn(D, K) * 2 / np.sqrt(D)
+    W0 = np.random.randn(D, K) * np.sqrt(2.0 / D)
     b0 = np.zeros(K)
 
     # define variables and expressions
@@ -47,9 +47,9 @@ class TFLogistic:
 
     # hyperparams
     max_iter = 30
-    lr = 10e-4
+    lr = 1e-3
     mu = 0.9
-    regularization = 10e-2
+    regularization = 1e-1
     batch_sz = 100
     n_batches = N / batch_sz
 

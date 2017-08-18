@@ -13,7 +13,7 @@ class HiddenLayer(object):
     def __init__(self, M1, M2):
         self.M1 = M1
         self.M2 = M2
-        W = np.random.randn(M1, M2) / np.sqrt(M1)
+        W = np.random.randn(M1, M2) / np.sqrt(2.0 / M1)
         b = np.zeros(M2)
         self.W = tf.Variable(W.astype(np.float32))
         self.b = tf.Variable(b.astype(np.float32))
@@ -28,7 +28,7 @@ class ANN(object):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.dropout_rates = p_keep
 
-    def fit(self, X, Y, lr=1e-3, mu=0.99, decay=0.999, epochs=300, batch_sz=100, split=True, print_every=20):
+    def fit(self, X, Y, lr=1e-4, mu=0.9, decay=0.9, epochs=8, batch_sz=100, split=True, print_every=20):
         # make a validation set
         X, Y = shuffle(X, Y)
         X = X.astype(np.float32)
@@ -69,8 +69,8 @@ class ANN(object):
                 labels=labels
             )
         )
-        # train_op = tf.train.RMSPropOptimizer(lr, decay=decay, momentum=mu).minimize(cost)
-        train_op = tf.train.MomentumOptimizer(lr, momentum=mu).minimize(cost)
+        train_op = tf.train.RMSPropOptimizer(lr, decay=decay, momentum=mu).minimize(cost)
+        # train_op = tf.train.MomentumOptimizer(lr, momentum=mu).minimize(cost)
         prediction = self.predict(inputs)
 
         n_batches = N / batch_sz

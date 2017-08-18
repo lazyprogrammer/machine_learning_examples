@@ -55,7 +55,6 @@ class AutoEncoder(object):
             outputs=X_hat,
         )
 
-        # cost = ((X_in - X_hat) * (X_in - X_hat)).sum() / N
         cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).flatten().mean()
         cost_op = theano.function(
             inputs=[X_in],
@@ -90,8 +89,6 @@ class AutoEncoder(object):
 
     def forward_hidden(self, X):
         Z = T.nnet.sigmoid(X.dot(self.W) + self.bh)
-        # Z = T.tanh(X.dot(self.W) + self.bh)
-        # Z = relu(X.dot(self.W) + self.bh)
         return Z
 
     def forward_output(self, X):

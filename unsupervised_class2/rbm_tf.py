@@ -25,7 +25,7 @@ class RBM(object):
 
     def build(self, D, M):
         # params
-        self.W = tf.Variable(tf.random_normal(shape=(D, M)) * 2 / np.sqrt(M))
+        self.W = tf.Variable(tf.random_normal(shape=(D, M)) * np.sqrt(2.0 / M))
         # note: without limiting variance, you get numerical stability issues
         self.c = tf.Variable(np.zeros(M).astype(np.float32))
         self.b = tf.Variable(np.zeros(D).astype(np.float32))

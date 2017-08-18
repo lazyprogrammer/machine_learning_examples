@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import multivariate_normal
 
 
-def gmm(X, K, max_iter=20, smoothing=10e-3):
+def gmm(X, K, max_iter=20, smoothing=1e-2):
   N, D = X.shape
   M = np.zeros((K, D))
   R = np.zeros((N, K))

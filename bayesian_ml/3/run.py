@@ -56,7 +56,6 @@ def objective(X, Y, C, mu, a, b, e, f, a0, b0, e0, f0):
   # e1 = mvn.entropy(cov=C)
   # e2 = 0.5*np.log( np.linalg.det(2*np.pi*np.e*C) )
   # print "e1:", e1, "e2:", e2
-  # assert(np.abs(e1-e2) < 10e-8)
   # total += 0.5*np.log( np.linalg.det(2*np.pi*np.e*C) )
 
   total += mvn.entropy(cov=C)
@@ -84,8 +83,8 @@ def run(num=1, T=500):
   N, D = X.shape
   print X.shape, Y.shape, Z.shape
 
-  a0 = 10e-16
-  b0 = 10e-16
+  a0 = 1e-16
+  b0 = 1e-16
   e0 = 1
   f0 = 1
 

@@ -20,7 +20,7 @@ class HiddenLayer(object):
         self.id = an_id
         self.M1 = M1
         self.M2 = M2
-        W = np.random.randn(M1, M2) / np.sqrt(M1)
+        W = np.random.randn(M1, M2) / np.sqrt(2.0 / M1)
         b = np.zeros(M2)
         self.W = theano.shared(W, 'W_%s' % self.id)
         self.b = theano.shared(b, 'b_%s' % self.id)

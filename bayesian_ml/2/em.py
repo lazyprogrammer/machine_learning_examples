@@ -42,7 +42,6 @@ for t in xrange(50):
   # print "test:", test
   # diff = np.abs(R - test).sum()
   # print "diff:", diff
-  # assert(diff < 10e-10)
   Ez = X.dot(R.T)
 
   # M-step
@@ -54,7 +53,6 @@ for t in xrange(50):
   # print "test:", test
   # diff = np.abs(W - test).sum()
   # print "diff:", diff
-  # assert(diff < 10e-5)
 
   # likelihood
   cost = loglikelihood(X, Ez, W)

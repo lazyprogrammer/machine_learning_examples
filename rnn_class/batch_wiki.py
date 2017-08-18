@@ -9,8 +9,7 @@ import json
 
 from datetime import datetime
 from sklearn.utils import shuffle
-from batch_gru import GRU
-# from batch_lstm import LSTM
+from batch_units import GRU, LSTM
 from util import init_weight, get_wikipedia_data
 from brown import get_sentences_with_word2idx_limit_vocab
 
@@ -21,7 +20,7 @@ class RNN:
         self.D = D
         self.V = V
 
-    def fit(self, X, learning_rate=10e-5, mu=0.99, epochs=10, batch_sz=100, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU):
+    def fit(self, X, learning_rate=1e-4, mu=0.99, epochs=10, batch_sz=100, show_fig=True, activation=T.nnet.relu, RecurrentUnit=LSTM):
         D = self.D
         V = self.V
         N = len(X)

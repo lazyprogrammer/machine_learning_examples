@@ -17,11 +17,11 @@ class Autoencoder:
     self.X = tf.placeholder(tf.float32, shape=(None, D))
 
     # input -> hidden
-    self.W = tf.Variable(tf.random_normal(shape=(D, M)) * 2 / np.sqrt(M))
+    self.W = tf.Variable(tf.random_normal(shape=(D, M)) * np.sqrt(2.0 / M))
     self.b = tf.Variable(np.zeros(M).astype(np.float32))
 
     # hidden -> output
-    self.V = tf.Variable(tf.random_normal(shape=(M, D)) * 2 / np.sqrt(D))
+    self.V = tf.Variable(tf.random_normal(shape=(M, D)) * np.sqrt(2.0 / D))
     self.c = tf.Variable(np.zeros(D).astype(np.float32))
 
     # construct the reconstruction

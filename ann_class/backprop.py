@@ -126,7 +126,7 @@ def main():
     W2 = np.random.randn(M, K)
     b2 = np.random.randn(K)
 
-    learning_rate = 10e-7
+    learning_rate = 1e-6
     costs = []
     for epoch in xrange(100000):
         output, hidden = forward(X, W1, b1, W2, b2)

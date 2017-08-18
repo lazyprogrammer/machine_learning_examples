@@ -16,7 +16,7 @@ from theano.tensor.shared_randomstreams import RandomStreams
 
 class DenseLayer(object):
   def __init__(self, M1, M2, f=T.nnet.relu):
-    self.W = theano.shared(np.random.randn(M1, M2) * 2 / np.sqrt(M1))
+    self.W = theano.shared(np.random.randn(M1, M2) * np.sqrt(2.0 / M1))
     self.b = theano.shared(np.zeros(M2))
     self.f = f
     self.params = [self.W, self.b]

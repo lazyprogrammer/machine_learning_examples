@@ -92,7 +92,12 @@ class LSTM:
 
 def train_wikipedia(we_file='lstm_word_embeddings.npy', w2i_file='lstm_wikipedia_word2idx.json'):
     # there are 32 files
-    sentences, word2idx = get_wikipedia_data(n_files=100, n_vocab=2000)
+
+    ### note: you can pick between Wikipedia data and Brown corpus
+    ###       just comment one out, and uncomment the other!
+    # sentences, word2idx = get_wikipedia_data(n_files=100, n_vocab=2000)
+    sentences, word2idx = get_sentences_with_word2idx_limit_vocab()
+
     print "finished retrieving data"
     print "vocab size:", len(word2idx), "number of sentences:", len(sentences)
     rnn = RNN(50, [50], len(word2idx))

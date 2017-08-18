@@ -58,7 +58,7 @@ def update_state(state, obs):
 
 
 def init_filter(shape):
-  w = np.random.randn(*shape) * 2 / np.sqrt(np.prod(shape[1:]))
+  w = np.random.randn(*shape) * np.sqrt(2.0 / np.prod(shape[1:]))
   return w.astype(np.float32)
 
 

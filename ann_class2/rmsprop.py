@@ -78,10 +78,10 @@ def main():
     LL_rms = []
     CR_rms = []
     lr0 = 0.001 # if you set this too high you'll get NaN!
-    cache_W2 = 0
-    cache_b2 = 0
-    cache_W1 = 0
-    cache_b1 = 0
+    cache_W2 = 1
+    cache_b2 = 1
+    cache_W1 = 1
+    cache_b1 = 1
     decay_rate = 0.999
     eps = 0.0000000001
     for i in xrange(max_iter):

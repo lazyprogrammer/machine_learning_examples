@@ -23,6 +23,15 @@ def main():
     print "Z.shape:", Z.shape
     # Z has the format [idx1, idx2, dist, sample_count]
     # therefore, its size will be (N-1, 4)
+
+    # from documentation:
+    # A (n-1) by 4 matrix Z is returned. At the i-th iteration,
+    # clusters with indices Z[i, 0] and Z[i, 1] are combined to
+    # form cluster n + i. A cluster with an index less than n
+    # corresponds to one of the original observations.
+    # The distance between clusters Z[i, 0] and Z[i, 1] is given
+    # by Z[i, 2]. The fourth value Z[i, 3] represents the number
+    # of original observations in the newly formed cluster.
     plt.title("Ward")
     dendrogram(Z)
     plt.show()

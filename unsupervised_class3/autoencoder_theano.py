@@ -18,11 +18,11 @@ class Autoencoder:
     self.X = T.matrix('X')
 
     # input -> hidden
-    self.W = theano.shared(np.random.randn(D, M) * 2 / np.sqrt(M))
+    self.W = theano.shared(np.random.randn(D, M) * np.sqrt(2.0 / M))
     self.b = theano.shared(np.zeros(M))
 
     # hidden -> output
-    self.V = theano.shared(np.random.randn(M, D) * 2 / np.sqrt(D))
+    self.V = theano.shared(np.random.randn(M, D) * np.sqrt(2.0 / D))
     self.c = theano.shared(np.zeros(D))
 
     # construct the reconstruction

@@ -132,12 +132,9 @@ class FractionallyStridedConvLayer:
 
 class DenseLayer(object):
   def __init__(self, name, M1, M2, apply_batch_norm, f=tf.nn.relu):
-    # self.W = tf.Variable(tf.random_normal(shape=(M1, M2)) * 2 / np.sqrt(M1))
-    # self.b = tf.Variable(np.zeros(M2).astype(np.float32))
     self.W = tf.get_variable(
       "W_%s" % name,
       shape=(M1, M2),
-      # initializer=tf.contrib.layers.xavier_initializer(),
       initializer=tf.random_normal_initializer(stddev=0.02),
     )
     self.b = tf.get_variable(

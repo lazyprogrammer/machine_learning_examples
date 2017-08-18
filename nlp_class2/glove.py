@@ -318,14 +318,14 @@ def main(we_file, w2i_file, use_brown=True, n_files=50):
             json.dump(word2idx, f)
 
     V = len(word2idx)
-    model = Glove(80, V, 10)
+    model = Glove(100, V, 10)
     # model.fit(sentences, cc_matrix=cc_matrix, epochs=20) # ALS
     model.fit(
         sentences,
         cc_matrix=cc_matrix,
         learning_rate=3*10e-5,
-        reg=0.01,
-        epochs=500,
+        reg=0.1,
+        epochs=10,
         gd=True,
         use_theano=False,
         use_tensorflow=True,
