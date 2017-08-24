@@ -1,4 +1,3 @@
-# https://deeplearningcourses.com/c/data-science-supervised-machine-learning-in-python
 # https://www.udemy.com/data-science-supervised-machine-learning-in-python
 # Decision Tree for continuous-vector input, binary output
 import numpy as np
@@ -101,8 +100,9 @@ class TreeNode:
         boundaries = np.nonzero(y_values[:-1] != y_values[1:])[0]
         best_split = None
         max_ig = 0
-        for b in boundaries:
-            split = (x_values[b] + x_values[b+1]) / 2
+        # print "num boundaries:", len(boundaries), "out of:", len(Y)
+        for i in xrange(len(boundaries)):
+            split = (x_values[boundaries[i]] + x_values[boundaries[i]+1]) / 2
             ig = self.information_gain(x_values, y_values, split)
             if ig > max_ig:
                 max_ig = ig
