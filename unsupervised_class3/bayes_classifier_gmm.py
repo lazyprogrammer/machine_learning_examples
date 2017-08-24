@@ -20,8 +20,8 @@ class BayesClassifier:
     self.p_y = np.zeros(self.K)
     for k in range(self.K):
       print("Fitting gmm", k)
-      self.p_y[k] = len(Xk)
       Xk = X[Y == k]
+      self.p_y[k] = len(Xk)
       gmm = BayesianGaussianMixture(10)
       gmm.fit(Xk)
       self.gaussians.append(gmm)
