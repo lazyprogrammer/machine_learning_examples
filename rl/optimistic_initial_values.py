@@ -1,5 +1,10 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 import numpy as np
 import matplotlib.pyplot as plt
 from comparing_epsilons import run_experiment as run_experiment_eps
@@ -24,7 +29,7 @@ def run_experiment(m1, m2, m3, N, upper_limit=10):
 
   data = np.empty(N)
   
-  for i in xrange(N):
+  for i in range(N):
     # optimistic initial values
     j = np.argmax([b.mean for b in bandits])
     x = bandits[j].pull()
@@ -43,7 +48,7 @@ def run_experiment(m1, m2, m3, N, upper_limit=10):
   plt.show()
 
   for b in bandits:
-    print b.mean
+    print(b.mean)
 
   return cumulative_average
 
