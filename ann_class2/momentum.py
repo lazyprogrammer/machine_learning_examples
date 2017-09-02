@@ -41,7 +41,7 @@ def main():
 
     M = 300
     K = 10
-    W1 = np.random.randn(D, M) / 28
+    W1 = np.random.randn(D, M) / np.sqrt(D)
     b1 = np.zeros(M)
     W2 = np.random.randn(M, K) / np.sqrt(M)
     b2 = np.zeros(K)
@@ -79,7 +79,7 @@ def main():
     print "Final error rate:", error_rate(pY, Ytest)
 
     # 2. batch with momentum
-    W1 = np.random.randn(D, M) / 28
+    W1 = np.random.randn(D, M) / np.sqrt(D)
     b1 = np.zeros(M)
     W2 = np.random.randn(M, K) / np.sqrt(M)
     b2 = np.zeros(K)
@@ -122,7 +122,7 @@ def main():
 
 
     # 3. batch with Nesterov momentum
-    W1 = np.random.randn(D, M) / 28
+    W1 = np.random.randn(D, M) / np.sqrt(D)
     b1 = np.zeros(M)
     W2 = np.random.randn(M, K) / np.sqrt(M)
     b2 = np.zeros(K)
