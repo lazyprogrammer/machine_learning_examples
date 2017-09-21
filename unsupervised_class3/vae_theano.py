@@ -203,7 +203,7 @@ class VariationalAutoencoder:
       np.random.shuffle(X)
       for j in range(n_batches):
         batch = X[j*batch_sz:(j+1)*batch_sz]
-        c, = self.train_op(batch)
+        c = self.train_op(batch)
         c /= batch_sz # just debugging
         costs.append(c)
         if j % 100 == 0:
