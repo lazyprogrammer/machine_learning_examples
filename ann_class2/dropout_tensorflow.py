@@ -1,3 +1,8 @@
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 # For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFlow
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 # https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
@@ -13,7 +18,7 @@ class HiddenLayer(object):
     def __init__(self, M1, M2):
         self.M1 = M1
         self.M2 = M2
-        W = np.random.randn(M1, M2) / np.sqrt(2.0 / M1)
+        W = np.random.randn(M1, M2) * np.sqrt(2.0 / M1)
         b = np.zeros(M2)
         self.W = tf.Variable(W.astype(np.float32))
         self.b = tf.Variable(b.astype(np.float32))
@@ -28,7 +33,7 @@ class ANN(object):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.dropout_rates = p_keep
 
-    def fit(self, X, Y, lr=1e-4, mu=0.9, decay=0.9, epochs=8, batch_sz=100, split=True, print_every=20):
+    def fit(self, X, Y, lr=1e-4, mu=0.9, decay=0.9, epochs=15, batch_sz=100, split=True, print_every=20):
         # make a validation set
         X, Y = shuffle(X, Y)
         X = X.astype(np.float32)
@@ -48,7 +53,7 @@ class ANN(object):
             h = HiddenLayer(M1, M2)
             self.hidden_layers.append(h)
             M1 = M2
-        W = np.random.randn(M1, K) / np.sqrt(M1)
+        W = np.random.randn(M1, K) * np.sqrt(2.0 / M1)
         b = np.zeros(K)
         self.W = tf.Variable(W.astype(np.float32))
         self.b = tf.Variable(b.astype(np.float32))
@@ -71,35 +76,45 @@ class ANN(object):
         )
         train_op = tf.train.RMSPropOptimizer(lr, decay=decay, momentum=mu).minimize(cost)
         # train_op = tf.train.MomentumOptimizer(lr, momentum=mu).minimize(cost)
+        # train_op = tf.train.AdamOptimizer(lr).minimize(cost)
         prediction = self.predict(inputs)
 
-        n_batches = N / batch_sz
+        # validation cost will be calculated separately since nothing will be dropped
+        test_logits = self.forward_test(inputs)
+        test_cost = tf.reduce_mean(
+            tf.nn.sparse_softmax_cross_entropy_with_logits(
+                logits=test_logits,
+                labels=labels
+            )
+        )
+
+        n_batches = N // batch_sz
         costs = []
         init = tf.global_variables_initializer()
         with tf.Session() as session:
             session.run(init)
-            for i in xrange(epochs):
-                print "epoch:", i, "n_batches:", n_batches
+            for i in range(epochs):
+                print("epoch:", i, "n_batches:", n_batches)
                 X, Y = shuffle(X, Y)
-                for j in xrange(n_batches):
+                for j in range(n_batches):
                     Xbatch = X[j*batch_sz:(j*batch_sz+batch_sz)]
                     Ybatch = Y[j*batch_sz:(j*batch_sz+batch_sz)]
 
                     session.run(train_op, feed_dict={inputs: Xbatch, labels: Ybatch})
 
                     if j % print_every == 0:
-                        c = session.run(cost, feed_dict={inputs: Xvalid, labels: Yvalid})
+                        c = session.run(test_cost, feed_dict={inputs: Xvalid, labels: Yvalid})
                         p = session.run(prediction, feed_dict={inputs: Xvalid})
                         costs.append(c)
                         e = error_rate(Yvalid, p)
-                        print "i:", i, "j:", j, "nb:", n_batches, "cost:", c, "error rate:", e
+                        print("i:", i, "j:", j, "nb:", n_batches, "cost:", c, "error rate:", e)
         
         plt.plot(costs)
         plt.show()
 
     def forward(self, X):
-        # no need to define different functions for train and predict
-        # tf.nn.dropout takes care of the differences for us
+        # tf.nn.dropout scales inputs by 1/p_keep
+        # therefore, during test time, we don't have to scale anything
         Z = X
         Z = tf.nn.dropout(Z, self.dropout_rates[0])
         for h, p in zip(self.hidden_layers, self.dropout_rates[1:]):
@@ -107,8 +122,15 @@ class ANN(object):
             Z = tf.nn.dropout(Z, p)
         return tf.matmul(Z, self.W) + self.b
 
+    def forward_test(self, X):
+        Z = X
+        Z = tf.nn.dropout(Z, self.dropout_rates[0])
+        for h, p in zip(self.hidden_layers, self.dropout_rates[1:]):
+            Z = h.forward(Z)
+        return tf.matmul(Z, self.W) + self.b
+
     def predict(self, X):
-        pY = self.forward(X)
+        pY = self.forward_test(X)
         return tf.argmax(pY, 1)
 
 

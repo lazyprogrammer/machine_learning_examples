@@ -20,7 +20,7 @@ class HiddenLayer(object):
         self.id = an_id
         self.M1 = M1
         self.M2 = M2
-        W = np.random.randn(M1, M2) / np.sqrt(2.0 / M1)
+        W = np.random.randn(M1, M2) * np.sqrt(2.0 / M1)
         b = np.zeros(M2)
         self.W = theano.shared(W, 'W_%s' % self.id)
         self.b = theano.shared(b, 'b_%s' % self.id)
@@ -56,7 +56,7 @@ class ANN(object):
             self.hidden_layers.append(h)
             M1 = M2
             count += 1
-        W = np.random.randn(M1, K) / np.sqrt(M1)
+        W = np.random.randn(M1, K) * np.sqrt(2.0 / M1)
         b = np.zeros(K)
         self.W = theano.shared(W, 'W_logreg')
         self.b = theano.shared(b, 'b_logreg')
@@ -111,11 +111,11 @@ class ANN(object):
         prediction = self.predict(thX)
         cost_predict_op = theano.function(inputs=[thX, thY], outputs=[cost_predict, prediction])
 
-        n_batches = N / batch_sz
+        n_batches = N // batch_sz
         costs = []
-        for i in xrange(epochs):
+        for i in range(epochs):
             X, Y = shuffle(X, Y)
-            for j in xrange(n_batches):
+            for j in range(n_batches):
                 Xbatch = X[j*batch_sz:(j*batch_sz+batch_sz)]
                 Ybatch = Y[j*batch_sz:(j*batch_sz+batch_sz)]
 
@@ -125,7 +125,7 @@ class ANN(object):
                     c, p = cost_predict_op(Xvalid, Yvalid)
                     costs.append(c)
                     e = error_rate(Yvalid, p)
-                    print "i:", i, "j:", j, "nb:", n_batches, "cost:", c, "error rate:", e
+                    print("i:", i, "j:", j, "nb:", n_batches, "cost:", c, "error rate:", e)
         
         if show_fig:
             plt.plot(costs)
