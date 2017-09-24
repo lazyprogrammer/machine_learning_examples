@@ -75,7 +75,7 @@ def batch_norm(
     #   batch variance
     #   running mean (for later use as population mean estimate)
     #   running var (for later use as population var estimate)
-    out, _, _, running_mean, running_var = batch_normalization_train(
+    out, _, _, new_running_mean, new_running_var = batch_normalization_train(
       input_,
       gamma,
       beta,
@@ -85,6 +85,8 @@ def batch_norm(
       running_average_factor=0.9,
     )
   else:
+    new_running_mean = None
+    new_running_var = None # just to ensure we don't try to use them
     out = batch_normalization_test(
       input_,
       gamma,
@@ -93,7 +95,7 @@ def batch_norm(
       running_var,
       axes=axes,
     )
-  return out, running_mean, running_var
+  return out, new_running_mean, new_running_var
 
 
 class ConvLayer:
@@ -104,14 +106,15 @@ class ConvLayer:
     self.W = theano.shared(W)
     self.b = theano.shared(np.zeros(mo))
     self.params = [self.W, self.b]
+    self.updates = [] # in case we do batch norm
 
     if apply_batch_norm:
       self.gamma = theano.shared(np.ones(mo))
       self.beta = theano.shared(np.zeros(mo))
       self.params += [self.gamma, self.beta]
 
-      self.running_mean = T.zeros(mo)
-      self.running_var = T.zeros(mo)
+      self.running_mean = theano.shared(np.zeros(mo))
+      self.running_var = theano.shared(np.zeros(mo))
 
     self.f = f
     self.stride = stride
@@ -129,7 +132,7 @@ class ConvLayer:
 
     # apply batch normalization
     if self.apply_batch_norm:
-      conv_out, self.running_mean, self.running_var = batch_norm(
+      conv_out, new_running_mean, new_running_var = batch_norm(
         conv_out,
         self.gamma,
         self.beta,
@@ -138,6 +141,11 @@ class ConvLayer:
         is_training,
         'spatial'
       )
+      if is_training:
+        self.updates = [
+          (self.running_mean, new_running_mean),
+          (self.running_var, new_running_var),
+        ]
     return self.f(conv_out)
 
 
@@ -157,14 +165,15 @@ class FractionallyStridedConvLayer:
     self.W = theano.shared(W)
     self.b = theano.shared(np.zeros(mo))
     self.params = [self.W, self.b]
+    self.updates = [] # in case we do batch norm
 
     if apply_batch_norm:
       self.gamma = theano.shared(np.ones(mo))
       self.beta = theano.shared(np.zeros(mo))
       self.params += [self.gamma, self.beta]
 
-      self.running_mean = T.zeros(mo)
-      self.running_var = T.zeros(mo)
+      self.running_mean = theano.shared(np.zeros(mo))
+      self.running_var = theano.shared(np.zeros(mo))
 
     self.f = f
     self.stride = stride
@@ -184,7 +193,7 @@ class FractionallyStridedConvLayer:
 
     # apply batch normalization
     if self.apply_batch_norm:
-      conv_out, self.running_mean, self.running_var = batch_norm(
+      conv_out, new_running_mean, new_running_var = batch_norm(
         conv_out,
         self.gamma,
         self.beta,
@@ -193,6 +202,11 @@ class FractionallyStridedConvLayer:
         is_training,
         'spatial'
       )
+      if is_training:
+        self.updates = [
+          (self.running_mean, new_running_mean),
+          (self.running_var, new_running_var),
+        ]
 
     return self.f(conv_out)
 
@@ -203,14 +217,15 @@ class DenseLayer(object):
     self.W = theano.shared(W)
     self.b = theano.shared(np.zeros(M2))
     self.params = [self.W, self.b]
+    self.updates = [] # in case we do batch norm
 
     if apply_batch_norm:
       self.gamma = theano.shared(np.ones(M2))
       self.beta = theano.shared(np.zeros(M2))
       self.params += [self.gamma, self.beta]
 
-      self.running_mean = T.zeros(M2)
-      self.running_var = T.zeros(M2)
+      self.running_mean = theano.shared(np.zeros(M2))
+      self.running_var = theano.shared(np.zeros(M2))
 
     self.f = f
     self.apply_batch_norm = apply_batch_norm
@@ -221,7 +236,7 @@ class DenseLayer(object):
 
     # apply batch normalization
     if self.apply_batch_norm:
-      a, self.running_mean, self.running_var = batch_norm(
+      a, new_running_mean, new_running_var = batch_norm(
         a,
         self.gamma,
         self.beta,
@@ -230,6 +245,12 @@ class DenseLayer(object):
         is_training,
         'spatial'
       )
+      if is_training:
+        self.updates = [
+          (self.running_mean, new_running_mean),
+          (self.running_var, new_running_var),
+        ]
+
     return self.f(a)
 
 
@@ -284,6 +305,9 @@ class DCGAN:
     # optimizers
     d_grads = T.grad(self.d_cost, self.d_params)
     d_updates = adam(self.d_params, d_grads)
+    # add batch norm updates
+    for layer in self.d_convlayers + self.d_denselayers + [self.d_finallayer]:
+      d_updates += layer.updates
     self.train_d = theano.function(
       inputs=[self.X, self.Z],
       outputs=[self.d_cost, self.d_accuracy],
@@ -292,8 +316,12 @@ class DCGAN:
 
     g_grads = T.grad(self.g_cost, self.g_params)
     g_updates = adam(self.g_params, g_grads)
+    # add batch norm updates
+    for layer in self.g_denselayers + self.g_convlayers:
+      g_updates += layer.updates
+    g_updates += self.g_bn_updates
     self.train_g = theano.function(
-      inputs=[self.X, self.Z],
+      inputs=[self.Z],
       outputs=self.g_cost,
       updates=g_updates,
     )
@@ -428,8 +456,8 @@ class DCGAN:
     if g_sizes['bn_after_project']:
       self.gamma = theano.shared(np.ones(g_sizes['projection']))
       self.beta = theano.shared(np.zeros(g_sizes['projection']))
-      self.running_mean = T.zeros(g_sizes['projection'])
-      self.running_var = T.zeros(g_sizes['projection'])
+      self.running_mean = theano.shared(np.zeros(g_sizes['projection']))
+      self.running_var = theano.shared(np.zeros(g_sizes['projection']))
       self.g_params += [self.gamma, self.beta]
 
     # get the output
@@ -451,7 +479,7 @@ class DCGAN:
 
     # apply batch norm
     if self.g_sizes['bn_after_project']:
-      output, self.running_mean, self.running_var = batch_norm(
+      output, new_running_mean, new_running_var = batch_norm(
         output,
         self.gamma,
         self.beta,
@@ -460,6 +488,13 @@ class DCGAN:
         is_training,
         'spatial'
       )
+      if is_training:
+        self.g_bn_updates = [
+          (self.running_mean, new_running_mean),
+          (self.running_var, new_running_var),
+        ]
+    else:
+      self.g_bn_updates = []
 
     # pass through fs-conv layers
     for layer in self.g_convlayers:
@@ -498,8 +533,8 @@ class DCGAN:
         d_costs.append(d_cost)
 
         # train the generator
-        g_cost1 = self.train_g(batch, Z)
-        g_cost2 = self.train_g(batch, Z)
+        g_cost1 = self.train_g(Z)
+        g_cost2 = self.train_g(Z)
         g_costs.append((g_cost1 + g_cost2)/2) # just use the avg
 
         print("  batch: %d/%d - dt: %s - d_acc: %.2f" % (j+1, n_batches, datetime.now() - t0, d_acc))
@@ -624,5 +659,5 @@ def mnist():
 
 
 if __name__ == '__main__':
-  # celeb()
-  mnist()
+  celeb()
+  # mnist()
