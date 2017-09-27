@@ -19,7 +19,6 @@ LEARNING_RATE = 0.0002
 BETA1 = 0.5
 BATCH_SIZE = 64
 EPOCHS = 2
-BATCH_SIZE = 64
 SAVE_SAMPLE_PERIOD = 50
 
 
@@ -184,6 +183,12 @@ class DCGAN:
       shape=(None, self.latent_dims),
       name='Z'
     )
+
+    # note: by making batch_sz a placeholder, we can specify a variable
+    # number of samples in the FS-conv operation where we are required
+    # to pass in output_shape
+    # we need only pass in the batch size via feed_dict
+    self.batch_sz = tf.placeholder(tf.int32, shape=(), name='batch_sz')
 
     # build the discriminator
     logits = self.build_discriminator(self.X, d_sizes)
@@ -354,7 +359,7 @@ class DCGAN:
         name = "fs_convlayer_%s" % i
         mo, filtersz, stride, apply_batch_norm = g_sizes['conv_layers'][i]
         f = activation_functions[i]
-        output_shape = [BATCH_SIZE, dims[i+1], dims[i+1], mo]
+        output_shape = [self.batch_sz, dims[i+1], dims[i+1], mo]
         print("mi:", mi, "mo:", mo, "outp shape:", output_shape)
         layer = FractionallyStridedConvLayer(
           name, mi, mo, output_shape, apply_batch_norm, filtersz, stride, f
@@ -427,19 +432,19 @@ class DCGAN:
         # train the discriminator
         _, d_cost, d_acc = self.sess.run(
           (self.d_train_op, self.d_cost, self.d_accuracy),
-          feed_dict={self.X: batch, self.Z: Z},
+          feed_dict={self.X: batch, self.Z: Z, self.batch_sz: BATCH_SIZE},
         )
         d_costs.append(d_cost)
 
         # train the generator
         _, g_cost1 = self.sess.run(
           (self.g_train_op, self.g_cost),
-          feed_dict={self.Z: Z},
+          feed_dict={self.Z: Z, self.batch_sz: BATCH_SIZE},
         )
         # g_costs.append(g_cost1)
         _, g_cost2 = self.sess.run(
           (self.g_train_op, self.g_cost),
-          feed_dict={self.Z: Z},
+          feed_dict={self.Z: Z, self.batch_sz: BATCH_SIZE},
         )
         g_costs.append((g_cost1 + g_cost2)/2) # just use the avg
 
@@ -492,7 +497,7 @@ class DCGAN:
 
   def sample(self, n):
     Z = np.random.uniform(-1, 1, size=(n, self.latent_dims))
-    samples = self.sess.run(self.sample_images_test, feed_dict={self.Z: Z})
+    samples = self.sess.run(self.sample_images_test, feed_dict={self.Z: Z, self.batch_sz: n})
     return samples
 
 
@@ -559,6 +564,7 @@ def mnist():
   # note: assume square images, so only need 1 dim
   gan = DCGAN(dim, colors, d_sizes, g_sizes)
   gan.fit(X)
+  # samples = gan.sample(1) # just making sure it works
 
   # since training will take a considerable
   # amount of time, let's just save some
@@ -566,5 +572,5 @@ def mnist():
 
 
 if __name__ == '__main__':
-  celeb()
-  # mnist()
+  # celeb()
+  mnist()
