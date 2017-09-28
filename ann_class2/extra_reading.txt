@@ -9,3 +9,7 @@ https://arxiv.org/abs/1604.03584
 
 Large Scale Distributed Deep Networks
 https://static.googleusercontent.com/media/research.google.com/en//archive/large_deep_networks_nips2012.pdf
+
+Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
+Sergey Ioffe, Christian Szegedy
+https://arxiv.org/abs/1502.03167
