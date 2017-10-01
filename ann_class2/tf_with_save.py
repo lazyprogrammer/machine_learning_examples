@@ -1,5 +1,9 @@
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 # https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import json
 import numpy as np
@@ -36,7 +40,12 @@ class TFLogistic:
     self.saver = tf.train.Saver({'W': self.W, 'b': self.b})
 
     logits = tf.matmul(self.inputs, self.W) + self.b
-    cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, self.targets))
+    cost = tf.reduce_mean(
+        tf.nn.sparse_softmax_cross_entropy_with_logits(
+            logits=logits,
+            labels=self.targets
+        )
+    )
     self.predict_op = tf.argmax(logits, 1)
     return cost
 
@@ -51,7 +60,7 @@ class TFLogistic:
     mu = 0.9
     regularization = 1e-1
     batch_sz = 100
-    n_batches = N / batch_sz
+    n_batches = N // batch_sz
 
     cost = self.build(D, K)
     l2_penalty = regularization*tf.reduce_mean(self.W**2) / 2
@@ -63,8 +72,8 @@ class TFLogistic:
     with tf.Session() as session:
         session.run(init)
 
-        for i in xrange(max_iter):
-            for j in xrange(n_batches):
+        for i in range(max_iter):
+            for j in range(n_batches):
                 Xbatch = X[j*batch_sz:(j*batch_sz + batch_sz),]
                 Ybatch = Y[j*batch_sz:(j*batch_sz + batch_sz),]
 
@@ -73,7 +82,7 @@ class TFLogistic:
                     test_cost = session.run(cost, feed_dict={self.inputs: Xtest, self.targets: Ytest})
                     Ptest = session.run(self.predict_op, feed_dict={self.inputs: Xtest})
                     err = error_rate(Ptest, Ytest)
-                    print "Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err)
+                    print("Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err))
                     costs.append(test_cost)
 
         # save the model
@@ -126,16 +135,16 @@ def main():
     model.fit(Xtrain, Ytrain, Xtest, Ytest)
 
     # test out restoring the model via the predict function
-    print "final train accuracy:", model.score(Xtrain, Ytrain)
-    print "final test accuracy:", model.score(Xtest, Ytest)
+    print("final train accuracy:", model.score(Xtrain, Ytrain))
+    print("final test accuracy:", model.score(Xtest, Ytest))
 
     # save the model
     model.save("my_trained_model.json")
 
     # load and score again
     model = TFLogistic.load("my_trained_model.json")
-    print "final train accuracy (after reload):", model.score(Xtrain, Ytrain)
-    print "final test accuracy (after reload):", model.score(Xtest, Ytest)
+    print("final train accuracy (after reload):", model.score(Xtrain, Ytrain))
+    print("final test accuracy (after reload):", model.score(Xtest, Ytest))
 
 
 if __name__ == '__main__':

@@ -13,6 +13,10 @@
 # For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFlow
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 # https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import numpy as np
 import pandas as pd
@@ -32,7 +36,7 @@ def main():
     std = X.std(axis=0)
     X = (X - mu) / std
 
-    print "Performing logistic regression..."
+    print("Performing logistic regression...")
     Xtrain = X[:-1000,]
     Ytrain = Y[:-1000]
     Xtest  = X[-1000:,]
@@ -49,7 +53,7 @@ def main():
     lr = 0.0001
     reg = 0.01
     t0 = datetime.now()
-    for i in xrange(200):
+    for i in range(200):
         p_y = forward(Xtrain, W, b)
 
         W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W)
@@ -61,11 +65,11 @@ def main():
         LL.append(ll)
         if i % 10 == 0:
             err = error_rate(p_y_test, Ytest)
-            print "Cost at iteration %d: %.6f" % (i, ll)
-            print "Error rate:", err
+            print("Cost at iteration %d: %.6f" % (i, ll))
+            print("Error rate:", err)
     p_y = forward(Xtest, W, b)
-    print "Final error rate:", error_rate(p_y, Ytest)
-    print "Elapsted time for full GD:", datetime.now() - t0
+    print("Final error rate:", error_rate(p_y, Ytest))
+    print("Elapsted time for full GD:", datetime.now() - t0)
 
 
     # 2. stochastic
@@ -76,9 +80,9 @@ def main():
     reg = 0.01
 
     t0 = datetime.now()
-    for i in xrange(1): # takes very long since we're computing cost for 41k samples
+    for i in range(1): # takes very long since we're computing cost for 41k samples
         tmpX, tmpY = shuffle(Xtrain, Ytrain_ind)
-        for n in xrange(min(N, 500)): # shortcut so it won't take so long...
+        for n in range(min(N, 500)): # shortcut so it won't take so long...
             x = tmpX[n,:].reshape(1,D)
             y = tmpY[n,:].reshape(1,10)
             p_y = forward(x, W, b)
@@ -90,13 +94,13 @@ def main():
             ll = cost(p_y_test, Ytest_ind)
             LL_stochastic.append(ll)
 
-            if n % (N/2) == 0:
+            if n % (N//2) == 0:
                 err = error_rate(p_y_test, Ytest)
-                print "Cost at iteration %d: %.6f" % (i, ll)
-                print "Error rate:", err
+                print("Cost at iteration %d: %.6f" % (i, ll))
+                print("Error rate:", err)
     p_y = forward(Xtest, W, b)
-    print "Final error rate:", error_rate(p_y, Ytest)
-    print "Elapsted time for SGD:", datetime.now() - t0
+    print("Final error rate:", error_rate(p_y, Ytest))
+    print("Elapsted time for SGD:", datetime.now() - t0)
 
 
     # 3. batch
@@ -106,12 +110,12 @@ def main():
     lr = 0.0001
     reg = 0.01
     batch_sz = 500
-    n_batches = N / batch_sz
+    n_batches = N // batch_sz
 
     t0 = datetime.now()
-    for i in xrange(50):
+    for i in range(50):
         tmpX, tmpY = shuffle(Xtrain, Ytrain_ind)
-        for j in xrange(n_batches):
+        for j in range(n_batches):
             x = tmpX[j*batch_sz:(j*batch_sz + batch_sz),:]
             y = tmpY[j*batch_sz:(j*batch_sz + batch_sz),:]
             p_y = forward(x, W, b)
@@ -122,13 +126,13 @@ def main():
             p_y_test = forward(Xtest, W, b)
             ll = cost(p_y_test, Ytest_ind)
             LL_batch.append(ll)
-            if j % (n_batches/2) == 0:
+            if j % (n_batches//2) == 0:
                 err = error_rate(p_y_test, Ytest)
-                print "Cost at iteration %d: %.6f" % (i, ll)
-                print "Error rate:", err
+                print("Cost at iteration %d: %.6f" % (i, ll))
+                print("Error rate:", err)
     p_y = forward(Xtest, W, b)
-    print "Final error rate:", error_rate(p_y, Ytest)
-    print "Elapsted time for batch GD:", datetime.now() - t0
+    print("Final error rate:", error_rate(p_y, Ytest))
+    print("Elapsted time for batch GD:", datetime.now() - t0)
 
 
 

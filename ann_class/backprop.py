@@ -4,6 +4,10 @@
 # the notes for this class can be found at: 
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 # https://www.udemy.com/data-science-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,7 +27,7 @@ def forward(X, W1, b1, W2, b2):
 def classification_rate(Y, P):
     n_correct = 0
     n_total = 0
-    for i in xrange(len(Y)):
+    for i in range(len(Y)):
         n_total += 1
         if Y[i] == P[i]:
             n_correct += 1
@@ -113,7 +117,7 @@ def main():
     N = len(Y)
     # turn Y into an indicator matrix for training
     T = np.zeros((N, K))
-    for i in xrange(N):
+    for i in range(N):
         T[i, Y[i]] = 1
 
     # let's see what it looks like
@@ -126,15 +130,15 @@ def main():
     W2 = np.random.randn(M, K)
     b2 = np.random.randn(K)
 
-    learning_rate = 1e-6
+    learning_rate = 1e-3
     costs = []
-    for epoch in xrange(100000):
+    for epoch in range(1000):
         output, hidden = forward(X, W1, b1, W2, b2)
         if epoch % 100 == 0:
             c = cost(T, output)
             P = np.argmax(output, axis=1)
             r = classification_rate(Y, P)
-            print "cost:", c, "classification_rate:", r
+            print("cost:", c, "classification_rate:", r)
             costs.append(c)
 
         # this is gradient ASCENT, not DESCENT

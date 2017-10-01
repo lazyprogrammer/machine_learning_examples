@@ -2,22 +2,24 @@
 # For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFlow
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 # https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import numpy as np
 
 def forward(X, W1, b1, W2, b2):
+    # sigmoid
     # Z = 1 / (1 + np.exp(-( X.dot(W1) + b1 )))
 
-    # rectifier
+    # relu
     Z = X.dot(W1) + b1
     Z[Z < 0] = 0
-    # print "Z:", Z
 
     A = Z.dot(W2) + b2
     expA = np.exp(A)
     Y = expA / expA.sum(axis=1, keepdims=True)
-    # print "Y:", Y, "are any 0?", np.any(Y == 0), "are any nan?", np.any(np.isnan(Y))
-    # exit()
     return Y, Z
 
 def derivative_w2(Z, T, Y):

@@ -5,6 +5,10 @@
 # For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFlow
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 # https://www.udemy.com/data-science-deep-learning-in-theano-tensorflow
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
 
 import numpy as np
 import tensorflow as tf
@@ -38,7 +42,7 @@ def main():
 
     N, D = Xtrain.shape
     batch_sz = 500
-    n_batches = N / batch_sz
+    n_batches = N // batch_sz
 
     # add an extra layer just for fun
     M1 = 300
@@ -85,8 +89,8 @@ def main():
     with tf.Session() as session:
         session.run(init)
 
-        for i in xrange(max_iter):
-            for j in xrange(n_batches):
+        for i in range(max_iter):
+            for j in range(n_batches):
                 Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
                 Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
 
@@ -95,7 +99,7 @@ def main():
                     test_cost = session.run(cost, feed_dict={X: Xtest, T: Ytest_ind})
                     prediction = session.run(predict_op, feed_dict={X: Xtest})
                     err = error_rate(prediction, Ytest)
-                    print "Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err)
+                    print("Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err))
                     costs.append(test_cost)
 
     plt.plot(costs)
