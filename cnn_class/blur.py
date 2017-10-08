@@ -56,6 +56,7 @@ out3 = np.zeros(img.shape)
 print(out3.shape)
 for i in range(3):
     out3[:,:,i] = convolve2d(img[:,:,i], W, mode='same')
+# out3 /= out3.max() # can also do this if you didn't normalize the kernel
 plt.imshow(out3)
 plt.show() # does not look like anything
 
