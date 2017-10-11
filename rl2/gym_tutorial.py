@@ -39,6 +39,8 @@ env.action_space
 # env.action_space.contains       env.action_space.n              env.action_space.to_jsonable
 # env.action_space.from_jsonable  env.action_space.sample
 
+# pick an action
+action = env.action_space.sample()
 
 # do an action
 observation, reward, done, info = env.step(action)
