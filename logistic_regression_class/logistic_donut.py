@@ -36,9 +36,7 @@ plt.show()
 ones = np.ones((N, 1))
 
 # add a column of r = sqrt(x^2 + y^2)
-r = np.zeros((N,1))
-for i in xrange(N):
-    r[i] = np.sqrt(X[i,:].dot(X[i,]))
+r = np.sqrt( (X * X).sum(axis=1) ).reshape(-1, 1)
 Xb = np.concatenate((ones, r, X), axis=1)
 
 # randomly initialize the weights
@@ -62,7 +60,7 @@ def cross_entropy(T, Y):
     #     else:
     #         E -= np.log(1 - Y[i])
     # return E
-    return (T*np.log(Y) + (1-T)*np.log(1-Y)).sum()
+    return -(T*np.log(Y) + (1-T)*np.log(1-Y)).sum()
 
 
 # let's do gradient descent 100 times
@@ -71,7 +69,7 @@ error = []
 for i in xrange(5000):
     e = cross_entropy(T, Y)
     error.append(e)
-    if i % 100 == 0:
+    if i % 500 == 0:
         print e
 
     # gradient descent weight udpate with regularization
