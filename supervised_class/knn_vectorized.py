@@ -2,15 +2,12 @@
 # https://www.udemy.com/data-science-supervised-machine-learning-in-python
 # This is an example of a K-Nearest Neighbors classifier on MNIST data.
 # We try k=1...5 to show how we might choose the best k.
-# sudo pip install sortedcontainers (if you don't have it)
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sortedcontainers import SortedList
-# Note: You can't use SortedDict because the key is distance
-# if 2 close points are the same distance away, one will be overwritten
 from util import get_data
 from datetime import datetime
+from sklearn.metrics.pairwise import pairwise_distances
 
 
 class KNN(object):
@@ -22,35 +19,34 @@ class KNN(object):
         self.y = y
 
     def predict(self, X):
-        y = np.zeros(len(X))
-        for i,x in enumerate(X): # test points
-            sl = SortedList(load=self.k) # stores (distance, class) tuples
-            for j,xt in enumerate(self.X): # training points
-                diff = x - xt
-                d = diff.dot(diff)
-                if len(sl) < self.k:
-                    # don't need to check, just add
-                    sl.add( (d, self.y[j]) )
-                else:
-                    if d < sl[-1][0]:
-                        del sl[-1]
-                        sl.add( (d, self.y[j]) )
-            # print "input:", x
-            # print "sl:", sl
+        N = len(X)
+        y = np.zeros(N)
 
-            # vote
-            votes = {}
-            for _, v in sl:
-                # print "v:", v
-                votes[v] = votes.get(v,0) + 1
-            # print "votes:", votes, "true:", Ytest[i]
-            max_votes = 0
-            max_votes_class = -1
-            for v,count in votes.iteritems():
-                if count > max_votes:
-                    max_votes = count
-                    max_votes_class = v
-            y[i] = max_votes_class
+        # returns distances in a matrix
+        # of shape (N_test, N_train)
+        distances = pairwise_distances(X, self.X)
+        
+
+        # now get the minimum k elements' indexes
+        # https://stackoverflow.com/questions/16817948/i-have-need-the-n-minimum-index-values-in-a-numpy-array
+        idx = distances.argsort(axis=1)[:, :self.k]
+
+        # now determine the winning votes
+        # each row of idx contains indexes from 0..Ntrain
+        # corresponding to the indexes of the closest samples
+        # from the training set
+        # NOTE: if you don't "believe" this works, test it
+        # in your console with simpler arrays
+        votes = self.y[idx]
+
+        # now y contains the classes in each row
+        # e.g.
+        # sample 0 --> [class0, class1, class1, class0, ...]
+        # unfortunately there's no good way to vectorize this
+        # https://stackoverflow.com/questions/19201972/can-numpy-bincount-work-with-2d-arrays
+        for i in xrange(N):
+            y[i] = np.bincount(votes[i]).argmax()
+
         return y
 
     def score(self, X, Y):
@@ -89,3 +85,4 @@ if __name__ == '__main__':
     plt.plot(ks, test_scores, label='test scores')
     plt.legend()
     plt.show()
+
