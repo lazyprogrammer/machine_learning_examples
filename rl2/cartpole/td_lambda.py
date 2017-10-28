@@ -51,9 +51,7 @@ class Model:
 
   def predict(self, s):
     X = self.feature_transformer.transform([s])
-    # assert(len(X.shape) == 2)
-    result = np.array([m.predict(X)[0] for m in self.models])
-    result = np.atleast_2d(result)
+    result = np.stack([m.predict(X) for m in self.models]).T
     return result
 
   def update(self, s, a, G, gamma, lambda_):

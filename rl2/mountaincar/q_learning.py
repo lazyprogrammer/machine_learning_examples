@@ -75,9 +75,7 @@ class Model:
 
   def predict(self, s):
     X = self.feature_transformer.transform([s])
-    assert(len(X.shape) == 2)
-    result = np.array([m.predict(X)[0] for m in self.models])
-    result = np.atleast_2d(result)
+    result = np.stack([m.predict(X) for m in self.models]).T
     assert(len(result.shape) == 2)
     return result
 
