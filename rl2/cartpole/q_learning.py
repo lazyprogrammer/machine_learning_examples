@@ -73,7 +73,11 @@ class Model:
 
   def predict(self, s):
     X = self.feature_transformer.transform(np.atleast_2d(s))
-    return np.array([m.predict(X)[0] for m in self.models])
+    # print("X.shape", X.shape)
+    result = np.array([m.predict(X)[0] for m in self.models])
+    result = np.atleast_2d(result)
+    assert(len(result.shape) == 2)
+    return result
 
   def update(self, s, a, G):
     X = self.feature_transformer.transform(np.atleast_2d(s))
@@ -103,7 +107,8 @@ def play_one(env, model, eps, gamma):
 
     # update the model
     next = model.predict(observation)
-    assert(len(next.shape) == 1)
+    # print(next.shape)
+    assert(next.shape == (1, env.action_space.n))
     G = reward + gamma*np.max(next)
     model.update(prev_observation, action, G)
 

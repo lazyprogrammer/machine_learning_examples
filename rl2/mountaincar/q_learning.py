@@ -76,7 +76,8 @@ class Model:
   def predict(self, s):
     X = self.feature_transformer.transform([s])
     assert(len(X.shape) == 2)
-    result = np.array([m.predict(X) for m in self.models])
+    result = np.array([m.predict(X)[0] for m in self.models])
+    result = np.atleast_2d(result)
     assert(len(result.shape) == 2)
     return result
 
@@ -99,7 +100,7 @@ class Model:
 
 
 # returns a list of states_and_rewards, and the total reward
-def play_one(model, eps, gamma):
+def play_one(model, env, eps, gamma):
   observation = env.reset()
   done = False
   totalreward = 0
@@ -110,7 +111,9 @@ def play_one(model, eps, gamma):
     observation, reward, done, info = env.step(action)
 
     # update the model
-    G = reward + gamma*np.max(model.predict(observation)[0])
+    next = model.predict(observation)
+    # assert(next.shape == (1, env.action_space.n))
+    G = reward + gamma*np.max(next[0])
     model.update(prev_observation, action, G)
 
     totalreward += reward
@@ -149,7 +152,7 @@ def plot_running_avg(totalrewards):
   plt.show()
 
 
-if __name__ == '__main__':
+def main(show_plots=True):
   env = gym.make('MountainCar-v0')
   ft = FeatureTransformer(env)
   model = Model(env, ft, "constant")
@@ -166,19 +169,28 @@ if __name__ == '__main__':
   for n in range(N):
     # eps = 1.0/(0.1*n+1)
     eps = 0.1*(0.97**n)
-    # eps = 0.5/np.sqrt(n+1)
-    totalreward = play_one(model, eps, gamma)
+    if n == 199:
+      print("eps:", eps)
+    # eps = 1.0/np.sqrt(n+1)
+    totalreward = play_one(model, env, eps, gamma)
     totalrewards[n] = totalreward
-    print("episode:", n, "total reward:", totalreward)
+    if (n + 1) % 100 == 0:
+      print("episode:", n, "total reward:", totalreward)
   print("avg reward for last 100 episodes:", totalrewards[-100:].mean())
   print("total steps:", -totalrewards.sum())
 
-  plt.plot(totalrewards)
-  plt.title("Rewards")
-  plt.show()
+  if show_plots:
+    plt.plot(totalrewards)
+    plt.title("Rewards")
+    plt.show()
 
-  plot_running_avg(totalrewards)
+    plot_running_avg(totalrewards)
 
-  # plot the optimal state-value function
-  plot_cost_to_go(env, model)
+    # plot the optimal state-value function
+    plot_cost_to_go(env, model)
 
+
+if __name__ == '__main__':
+  # for i in range(10):
+  #   main(show_plots=False)
+  main()

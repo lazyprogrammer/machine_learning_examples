@@ -52,7 +52,8 @@ class Model:
   def predict(self, s):
     X = self.feature_transformer.transform([s])
     assert(len(X.shape) == 2)
-    result = np.array([m.predict(X) for m in self.models])
+    result = np.array([m.predict(X)[0] for m in self.models])
+    result = np.atleast_2d(result)
     assert(len(result.shape) == 2)
     return result
 
@@ -71,7 +72,7 @@ class Model:
 
 
 # returns a list of states_and_rewards, and the total reward
-def play_one(model, eps, gamma, lambda_):
+def play_one(model, env, eps, gamma, lambda_):
   observation = env.reset()
   done = False
   totalreward = 0
@@ -83,7 +84,9 @@ def play_one(model, eps, gamma, lambda_):
     observation, reward, done, info = env.step(action)
 
     # update the model
-    G = reward + gamma*np.max(model.predict(observation)[0])
+    next = model.predict(observation)
+    assert(next.shape == (1, env.action_space.n))
+    G = reward + gamma*np.max(next[0])
     model.update(prev_observation, action, G, gamma, lambda_)
 
     totalreward += reward
@@ -96,7 +99,7 @@ if __name__ == '__main__':
   env = gym.make('MountainCar-v0')
   ft = FeatureTransformer(env)
   model = Model(env, ft)
-  gamma = 0.99
+  gamma = 0.9999
   lambda_ = 0.7
 
   if 'monitor' in sys.argv:
@@ -112,7 +115,7 @@ if __name__ == '__main__':
     # eps = 1.0/(0.1*n+1)
     eps = 0.1*(0.97**n)
     # eps = 0.5/np.sqrt(n+1)
-    totalreward = play_one(model, eps, gamma, lambda_)
+    totalreward = play_one(model, env, eps, gamma, lambda_)
     totalrewards[n] = totalreward
     print("episode:", n, "total reward:", totalreward)
   print("avg reward for last 100 episodes:", totalrewards[-100:].mean())
