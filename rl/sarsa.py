@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from grid_world import standard_grid, negative_grid
@@ -32,7 +38,7 @@ if __name__ == '__main__':
   grid = negative_grid(step_cost=-0.1)
 
   # print rewards
-  print "rewards:"
+  print("rewards:")
   print_values(grid.rewards, grid)
 
   # no policy initialization, we will derive our policy from most recent Q
@@ -56,11 +62,11 @@ if __name__ == '__main__':
   # repeat until convergence
   t = 1.0
   deltas = []
-  for it in xrange(10000):
+  for it in range(10000):
     if it % 100 == 0:
       t += 1e-2
     if it % 2000 == 0:
-      print "it:", it
+      print("it:", it)
 
     # instead of 'generating' an epsiode, we will PLAY
     # an episode within this loop
@@ -113,14 +119,14 @@ if __name__ == '__main__':
     V[s] = max_q
 
   # what's the proportion of time we spend updating each part of Q?
-  print "update counts:"
-  total = np.sum(update_counts.values())
-  for k, v in update_counts.iteritems():
+  print("update counts:")
+  total = np.sum(list(update_counts.values()))
+  for k, v in update_counts.items():
     update_counts[k] = float(v) / total
   print_values(update_counts, grid)
 
-  print "values:"
+  print("values:")
   print_values(V, grid)
-  print "policy:"
+  print("policy:")
   print_policy(policy, grid)
 

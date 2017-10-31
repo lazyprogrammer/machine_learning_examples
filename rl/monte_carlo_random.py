@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 from grid_world import standard_grid, negative_grid
 from iterative_policy_evaluation import print_values, print_policy
@@ -27,7 +33,7 @@ def play_game(grid, policy):
   # reset game to start at a random position
   # we need to do this, because given our current deterministic policy
   # we would never end up at certain states, but we still want to measure their value
-  start_states = grid.actions.keys()
+  start_states = list(grid.actions.keys())
   start_idx = np.random.choice(len(start_states))
   grid.set_state(start_states[start_idx])
 
@@ -62,7 +68,7 @@ if __name__ == '__main__':
   grid = standard_grid()
 
   # print rewards
-  print "rewards:"
+  print("rewards:")
   print_values(grid.rewards, grid)
 
   # state -> action
@@ -106,7 +112,7 @@ if __name__ == '__main__':
       V[s] = 0
 
   # repeat until convergence
-  for t in xrange(5000):
+  for t in range(5000):
 
     # generate an episode using pi
     states_and_returns = play_game(grid, policy)
@@ -119,7 +125,7 @@ if __name__ == '__main__':
         V[s] = np.mean(returns[s])
         seen_states.add(s)
 
-  print "values:"
+  print("values:")
   print_values(V, grid)
-  print "policy:"
+  print("policy:")
   print_policy(policy, grid)

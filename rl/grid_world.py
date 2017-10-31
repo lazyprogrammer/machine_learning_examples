@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 
 
@@ -63,7 +69,7 @@ class Grid: # Environment
     # possibly buggy but simple way to get all states
     # either a position that has possible next actions
     # or a position that yields a reward
-    return set(self.actions.keys() + self.rewards.keys())
+    return set(self.actions.keys()) | set(self.rewards.keys())
 
 
 def standard_grid():

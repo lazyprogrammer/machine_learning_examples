@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from grid_world import standard_grid, negative_grid
@@ -18,7 +24,7 @@ def play_game(grid, policy):
   # we need to do this if we have a deterministic policy
   # we would never end up at certain states, but we still want to measure their value
   # this is called the "exploring starts" method
-  start_states = grid.actions.keys()
+  start_states = list(grid.actions.keys())
   start_idx = np.random.choice(len(start_states))
   grid.set_state(start_states[start_idx])
 
@@ -70,7 +76,7 @@ def max_dict(d):
   # put this into a function since we are using it so often
   max_key = None
   max_val = float('-inf')
-  for k, v in d.iteritems():
+  for k, v in d.items():
     if v > max_val:
       max_val = v
       max_key = k
@@ -86,7 +92,7 @@ if __name__ == '__main__':
   grid = negative_grid(step_cost=-0.9)
 
   # print rewards
-  print "rewards:"
+  print("rewards:")
   print_values(grid.rewards, grid)
 
   # state -> action
@@ -111,9 +117,9 @@ if __name__ == '__main__':
 
   # repeat until convergence
   deltas = []
-  for t in xrange(2000):
+  for t in range(2000):
     if t % 100 == 0:
-      print t
+      print(t)
 
     # generate an episode using pi
     biggest_change = 0
@@ -138,13 +144,13 @@ if __name__ == '__main__':
   plt.plot(deltas)
   plt.show()
 
-  print "final policy:"
+  print("final policy:")
   print_policy(policy, grid)
 
   # find V
   V = {}
-  for s, Qs in Q.iteritems():
+  for s, Qs in Q.items():
     V[s] = max_dict(Q[s])[1]
 
-  print "final values:"
+  print("final values:")
   print_values(V, grid)

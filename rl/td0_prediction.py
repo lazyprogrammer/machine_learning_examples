@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from grid_world import standard_grid, negative_grid
@@ -42,7 +48,7 @@ if __name__ == '__main__':
   grid = standard_grid()
 
   # print rewards
-  print "rewards:"
+  print("rewards:")
   print_values(grid.rewards, grid)
 
   # state -> action
@@ -65,7 +71,7 @@ if __name__ == '__main__':
     V[s] = 0
 
   # repeat until convergence
-  for it in xrange(1000):
+  for it in range(1000):
 
     # generate an episode using pi
     states_and_rewards = play_game(grid, policy)
@@ -74,13 +80,13 @@ if __name__ == '__main__':
     # the last (s, r) tuple is the terminal state and the final reward
     # the value for the terminal state is by definition 0, so we don't
     # care about updating it.
-    for t in xrange(len(states_and_rewards) - 1):
+    for t in range(len(states_and_rewards) - 1):
       s, _ = states_and_rewards[t]
       s2, r = states_and_rewards[t+1]
       # we will update V(s) AS we experience the episode
       V[s] = V[s] + ALPHA*(r + GAMMA*V[s2] - V[s])
 
-  print "values:"
+  print("values:")
   print_values(V, grid)
-  print "policy:"
+  print("policy:")
   print_policy(policy, grid)

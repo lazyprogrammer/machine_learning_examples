@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from grid_world import standard_grid, negative_grid
@@ -18,7 +24,7 @@ if __name__ == '__main__':
   grid = standard_grid()
 
   # print rewards
-  print "rewards:"
+  print("rewards:")
   print_values(grid.rewards, grid)
 
   # state -> action
@@ -60,7 +66,7 @@ if __name__ == '__main__':
   # repeat until convergence
   deltas = []
   t = 1.0
-  for it in xrange(20000):
+  for it in range(20000):
     if it % 100 == 0:
       t += 0.01
     alpha = LEARNING_RATE/t
@@ -94,7 +100,7 @@ if __name__ == '__main__':
       # terminal state or state we can't otherwise get to
       V[s] = 0
 
-  print "values:"
+  print("values:")
   print_values(V, grid)
-  print "policy:"
+  print("policy:")
   print_policy(policy, grid)

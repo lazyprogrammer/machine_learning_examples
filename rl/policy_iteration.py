@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
 # https://www.udemy.com/artificial-intelligence-reinforcement-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 from grid_world import standard_grid, negative_grid
 from iterative_policy_evaluation import print_values, print_policy
@@ -17,7 +23,7 @@ if __name__ == '__main__':
   grid = negative_grid()
 
   # print rewards
-  print "rewards:"
+  print("rewards:")
   print_values(grid.rewards, grid)
 
   # state -> action
@@ -27,7 +33,7 @@ if __name__ == '__main__':
     policy[s] = np.random.choice(ALL_POSSIBLE_ACTIONS)
 
   # initial policy
-  print "initial policy:"
+  print("initial policy:")
   print_policy(policy, grid)
 
   # initialize V(s)
@@ -83,7 +89,7 @@ if __name__ == '__main__':
     if is_policy_converged:
       break
 
-  print "values:"
+  print("values:")
   print_values(V, grid)
-  print "policy:"
+  print("policy:")
   print_policy(policy, grid)
