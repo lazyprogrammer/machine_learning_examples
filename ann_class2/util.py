@@ -261,7 +261,7 @@ def benchmark_pca():
     for i in range(Ntest):
         Ytest_ind[i, Ytest[i]] = 1
 
-    W = np.random.randn(D, 10) / 28
+    W = np.random.randn(D, 10) / np.sqrt(300)
     b = np.zeros(10)
     LL = []
     LLtest = []
