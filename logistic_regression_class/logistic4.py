@@ -42,7 +42,7 @@ Y = sigmoid(z)
 # calculate the cross-entropy error
 def cross_entropy(T, Y):
     E = 0
-    for i in xrange(N):
+    for i in xrange(len(T)):
         if T[i] == 1:
             E -= np.log(Y[i])
         else:
