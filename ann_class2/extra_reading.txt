@@ -13,3 +13,9 @@ https://static.googleusercontent.com/media/research.google.com/en//archive/large
 Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
 Sergey Ioffe, Christian Szegedy
 https://arxiv.org/abs/1502.03167
+
+Xavier (Glorot) Normal Initializer
+http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf
+
+He Normal Initializer
+http://arxiv.org/abs/1502.01852
