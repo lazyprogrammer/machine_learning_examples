@@ -17,10 +17,11 @@ from sklearn.metrics import f1_score
 
 
 class RNN:
-    def __init__(self, D, hidden_layer_sizes, V):
+    def __init__(self, D, hidden_layer_sizes, V, K):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.D = D
         self.V = V
+        self.K = K
 
     def fit(self, X, Y, learning_rate=1e-4, mu=0.99, epochs=30, show_fig=True, activation=T.nnet.relu, RecurrentUnit=GRU, normalize=False):
         D = self.D
@@ -35,8 +36,8 @@ class RNN:
             self.hidden_layers.append(ru)
             Mi = Mo
 
-        Wo = init_weight(Mi, V)
-        bo = np.zeros(V)
+        Wo = init_weight(Mi, self.K)
+        bo = np.zeros(self.K)
 
         self.We = theano.shared(We)
         self.Wo = theano.shared(Wo)
@@ -52,6 +53,13 @@ class RNN:
         for ru in self.hidden_layers:
             Z = ru.output(Z)
         py_x = T.nnet.softmax(Z.dot(self.Wo) + self.bo)
+
+        testf = theano.function(
+            inputs=[thX],
+            outputs=py_x,
+        )
+        testout = testf(X[0])
+        print "py_x.shape:", testout.shape
 
         prediction = T.argmax(py_x, axis=1)
         
@@ -127,10 +135,16 @@ class RNN:
         P = np.concatenate(P)
         return f1_score(Y, P, average=None).mean()
 
+
+def flatten(l):
+    return [item for sublist in l for item in sublist]
+
+
 def main():
     Xtrain, Ytrain, Xtest, Ytest, word2idx = get_data(split_sequences=True)
     V = len(word2idx) + 1
-    rnn = RNN(10, [10], V)
+    K = len(set(flatten(Ytrain)) | set(flatten(Ytest)))
+    rnn = RNN(10, [10], V, K)
     rnn.fit(Xtrain, Ytrain)
     print "train score:", rnn.score(Xtrain, Ytrain)
     print "test score:", rnn.score(Xtest, Ytest)
