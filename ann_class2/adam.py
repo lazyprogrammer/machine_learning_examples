@@ -137,7 +137,8 @@ def main():
     loss_rms = []
     err_rms = []
 
-    lr0 = 0.001 # if you set this too high you'll get NaN!
+    # comparable hyperparameters for fair comparison
+    lr0 = 0.001
     mu = 0.9
     decay_rate = 0.999
     eps = 1e-8
