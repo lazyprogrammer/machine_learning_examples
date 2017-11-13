@@ -73,19 +73,16 @@ def main():
     Ytrain = train['y'].flatten() - 1
     del train
     Xtrain, Ytrain = shuffle(Xtrain, Ytrain)
-    Ytrain_ind = y2indicator(Ytrain)
 
     Xtest  = rearrange(test['X'])
     Ytest  = test['y'].flatten() - 1
     del test
-    Ytest_ind  = y2indicator(Ytest)
 
 
-    max_iter = 8
+    max_iter = 6
     print_period = 10
 
-    lr = np.float32(0.00001)
-    reg = np.float32(0.01)
+    lr = np.float32(1e-2)
     mu = np.float32(0.99)
 
     N = Xtrain.shape[0]
@@ -117,7 +114,7 @@ def main():
 
     # step 2: define theano variables and expressions
     X = T.tensor4('X', dtype='float32')
-    Y = T.matrix('T')
+    Y = T.ivector('T')
     W1 = theano.shared(W1_init, 'W1')
     b1 = theano.shared(b1_init, 'b1')
     W2 = theano.shared(W2_init, 'W2')
@@ -127,16 +124,6 @@ def main():
     W4 = theano.shared(W4_init.astype(np.float32), 'W4')
     b4 = theano.shared(b4_init, 'b4')
 
-    # momentum changes
-    dW1 = theano.shared(np.zeros(W1_init.shape, dtype=np.float32), 'dW1')
-    db1 = theano.shared(np.zeros(b1_init.shape, dtype=np.float32), 'db1')
-    dW2 = theano.shared(np.zeros(W2_init.shape, dtype=np.float32), 'dW2')
-    db2 = theano.shared(np.zeros(b2_init.shape, dtype=np.float32), 'db2')
-    dW3 = theano.shared(np.zeros(W3_init.shape, dtype=np.float32), 'dW3')
-    db3 = theano.shared(np.zeros(b3_init.shape, dtype=np.float32), 'db3')
-    dW4 = theano.shared(np.zeros(W4_init.shape, dtype=np.float32), 'dW4')
-    db4 = theano.shared(np.zeros(b4_init.shape, dtype=np.float32), 'db4')
-
     # forward pass
     Z1 = convpool(X, W1, b1)
     Z2 = convpool(Z1, W2, b2)
@@ -144,51 +131,34 @@ def main():
     pY = T.nnet.softmax( Z3.dot(W4) + b4)
 
     # define the cost function and prediction
-    params = (W1, b1, W2, b2, W3, b3, W4, b4)
-    reg_cost = reg*np.sum((param*param).sum() for param in params)
-    cost = -(Y * T.log(pY)).sum() + reg_cost
+    cost = -(T.log(pY[T.arange(Y.shape[0]), Y])).mean()
     prediction = T.argmax(pY, axis=1)
 
     # step 3: training expressions and functions
-    update_W1 = W1 + mu*dW1 - lr*T.grad(cost, W1)
-    update_b1 = b1 + mu*db1 - lr*T.grad(cost, b1)
-    update_W2 = W2 + mu*dW2 - lr*T.grad(cost, W2)
-    update_b2 = b2 + mu*db2 - lr*T.grad(cost, b2)
-    update_W3 = W3 + mu*dW3 - lr*T.grad(cost, W3)
-    update_b3 = b3 + mu*db3 - lr*T.grad(cost, b3)
-    update_W4 = W4 + mu*dW4 - lr*T.grad(cost, W4)
-    update_b4 = b4 + mu*db4 - lr*T.grad(cost, b4)
+    params = [W1, b1, W2, b2, W3, b3, W4, b4]
 
-    # update weight changes
-    update_dW1 = mu*dW1 - lr*T.grad(cost, W1)
-    update_db1 = mu*db1 - lr*T.grad(cost, b1)
-    update_dW2 = mu*dW2 - lr*T.grad(cost, W2)
-    update_db2 = mu*db2 - lr*T.grad(cost, b2)
-    update_dW3 = mu*dW3 - lr*T.grad(cost, W3)
-    update_db3 = mu*db3 - lr*T.grad(cost, b3)
-    update_dW4 = mu*dW4 - lr*T.grad(cost, W4)
-    update_db4 = mu*db4 - lr*T.grad(cost, b4)
+    # momentum changes
+    dparams = [
+        theano.shared(
+            np.zeros_like(
+                p.get_value(),
+                dtype=np.float32
+            )
+        ) for p in params
+    ]
+
+    updates = []
+    grads = T.grad(cost, params)
+    for p, dp, g in zip(params, dparams, grads):
+        dp_update = mu*dp - lr*g
+        p_update = p + dp_update
+
+        updates.append((dp, dp_update))
+        updates.append((p, p_update))
 
     train = theano.function(
         inputs=[X, Y],
-        updates=[
-            (W1, update_W1),
-            (b1, update_b1),
-            (W2, update_W2),
-            (b2, update_b2),
-            (W3, update_W3),
-            (b3, update_b3),
-            (W4, update_W4),
-            (b4, update_b4),
-            (dW1, update_dW1),
-            (db1, update_db1),
-            (dW2, update_dW2),
-            (db2, update_db2),
-            (dW3, update_dW3),
-            (db3, update_db3),
-            (dW4, update_dW4),
-            (db4, update_db4),
-        ],
+        updates=updates,
     )
 
     # create another function for this because we want it over the whole dataset
@@ -198,22 +168,21 @@ def main():
     )
 
     t0 = datetime.now()
-    LL = []
+    costs = []
     for i in range(max_iter):
+        Xtrain, Ytrain = shuffle(Xtrain, Ytrain)
         for j in range(n_batches):
             Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
-            Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
+            Ybatch = Ytrain[j*batch_sz:(j*batch_sz + batch_sz),]
 
             train(Xbatch, Ybatch)
             if j % print_period == 0:
-                cost_val, prediction_val = get_prediction(Xtest, Ytest_ind)
+                cost_val, prediction_val = get_prediction(Xtest, Ytest)
                 err = error_rate(prediction_val, Ytest)
-                # cost_val = 0
-                # err = 0 ### test
                 print("Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, cost_val, err))
-                LL.append(cost_val)
+                costs.append(cost_val)
     print("Elapsed time:", (datetime.now() - t0))
-    plt.plot(LL)
+    plt.plot(costs)
     plt.show()
 
 
