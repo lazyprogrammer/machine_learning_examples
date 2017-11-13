@@ -44,7 +44,8 @@ def convpool(X, W, b, poolsize=(2, 2)):
 
 
 def init_filter(shape, poolsz):
-    w = np.random.randn(*shape) / np.sqrt(np.prod(shape[1:]) + shape[0]*np.prod(shape[2:] / np.prod(poolsz)))
+    # w = np.random.randn(*shape) / np.sqrt(np.prod(shape[1:]) + shape[0]*np.prod(shape[2:]) / np.prod(poolsz))
+    w = np.random.randn(*shape) * np.sqrt(2.0 / np.prod(shape[1:]))
     return w.astype(np.float32)
 
 
