@@ -37,7 +37,6 @@ from cntk.train.training_session import *
 
 
 # get the data, same as Theano + Tensorflow examples
-# no need to split now, the fit() function will do it
 X, Y = get_normalized_data()
 
 # get shapes
