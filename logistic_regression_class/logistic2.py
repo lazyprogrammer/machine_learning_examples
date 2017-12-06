@@ -5,6 +5,13 @@
 # https://deeplearningcourses.com/c/data-science-logistic-regression-in-python
 # https://www.udemy.com/data-science-logistic-regression-in-python
 
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
+
 import numpy as np
 
 N = 100
@@ -41,14 +48,14 @@ Y = sigmoid(z)
 # calculate the cross-entropy error
 def cross_entropy(T, Y):
     E = 0
-    for i in xrange(len(T)):
+    for i in range(len(T)):
         if T[i] == 1:
             E -= np.log(Y[i])
         else:
             E -= np.log(1 - Y[i])
     return E
 
-print cross_entropy(T, Y)
+print(cross_entropy(T, Y))
 
 # try it with our closed-form solution
 w = np.array([0, 4, 4])
@@ -58,5 +65,5 @@ z = Xb.dot(w)
 Y = sigmoid(z)
 
 # calculate the cross-entropy error
-print cross_entropy(T, Y)
+print(cross_entropy(T, Y))
 
