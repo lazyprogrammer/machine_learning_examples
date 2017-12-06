@@ -3,6 +3,12 @@
 # the notes for this class can be found at: 
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 # https://www.udemy.com/data-science-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import sys
 sys.path.append('../ann_logistic_extra')
 from process import get_data
@@ -28,4 +34,4 @@ model.fit(Xtrain, Ytrain)
 # print the train and test accuracy
 train_accuracy = model.score(Xtrain, Ytrain)
 test_accuracy = model.score(Xtest, Ytest)
-print "train accuracy:", train_accuracy, "test accuracy:", test_accuracy
+print("train accuracy:", train_accuracy, "test accuracy:", test_accuracy)

@@ -4,6 +4,13 @@
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 # https://www.udemy.com/data-science-deep-learning-in-python
 
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -44,7 +51,7 @@ def forward(X, W1, b1, W2, b2):
 def classification_rate(Y, P):
     n_correct = 0
     n_total = 0
-    for i in xrange(len(Y)):
+    for i in range(len(Y)):
         n_total += 1
         if Y[i] == P[i]:
             n_correct += 1
@@ -56,5 +63,5 @@ P = np.argmax(P_Y_given_X, axis=1)
 # verify we chose the correct axis
 assert(len(P) == len(Y))
 
-print "Classification rate for randomly chosen weights:", classification_rate(Y, P)
+print("Classification rate for randomly chosen weights:", classification_rate(Y, P))
 
