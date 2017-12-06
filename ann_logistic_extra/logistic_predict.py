@@ -1,3 +1,9 @@
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 from process import get_binary_data
 
@@ -22,4 +28,4 @@ predictions = np.round(P_Y_given_X)
 def classification_rate(Y, P):
     return np.mean(Y == P)
 
-print "Score:", classification_rate(Y, predictions)
+print("Score:", classification_rate(Y, predictions))

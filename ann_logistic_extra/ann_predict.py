@@ -1,3 +1,9 @@
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 from process import get_data
 
@@ -22,10 +28,11 @@ def forward(X, W1, b1, W2, b2):
     return softmax(Z.dot(W2) + b2)
 
 P_Y_given_X = forward(X, W1, b1, W2, b2)
+print("P_Y_given_X.shape:", P_Y_given_X.shape)
 predictions = np.argmax(P_Y_given_X, axis=1)
 
 # calculate the accuracy
 def classification_rate(Y, P):
     return np.mean(Y == P)
 
-print "Score:", classification_rate(Y, predictions)
+print("Score:", classification_rate(Y, predictions))

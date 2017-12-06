@@ -1,3 +1,9 @@
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -37,7 +43,7 @@ def cross_entropy(T, pY):
 train_costs = []
 test_costs = []
 learning_rate = 0.001
-for i in xrange(10000):
+for i in range(10000):
     pYtrain = forward(Xtrain, W, b)
     pYtest = forward(Xtest, W, b)
 
@@ -50,10 +56,10 @@ for i in xrange(10000):
     W -= learning_rate*Xtrain.T.dot(pYtrain - Ytrain)
     b -= learning_rate*(pYtrain - Ytrain).sum()
     if i % 1000 == 0:
-        print i, ctrain, ctest
+        print(i, ctrain, ctest)
 
-print "Final train classification_rate:", classification_rate(Ytrain, np.round(pYtrain))
-print "Final test classification_rate:", classification_rate(Ytest, np.round(pYtest))
+print("Final train classification_rate:", classification_rate(Ytrain, np.round(pYtrain)))
+print("Final test classification_rate:", classification_rate(Ytest, np.round(pYtest)))
 
 legend1, = plt.plot(train_costs, label='train cost')
 legend2, = plt.plot(test_costs, label='test cost')

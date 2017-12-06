@@ -1,3 +1,9 @@
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import pandas as pd
 import os
@@ -30,7 +36,7 @@ def get_data():
     X2[:,0:(D-1)] = X[:,0:(D-1)] # non-categorical
 
     # one-hot
-    for n in xrange(N):
+    for n in range(N):
         t = int(X[n,D-1])
         X2[n,t+D-1] = 1
 
