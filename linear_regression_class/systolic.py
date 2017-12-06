@@ -8,6 +8,13 @@
 # X2 = age in years
 # X3 = weight in pounds
 
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -41,9 +48,9 @@ def get_r2(X, Y):
     r2 = 1 - d1.dot(d1) / d2.dot(d2)
     return r2
 
-print "r2 for x2 only:", get_r2(X2only, Y)
-print "r2 for x3 only:", get_r2(X3only, Y)
-print "r2 for both:", get_r2(X, Y)
+print("r2 for x2 only:", get_r2(X2only, Y))
+print("r2 for x3 only:", get_r2(X3only, Y))
+print("r2 for both:", get_r2(X, Y))
 
 
 

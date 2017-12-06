@@ -4,6 +4,12 @@
 # https://deeplearningcourses.com/c/data-science-linear-regression-in-python
 # https://www.udemy.com/data-science-linear-regression-in-python
 
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
