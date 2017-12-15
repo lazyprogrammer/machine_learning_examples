@@ -7,6 +7,12 @@
 # i.e. It is not optimized for anything.
 
 # Author: http://lazyprogrammer.me
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 
 import nltk
 import numpy as np
@@ -117,13 +123,13 @@ Ytest = Y[-100:,]
 
 model = LogisticRegression()
 model.fit(Xtrain, Ytrain)
-print "Classification rate:", model.score(Xtest, Ytest)
+print("Classification rate:", model.score(Xtest, Ytest))
 
 
 # let's look at the weights for each word
 # try it with different threshold values!
 threshold = 0.5
-for word, index in word_index_map.iteritems():
+for word, index in iteritems(word_index_map):
     weight = model.coef_[0][index]
     if weight > threshold or weight < -threshold:
-        print word, weight
+        print(word, weight)

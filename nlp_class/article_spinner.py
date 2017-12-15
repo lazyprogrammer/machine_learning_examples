@@ -5,6 +5,13 @@
 # Author: http://lazyprogrammer.me
 
 # A very bad article spinner using trigrams.
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import nltk
 import random
 import numpy as np
@@ -24,16 +31,15 @@ trigrams = {}
 for review in positive_reviews:
     s = review.text.lower()
     tokens = nltk.tokenize.word_tokenize(s)
-    for i in xrange(len(tokens) - 2):
+    for i in range(len(tokens) - 2):
         k = (tokens[i], tokens[i+2])
         if k not in trigrams:
             trigrams[k] = []
         trigrams[k].append(tokens[i+1])
 
-
 # turn each array of middle-words into a probability vector
 trigram_probabilities = {}
-for k, words in trigrams.iteritems():
+for k, words in iteritems(trigrams):
     # create a dictionary of word -> count
     if len(set(words)) > 1:
         # only do this when there are different possibilities for a middle word
@@ -44,7 +50,7 @@ for k, words in trigrams.iteritems():
                 d[w] = 0
             d[w] += 1
             n += 1
-        for w, c in d.iteritems():
+        for w, c in iteritems(d):
             d[w] = float(c) / n
         trigram_probabilities[k] = d
 
@@ -53,7 +59,7 @@ def random_sample(d):
     # choose a random sample from dictionary where values are the probabilities
     r = random.random()
     cumulative = 0
-    for w, p in d.iteritems():
+    for w, p in iteritems(d):
         cumulative += p
         if r < cumulative:
             return w
@@ -62,14 +68,17 @@ def random_sample(d):
 def test_spinner():
     review = random.choice(positive_reviews)
     s = review.text.lower()
-    print "Original:", s
+    print("Original:", s)
     tokens = nltk.tokenize.word_tokenize(s)
-    for i in xrange(len(tokens) - 2):
+    for i in range(len(tokens) - 2):
         if random.random() < 0.2: # 20% chance of replacement
             k = (tokens[i], tokens[i+2])
             if k in trigram_probabilities:
                 w = random_sample(trigram_probabilities[k])
                 tokens[i+1] = w
-    print "Spun:"
-    print " ".join(tokens).replace(" .", ".").replace(" '", "'").replace(" ,", ",").replace("$ ", "$").replace(" !", "!")
+    print("Spun:")
+    print(" ".join(tokens).replace(" .", ".").replace(" '", "'").replace(" ,", ",").replace("$ ", "$").replace(" !", "!"))
 
+
+if __name__ == '__main__':
+    test_spinner()
