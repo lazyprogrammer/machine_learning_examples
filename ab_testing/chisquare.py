@@ -1,6 +1,12 @@
 # From the course: Bayesin Machine Learning in Python: A/B Testing
 # https://deeplearningcourses.com/c/bayesian-machine-learning-in-python-ab-testing
 # https://www.udemy.com/bayesian-machine-learning-in-python-ab-testing
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import chi2, chi2_contingency
@@ -47,7 +53,7 @@ def run_experiment(p1, p2, N):
   data = DataGenerator(p1, p2)
   p_values = np.empty(N)
   T = np.zeros((2, 2)).astype(np.float32)
-  for i in xrange(N):
+  for i in range(N):
     c1, c2 = data.next()
     T[0,c1] += 1
     T[1,c2] += 1

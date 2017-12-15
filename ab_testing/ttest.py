@@ -1,6 +1,12 @@
 # From the course: Bayesin Machine Learning in Python: A/B Testing
 # https://deeplearningcourses.com/c/bayesian-machine-learning-in-python-ab-testing
 # https://www.udemy.com/bayesian-machine-learning-in-python-ab-testing
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 from scipy import stats
 
@@ -16,8 +22,8 @@ s = np.sqrt( (var_a + var_b) / 2 ) # balanced standard deviation
 t = (a.mean() - b.mean()) / (s * np.sqrt(2.0/N)) # t-statistic
 df = 2*N - 2 # degrees of freedom
 p = 1 - stats.t.cdf(np.abs(t), df=df) # one-sided test p-value
-print "t:\t", t, "p:\t", 2*p # two-sided test p-value
+print("t:\t", t, "p:\t", 2*p) # two-sided test p-value
 
 # built-in t-test:
 t2, p2 = stats.ttest_ind(a, b)
-print "t2:\t", t2, "p2:\t", p2
+print("t2:\t", t2, "p2:\t", p2)

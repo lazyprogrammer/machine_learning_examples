@@ -1,6 +1,12 @@
 # From the course: Bayesin Machine Learning in Python: A/B Testing
 # https://deeplearningcourses.com/c/bayesian-machine-learning-in-python-ab-testing
 # https://www.udemy.com/bayesian-machine-learning-in-python-ab-testing
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import beta
@@ -41,7 +47,7 @@ def experiment():
   bandits = [Bandit(p) for p in BANDIT_PROBABILITIES]
 
   sample_points = [5,10,20,50,100,200,500,1000,1500,1999]
-  for i in xrange(NUM_TRIALS):
+  for i in range(NUM_TRIALS):
 
     # take a sample from each bandit
     bestb = None
@@ -54,7 +60,7 @@ def experiment():
         maxsample = sample
         bestb = b
     if i in sample_points:
-      print "current samples: %s" % allsamples
+      print("current samples: %s" % allsamples)
       plot(bandits, i)
 
     # pull the arm for the bandit with the largest sample

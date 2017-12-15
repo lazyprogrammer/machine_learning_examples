@@ -1,6 +1,12 @@
 # From the course: Bayesin Machine Learning in Python: A/B Testing
 # https://deeplearningcourses.com/c/bayesian-machine-learning-in-python-ab-testing
 # https://www.udemy.com/bayesian-machine-learning-in-python-ab-testing
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import beta
@@ -16,7 +22,7 @@ def plot(a, b, trial, ctr):
 true_ctr = 0.3
 a, b = 1, 1 # beta parameters
 show = [0, 5, 10, 25, 50, 100, 200, 300, 500, 700, 1000, 1500]
-for t in xrange(1501):
+for t in range(1501):
   coin_toss_result = (np.random.random() < true_ctr)
   if coin_toss_result:
     a += 1
