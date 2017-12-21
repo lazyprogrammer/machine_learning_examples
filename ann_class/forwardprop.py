@@ -40,7 +40,9 @@ def sigmoid(a):
     return 1 / (1 + np.exp(-a))
 
 def forward(X, W1, b1, W2, b2):
-    Z = sigmoid(X.dot(W1) + b1)
+    Z = sigmoid(X.dot(W1) + b1) # sigmoid
+    # Z = np.tanh(X.dot(W1) + b1) # tanh
+    # Z = np.maximum(X.dot(W1) + b1) # relu
     A = Z.dot(W2) + b2
     expA = np.exp(A)
     Y = expA / expA.sum(axis=1, keepdims=True)
