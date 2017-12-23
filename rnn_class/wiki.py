@@ -1,5 +1,12 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import sys
 import theano
 import theano.tensor as T
@@ -86,13 +93,13 @@ class RNN:
         )
 
         costs = []
-        for i in xrange(epochs):
+        for i in range(epochs):
             t0 = datetime.now()
             X = shuffle(X)
             n_correct = 0
             n_total = 0
             cost = 0
-            for j in xrange(N):
+            for j in range(N):
                 if np.random.random() < 0.01 or len(X[j]) <= 1:
                     input_sequence = [0] + X[j]
                     output_sequence = X[j] + [1]
@@ -108,9 +115,9 @@ class RNN:
                     c, p = self.train_op(input_sequence, output_sequence)
                 except Exception as e:
                     PYX, pred = self.predict_op(input_sequence)
-                    print "input_sequence len:", len(input_sequence)
-                    print "PYX.shape:",PYX.shape
-                    print "pred.shape:", pred.shape
+                    print("input_sequence len:", len(input_sequence))
+                    print("PYX.shape:",PYX.shape)
+                    print("pred.shape:", pred.shape)
                     raise e
                 # print "p:", p
                 cost += c
@@ -121,7 +128,7 @@ class RNN:
                 if j % 200 == 0:
                     sys.stdout.write("j/N: %d/%d correct rate so far: %f\r" % (j, N, float(n_correct)/n_total))
                     sys.stdout.flush()
-            print "i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total), "time for epoch:", (datetime.now() - t0)
+            print("i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total), "time for epoch:", (datetime.now() - t0))
             costs.append(cost)
 
         if show_fig:
@@ -136,17 +143,14 @@ def train_wikipedia(we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.
     # sentences, word2idx = get_wikipedia_data(n_files=100, n_vocab=2000)
     sentences, word2idx = get_sentences_with_word2idx_limit_vocab()
 
-    print "finished retrieving data"
-    print "vocab size:", len(word2idx), "number of sentences:", len(sentences)
+    print("finished retrieving data")
+    print("vocab size:", len(word2idx), "number of sentences:", len(sentences))
     rnn = RNN(30, [30], len(word2idx))
     rnn.fit(sentences, learning_rate=1e-5, epochs=10, show_fig=True, activation=T.nnet.relu)
 
     np.save(we_file, rnn.We.get_value())
     with open(w2i_file, 'w') as f:
         json.dump(word2idx, f)
-
-def generate_wikipedia():
-    pass
 
 def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.json'):
     We = np.load(we_file)
@@ -166,18 +170,17 @@ def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedi
     for dist, name in [(dist1, 'Euclidean'), (dist2, 'cosine')]:
         min_dist = float('inf')
         best_word = ''
-        for word, idx in word2idx.iteritems():
+        for word, idx in iteritems(word2idx):
             if word not in (w1, w2, w3):
                 v1 = We[idx]
                 d = dist(v0, v1)
                 if d < min_dist:
                     min_dist = d
                     best_word = word
-        print "closest match by", name, "distance:", best_word
-        print w1, "-", w2, "=", best_word, "-", w3
+        print("closest match by", name, "distance:", best_word)
+        print(w1, "-", w2, "=", best_word, "-", w3)
 
 if __name__ == '__main__':
-    # train_wikipedia() # GRU
     we = 'lstm_word_embeddings2.npy'
     w2i = 'lstm_wikipedia_word2idx2.json'
     train_wikipedia(we, w2i, RecurrentUnit=GRU)

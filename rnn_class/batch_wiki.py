@@ -1,5 +1,12 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import sys
 import theano
 import theano.tensor as T
@@ -71,15 +78,15 @@ class RNN:
         )
 
         costs = []
-        n_batches = N / batch_sz
-        for i in xrange(epochs):
+        n_batches = N // batch_sz
+        for i in range(epochs):
             t0 = datetime.now()
             X = shuffle(X)
             n_correct = 0
             n_total = 0
             cost = 0
 
-            for j in xrange(n_batches):
+            for j in range(n_batches):
                 # construct input sequence and output sequence as
                 # concatenatation of multiple input sequences and output sequences
                 # input X should be a list of 2-D arrays or one 3-D array
@@ -88,7 +95,7 @@ class RNN:
                 sequenceLengths = []
                 input_sequence = []
                 output_sequence = []
-                for k in xrange(j*batch_sz, (j+1)*batch_sz):
+                for k in range(j*batch_sz, (j+1)*batch_sz):
                     # don't always add the end token
                     if np.random.random() < 0.01 or len(X[k]) <= 1:
                         input_sequence += [0] + X[k]
@@ -114,7 +121,7 @@ class RNN:
                 if j % 1 == 0:
                     sys.stdout.write("j/n_batches: %d/%d correct rate so far: %f\r" % (j, n_batches, float(n_correct)/n_total))
                     sys.stdout.flush()
-            print "i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total), "time for epoch:", (datetime.now() - t0)
+            print("i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total), "time for epoch:", (datetime.now() - t0))
             costs.append(cost)
 
         if show_fig:
@@ -129,8 +136,8 @@ def train_wikipedia(we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.
     ###       just comment one out, and uncomment the other!
     # sentences, word2idx = get_wikipedia_data(n_files=100, n_vocab=2000)
     sentences, word2idx = get_sentences_with_word2idx_limit_vocab()
-    print "finished retrieving data"
-    print "vocab size:", len(word2idx), "number of sentences:", len(sentences)
+    print("finished retrieving data")
+    print("vocab size:", len(word2idx), "number of sentences:", len(sentences))
     rnn = RNN(30, [30], len(word2idx))
     rnn.fit(sentences, learning_rate=2*1e-4, epochs=10, show_fig=True, activation=T.nnet.relu)
 
@@ -158,22 +165,22 @@ def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedi
     for dist, name in [(dist1, 'Euclidean'), (dist2, 'cosine')]:
         min_dist = float('inf')
         best_word = ''
-        for word, idx in word2idx.iteritems():
+        for word, idx in iteritems(word2idx):
             if word not in (w1, w2, w3):
                 v1 = We[idx]
                 d = dist(v0, v1)
                 if d < min_dist:
                     min_dist = d
                     best_word = word
-        print "closest match by", name, "distance:", best_word
-        print w1, "-", w2, "=", best_word, "-", w3
+        print("closest match by", name, "distance:", best_word)
+        print(w1, "-", w2, "=", best_word, "-", w3)
 
 
 
 if __name__ == '__main__':
     we = 'working_files/batch_gru_word_embeddings.npy'
     w2i = 'working_files/batch_wikipedia_word2idx.json'
-    train_wikipedia(we, w2i, RecurrentUnit=GRU)
+    train_wikipedia(we, w2i, RecurrentUnit=LSTM)
     find_analogies('king', 'man', 'woman', we, w2i)
     find_analogies('france', 'paris', 'london', we, w2i)
     find_analogies('france', 'paris', 'rome', we, w2i)

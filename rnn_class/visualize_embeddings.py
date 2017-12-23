@@ -1,5 +1,12 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import json
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,12 +18,12 @@ def main(we_file='word_embeddings.npy', w2i_file='wikipedia_word2idx.json', Mode
     V, D = We.shape
     with open(w2i_file) as f:
         word2idx = json.load(f)
-    idx2word = {v:k for k,v in word2idx.iteritems()}
+    idx2word = {v:k for k,v in iteritems(word2idx)}
 
     model = Model()
     Z = model.fit_transform(We)
     plt.scatter(Z[:,0], Z[:,1])
-    for i in xrange(V):
+    for i in range(V):
         plt.annotate(s=idx2word[i], xy=(Z[i,0], Z[i,1]))
     plt.show()
 

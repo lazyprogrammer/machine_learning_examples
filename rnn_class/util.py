@@ -1,8 +1,15 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import string
 import os
+import sys
 import operator
 from nltk import pos_tag, word_tokenize
 from datetime import datetime
@@ -18,10 +25,10 @@ def all_parity_pairs(nbit):
     Ntotal = N + remainder
     X = np.zeros((Ntotal, nbit))
     Y = np.zeros(Ntotal)
-    for ii in xrange(Ntotal):
+    for ii in range(Ntotal):
         i = ii % N
         # now generate the ith sample
-        for j in xrange(nbit):
+        for j in range(nbit):
             if i % (2**(j+1)) != 0:
                 i -= 2**j
                 X[ii,j] = 1
@@ -34,9 +41,9 @@ def all_parity_pairs_with_sequence_labels(nbit):
 
     # we want every time step to have a label
     Y_t = np.zeros(X.shape, dtype=np.int32)
-    for n in xrange(N):
+    for n in range(N):
         ones_count = 0
-        for i in xrange(t):
+        for i in range(t):
             if X[n,i] == 1:
                 ones_count += 1
             if ones_count % 2 == 1:
@@ -45,8 +52,18 @@ def all_parity_pairs_with_sequence_labels(nbit):
     X = X.reshape(N, t, 1).astype(np.float32)
     return X, Y_t
 
-def remove_punctuation(s):
+# unfortunately Python 2 and 3 translates work differently
+def remove_punctuation_2(s):
     return s.translate(None, string.punctuation)
+
+def remove_punctuation_3(s):
+    return s.translate(str.maketrans('','',string.punctuation))
+
+if sys.version.startswith('2'):
+    remove_punctuation = remove_punctuation_2
+else:
+    remove_punctuation = remove_punctuation_3
+
 
 def get_robert_frost():
     word2idx = {'START': 0, 'END': 1}
@@ -75,18 +92,18 @@ def get_wikipedia_data(n_files, n_vocab, by_paragraph=False):
     prefix = '../large_files/'
 
     if not os.path.exists(prefix):
-        print "Are you sure you've downloaded, converted, and placed the Wikipedia data into the proper folder?"
-        print "I'm looking for a folder called large_files, adjacent to the class folder, but it does not exist."
-        print "Please download the data from https://dumps.wikimedia.org/"
-        print "Quitting..."
+        print("Are you sure you've downloaded, converted, and placed the Wikipedia data into the proper folder?")
+        print("I'm looking for a folder called large_files, adjacent to the class folder, but it does not exist.")
+        print("Please download the data from https://dumps.wikimedia.org/")
+        print("Quitting...")
         exit()
 
     input_files = [f for f in os.listdir(prefix) if f.startswith('enwiki') and f.endswith('txt')]
 
     if len(input_files) == 0:
-        print "Looks like you don't have any data files, or they're in the wrong location."
-        print "Please download the data from https://dumps.wikimedia.org/"
-        print "Quitting..."
+        print("Looks like you don't have any data files, or they're in the wrong location.")
+        print("Please download the data from https://dumps.wikimedia.org/")
+        print("Quitting...")
         exit()
 
     # return variables

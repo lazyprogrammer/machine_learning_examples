@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import theano
 import theano.tensor as T
@@ -83,13 +89,11 @@ class ANN(object):
             updates=updates,
         )
 
-        n_batches = N / batch_sz
-        # print "N:", N, "batch_sz:", batch_sz
-        # print "n_batches:", n_batches
+        n_batches = N // batch_sz
         costs = []
-        for i in xrange(epochs):
+        for i in range(epochs):
             X, Y = shuffle(X, Y)
-            for j in xrange(n_batches):
+            for j in range(n_batches):
                 Xbatch = X[j*batch_sz:(j*batch_sz+batch_sz)]
                 Ybatch = Y[j*batch_sz:(j*batch_sz+batch_sz)]
 
@@ -98,7 +102,7 @@ class ANN(object):
                 if j % print_period == 0:
                     costs.append(c)
                     e = np.mean(Ybatch != p)
-                    print "i:", i, "j:", j, "nb:", n_batches, "cost:", c, "error rate:", e
+                    print("i:", i, "j:", j, "nb:", n_batches, "cost:", c, "error rate:", e)
         
         if show_fig:
             plt.plot(costs)

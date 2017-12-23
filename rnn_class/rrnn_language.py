@@ -1,5 +1,12 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import theano
 import theano.tensor as T
 import numpy as np
@@ -15,7 +22,7 @@ class SimpleRNN:
         self.M = M # hidden layer size
         self.V = V # vocabulary size
 
-    def fit(self, X, learning_rate=10e-1, mu=0.99, reg=1.0, activation=T.tanh, epochs=500, show_fig=False):
+    def fit(self, X, learning_rate=10., mu=0.9, reg=0., activation=T.tanh, epochs=500, show_fig=False):
         N = len(X)
         D = self.D
         M = self.M
@@ -42,11 +49,13 @@ class SimpleRNN:
         grads = T.grad(cost, self.params)
         dparams = [theano.shared(p.get_value()*0) for p in self.params]
 
-        updates = [
-            (p, p + mu*dp - lr*g) for p, dp, g in zip(self.params, dparams, grads)
-        ] + [
-            (dp, mu*dp - lr*g) for dp, g in zip(dparams, grads)
-        ]
+        updates = []
+        for p, dp, g in zip(self.params, dparams, grads):
+            new_dp = mu*dp - lr*g
+            updates.append((dp, new_dp))
+
+            new_p = p + new_dp
+            updates.append((p, new_p))
 
         self.predict_op = theano.function(inputs=[thX], outputs=prediction)
         self.train_op = theano.function(
@@ -56,12 +65,12 @@ class SimpleRNN:
         )
 
         costs = []
-        for i in xrange(epochs):
+        for i in range(epochs):
             X = shuffle(X)
             n_correct = 0
             n_total = 0
             cost = 0
-            for j in xrange(N):
+            for j in range(N):
                 if np.random.random() < 0.1:
                     input_sequence = [0] + X[j]
                     output_sequence = X[j] + [1]
@@ -78,7 +87,7 @@ class SimpleRNN:
                 for pj, xj in zip(p, output_sequence):
                     if pj == xj:
                         n_correct += 1
-            print "i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total)
+            print("i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total))
             if (i + 1) % 500 == 0:
                 learning_rate /= 2
             costs.append(cost)
@@ -157,7 +166,7 @@ class SimpleRNN:
 
     def generate(self, word2idx):
         # convert word2idx -> idx2word
-        idx2word = {v:k for k,v in word2idx.iteritems()}
+        idx2word = {v:k for k,v in iteritems(word2idx)}
         V = len(word2idx)
 
         # generate 4 lines at a time
@@ -176,19 +185,19 @@ class SimpleRNN:
             if P > 1:
                 # it's a real word, not start/end token
                 word = idx2word[P]
-                print word,
+                print(word, end=" ")
             elif P == 1:
                 # end token
                 n_lines += 1
                 X = [0]
-                print ''
+                print('')
 
 
 def train_poetry():
     # students: tanh didn't work but you should try it
     sentences, word2idx = get_robert_frost()
     rnn = SimpleRNN(50, 50, len(word2idx))
-    rnn.fit(sentences, learning_rate=10e-5, show_fig=True, activation=T.nnet.relu, epochs=2000)
+    rnn.fit(sentences, learning_rate=1e-4, show_fig=True, activation=T.nnet.relu, epochs=2000)
     rnn.save('RRNN_D50_M50_epochs2000_relu.npz')
 
 def generate_poetry():
@@ -198,6 +207,6 @@ def generate_poetry():
 
 
 if __name__ == '__main__':
-    # train_poetry()
+    train_poetry()
     generate_poetry()
 

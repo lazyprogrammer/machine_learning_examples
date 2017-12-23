@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import theano
 import theano.tensor as T
 import numpy as np
@@ -74,18 +80,18 @@ class SimpleRNN:
         )
 
         costs = []
-        for i in xrange(epochs):
+        for i in range(epochs):
             X, Y = shuffle(X, Y)
             n_correct = 0
             cost = 0
-            for j in xrange(N):
+            for j in range(N):
                 c, p, rout = self.train_op(X[j], Y[j])
                 # print "p:", p
                 cost += c
                 if p[-1] == Y[j,-1]:
                     n_correct += 1
-            print "shape y:", rout.shape
-            print "i:", i, "cost:", cost, "classification rate:", (float(n_correct)/N)
+            print("shape y:", rout.shape)
+            print("i:", i, "cost:", cost, "classification rate:", (float(n_correct)/N))
             costs.append(cost)
             if n_correct == N:
                 break

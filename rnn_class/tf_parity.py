@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
@@ -36,7 +42,7 @@ class SimpleRNN:
     self.M = M # hidden layer size
 
 
-  def fit(self, X, Y, batch_sz=20, learning_rate=10e-1, mu=0.99, activation=tf.nn.sigmoid, epochs=100, show_fig=False):
+  def fit(self, X, Y, batch_sz=20, learning_rate=0.1, mu=0.9, activation=tf.nn.sigmoid, epochs=100, show_fig=False):
     N, T, D = X.shape # X is of size N x T(n) x D
     K = len(set(Y.flatten()))
     M = self.M
@@ -85,28 +91,28 @@ class SimpleRNN:
     train_op = tf.train.MomentumOptimizer(learning_rate, momentum=mu).minimize(cost_op)
 
     costs = []
-    n_batches = N / batch_sz
+    n_batches = N // batch_sz
     
     init = tf.global_variables_initializer()
     with tf.Session() as session:
       session.run(init)
-      for i in xrange(epochs):
+      for i in range(epochs):
         X, Y = shuffle(X, Y)
         n_correct = 0
         cost = 0
-        for j in xrange(n_batches):
+        for j in range(n_batches):
           Xbatch = X[j*batch_sz:(j+1)*batch_sz]
           Ybatch = Y[j*batch_sz:(j+1)*batch_sz]
           
           _, c, p = session.run([train_op, cost_op, predict_op], feed_dict={tfX: Xbatch, tfY: Ybatch})
           cost += c
-          for b in xrange(batch_sz):
+          for b in range(batch_sz):
             idx = (b + 1)*T - 1
             n_correct += (p[idx] == Ybatch[b][-1])
         if i % 10 == 0:
-          print "i:", i, "cost:", cost, "classification rate:", (float(n_correct)/N)
+          print("i:", i, "cost:", cost, "classification rate:", (float(n_correct)/N))
         if n_correct == N:
-          print "i:", i, "cost:", cost, "classification rate:", (float(n_correct)/N)
+          print("i:", i, "cost:", cost, "classification rate:", (float(n_correct)/N))
           break
         costs.append(cost)
 
@@ -116,12 +122,12 @@ class SimpleRNN:
 
 
 
-def parity(B=12, learning_rate=10e-4, epochs=1000):
+def parity(B=12, learning_rate=1., epochs=1000):
   X, Y = all_parity_pairs_with_sequence_labels(B)
 
   rnn = SimpleRNN(4)
   rnn.fit(X, Y,
-    batch_sz=10,
+    batch_sz=len(Y),
     learning_rate=learning_rate,
     epochs=epochs,
     activation=tf.nn.sigmoid,

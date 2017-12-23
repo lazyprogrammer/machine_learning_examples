@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import theano
 import theano.tensor as T
@@ -39,8 +45,6 @@ class SimpleRecurrentLayer:
         return h_t
 
     def output(self, Xflat, startPoints):
-        # print("inside output()")
-
         # Xflat should be (NT, D)
         # calculate X after multiplying input weights
         XWxh = Xflat.dot(self.Wxh)
@@ -102,8 +106,6 @@ class GRU:
         return h_t
 
     def output(self, Xflat, startPoints):
-        # print("inside output()")
-
         # Xflat should be (NT, D)
         # calculate X after multiplying input weights
         XWxr = Xflat.dot(self.Wxr)

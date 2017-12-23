@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/deep-learning-recurrent-neural-networks-in-python
 # https://udemy.com/deep-learning-recurrent-neural-networks-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +18,7 @@ class SimpleRNN:
     def __init__(self, M):
         self.M = M # hidden layer size
 
-    def fit(self, X, Y, learning_rate=10e-1, mu=0.99, reg=1.0, activation=tf.tanh, epochs=100, show_fig=False):
+    def fit(self, X, Y, learning_rate=1.0, mu=0.99, reg=1.0, activation=tf.tanh, epochs=100, show_fig=False):
         N, T, D = X.shape
         K = len(set(Y.flatten()))
         M = self.M
@@ -70,16 +76,16 @@ class SimpleRNN:
             session.run(init)
 
             costs = []
-            for i in xrange(epochs):
+            for i in range(epochs):
                 X, Y = shuffle(X, Y)
                 n_correct = 0
                 batch_cost = 0
-                for j in xrange(N):
+                for j in range(N):
                     _, c, p = session.run([train_op, cost, predict_op], feed_dict={tfX: X[j].reshape(T, D), tfY: Y[j]})
                     batch_cost += c
                     if p[-1] == Y[j,-1]:
                         n_correct += 1
-                print "i:", i, "cost:", batch_cost, "classification rate:", (float(n_correct)/N)
+                print("i:", i, "cost:", batch_cost, "classification rate:", (float(n_correct)/N))
                 costs.append(batch_cost)
                 if n_correct == N:
                     break
@@ -90,7 +96,7 @@ class SimpleRNN:
 
 
 
-def parity(B=12, learning_rate=10e-5, epochs=200):
+def parity(B=12, learning_rate=1e-4, epochs=200):
     X, Y = all_parity_pairs_with_sequence_labels(B)
     X = X.astype(np.float32)
 
