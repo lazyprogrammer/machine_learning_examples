@@ -19,7 +19,7 @@ class SimpleRNN:
     def __init__(self, M):
         self.M = M # hidden layer size
 
-    def fit(self, X, Y, batch_sz=20, learning_rate=10e-1, mu=0.99, reg=1.0, activation=T.tanh, epochs=100, show_fig=False):
+    def fit(self, X, Y, batch_sz=20, learning_rate=1.0, mu=0.99, reg=1.0, activation=T.tanh, epochs=100, show_fig=False):
         D = X[0].shape[1] # X is of size N x T(n) x D
         K = len(set(Y.flatten()))
         N = len(Y)
@@ -153,7 +153,7 @@ class SimpleRNN:
 
 
 
-def parity(B=12, learning_rate=10e-4, epochs=3000):
+def parity(B=12, learning_rate=1e-3, epochs=3000):
     X, Y = all_parity_pairs_with_sequence_labels(B)
 
     rnn = SimpleRNN(4)

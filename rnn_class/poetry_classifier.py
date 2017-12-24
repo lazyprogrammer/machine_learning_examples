@@ -20,7 +20,7 @@ class SimpleRNN:
         self.M = M # hidden layer size
         self.V = V # vocabulary size
 
-    def fit(self, X, Y, learning_rate=10e-1, mu=0.99, reg=1.0, activation=T.tanh, epochs=500, show_fig=False):
+    def fit(self, X, Y, learning_rate=1.0, mu=0.99, reg=1.0, activation=T.tanh, epochs=500, show_fig=False):
         M = self.M
         V = self.V
         K = len(set(Y))
@@ -149,7 +149,7 @@ class SimpleRNN:
 def train_poetry():
     X, Y, V = get_poetry_classifier_data(samples_per_class=500)
     rnn = SimpleRNN(30, V)
-    rnn.fit(X, Y, learning_rate=10e-7, show_fig=True, activation=T.nnet.relu, epochs=1000)
+    rnn.fit(X, Y, learning_rate=1e-6, show_fig=True, activation=T.nnet.relu, epochs=1000)
 
 if __name__ == '__main__':
     train_poetry()

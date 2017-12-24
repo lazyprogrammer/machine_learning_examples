@@ -34,7 +34,7 @@ class ANN(object):
     def __init__(self, hidden_layer_sizes):
         self.hidden_layer_sizes = hidden_layer_sizes
 
-    def fit(self, X, Y, learning_rate=10e-3, mu=0.99, reg=10e-12, eps=10e-10, epochs=400, batch_sz=20, print_period=1, show_fig=False):
+    def fit(self, X, Y, learning_rate=1e-2, mu=0.99, reg=1e-12, epochs=400, batch_sz=20, print_period=1, show_fig=False):
 
         # X = X.astype(np.float32)
         Y = Y.astype(np.int32)
@@ -122,13 +122,13 @@ class ANN(object):
 def wide():
     X, Y = all_parity_pairs(12)
     model = ANN([2048])
-    model.fit(X, Y, learning_rate=10e-5, print_period=10, epochs=300, show_fig=True)
+    model.fit(X, Y, learning_rate=1e-4, print_period=10, epochs=300, show_fig=True)
 
 def deep():
     # Challenge - find a deeper, slimmer network to solve the problem
     X, Y = all_parity_pairs(12)
     model = ANN([1024]*2)
-    model.fit(X, Y, learning_rate=10e-4, print_period=10, epochs=100, show_fig=True)
+    model.fit(X, Y, learning_rate=1e-3, print_period=10, epochs=100, show_fig=True)
 
 if __name__ == '__main__':
     wide()

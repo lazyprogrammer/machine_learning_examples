@@ -6,7 +6,7 @@ from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-
+import os
 import sys
 import theano
 import theano.tensor as T
@@ -178,6 +178,8 @@ def find_analogies(w1, w2, w3, we_file='word_embeddings.npy', w2i_file='wikipedi
 
 
 if __name__ == '__main__':
+    if not os.path.exists('working_files'):
+        os.mkdir('working_files')
     we = 'working_files/batch_gru_word_embeddings.npy'
     w2i = 'working_files/batch_wikipedia_word2idx.json'
     train_wikipedia(we, w2i, RecurrentUnit=LSTM)
