@@ -2,11 +2,19 @@
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
 # Demonstrate how HMMs can be used for classification.
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
+
 import string
 import numpy as np
 import matplotlib.pyplot as plt
 
-from hmmd_theano import HMM
+from hmmd_theano2 import HMM
 from sklearn.utils import shuffle
 from nltk import pos_tag, word_tokenize
 
@@ -18,14 +26,14 @@ class HMMClassifier:
         K = len(set(Y)) # number of classes - assume 0..K-1
         self.models = []
         self.priors = []
-        for k in xrange(K):
+        for k in range(K):
             # gather all the training data for this class
             thisX = [x for x, y in zip(X, Y) if y == k]
             C = len(thisX)
             self.priors.append(np.log(C))
 
             hmm = HMM(5)
-            hmm.fit(thisX, V=V, p_cost=0.1, print_period=1, learning_rate=1e-4, max_iter=100)
+            hmm.fit(thisX, V=V, print_period=1, learning_rate=1e-2, max_iter=80)
             self.models.append(hmm)
 
     def score(self, X, Y):
@@ -56,7 +64,7 @@ def get_data():
         for line in open(fn):
             line = line.rstrip()
             if line:
-                print line
+                print(line)
                 # tokens = remove_punctuation(line.lower()).split()
                 tokens = get_tags(line)
                 if len(tokens) > 1:
@@ -69,18 +77,17 @@ def get_data():
                     X.append(sequence)
                     Y.append(label)
                     count += 1
-                    print count
+                    print(count)
                     if count >= 50:
                         break
-    print "Vocabulary:", word2idx.keys()
+    print("Vocabulary:", word2idx.keys())
     return X, Y, current_idx
         
 
 def main():
     X, Y, V = get_data()
-    # print "Finished loading data"
-    print "len(X):", len(X)
-    print "Vocabulary size:", V
+    print("len(X):", len(X))
+    print("Vocabulary size:", V)
     X, Y = shuffle(X, Y)
     N = 20 # number to test
     Xtrain, Ytrain = X[:-N], Y[:-N]
@@ -88,7 +95,7 @@ def main():
 
     model = HMMClassifier()
     model.fit(Xtrain, Ytrain, V)
-    print "Score:", model.score(Xtest, Ytest)
+    print("Score:", model.score(Xtest, Ytest))
 
 
 if __name__ == '__main__':

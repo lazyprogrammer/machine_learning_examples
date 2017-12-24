@@ -2,6 +2,11 @@
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
 # theano scan example: calculate x^2
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 
 import numpy as np
 import theano
@@ -26,4 +31,4 @@ square_op = theano.function(
 
 o_val = square_op(np.array([1, 2, 3, 4, 5]))
 
-print "output:", o_val
+print("output:", o_val)

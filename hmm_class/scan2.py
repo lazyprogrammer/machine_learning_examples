@@ -2,6 +2,11 @@
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
 # theano scan example: calculate fibonacci
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 
 import numpy as np
 import theano
@@ -27,4 +32,4 @@ fibonacci = theano.function(
 
 o_val = fibonacci(8)
 
-print "output:", o_val
+print("output:", o_val)

@@ -2,6 +2,12 @@
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
 # Discrete Hidden Markov Model (HMM) with scaling
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -30,19 +36,19 @@ class HMM:
         self.A = random_normalized(self.M, self.M) # state transition matrix
         self.B = random_normalized(self.M, V) # output distribution
 
-        print "initial A:", self.A
-        print "initial B:", self.B
+        print("initial A:", self.A)
+        print("initial B:", self.B)
 
         costs = []
-        for it in xrange(max_iter):
+        for it in range(max_iter):
             if it % 10 == 0:
-                print "it:", it
+                print("it:", it)
             # alpha1 = np.zeros((N, self.M))
             alphas = []
             betas = []
             scales = []
             logP = np.zeros(N)
-            for n in xrange(N):
+            for n in range(N):
                 x = X[n]
                 T = len(x)
                 scale = np.zeros(T)
@@ -51,19 +57,17 @@ class HMM:
                 alpha[0] = self.pi*self.B[:,x[0]]
                 scale[0] = alpha[0].sum()
                 alpha[0] /= scale[0]
-                for t in xrange(1, T):
+                for t in range(1, T):
                     alpha_t_prime = alpha[t-1].dot(self.A) * self.B[:, x[t]]
                     scale[t] = alpha_t_prime.sum()
                     alpha[t] = alpha_t_prime / scale[t]
-                # P[n] = alpha[-1].sum()
-                # print "alpha[-1].sum():", alpha[-1].sum()
                 logP[n] = np.log(scale).sum()
                 alphas.append(alpha)
                 scales.append(scale)
 
                 beta = np.zeros((T, self.M))
                 beta[-1] = 1
-                for t in xrange(T - 2, -1, -1):
+                for t in range(T - 2, -1, -1):
                     beta[t] = self.A.dot(self.B[:, x[t+1]] * beta[t+1]) / scale[t+1]
                 betas.append(beta)
 
@@ -72,48 +76,40 @@ class HMM:
             costs.append(cost)
 
             # now re-estimate pi, A, B
-            self.pi = np.sum((alphas[n][0] * betas[n][0]) for n in xrange(N)) / N
-            # print "self.pi:", self.pi
-            # break
+            self.pi = np.sum((alphas[n][0] * betas[n][0]) for n in range(N)) / N
 
             den1 = np.zeros((self.M, 1))
             den2 = np.zeros((self.M, 1))
             a_num = np.zeros((self.M, self.M))
             b_num = np.zeros((self.M, V))
-            for n in xrange(N):
+            for n in range(N):
                 x = X[n]
                 T = len(x)
-                # print "den shape:", den.shape
-                # test = (alphas[n][:-1] * betas[n][:-1]).sum(axis=0, keepdims=True).T
-                # print "shape (alphas[n][:-1] * betas[n][:-1]).sum(axis=0): ", test.shape
                 den1 += (alphas[n][:-1] * betas[n][:-1]).sum(axis=0, keepdims=True).T
                 den2 += (alphas[n] * betas[n]).sum(axis=0, keepdims=True).T
 
                 # numerator for A
                 # a_num_n = np.zeros((self.M, self.M))
-                for i in xrange(self.M):
-                    for j in xrange(self.M):
-                        for t in xrange(T-1):
+                for i in range(self.M):
+                    for j in range(self.M):
+                        for t in range(T-1):
                             a_num[i,j] += alphas[n][t,i] * betas[n][t+1,j] * self.A[i,j] * self.B[j, x[t+1]] / scales[n][t+1]
                 # a_num += a_num_n
 
                 # numerator for B
-                # for i in xrange(self.M):
-                #     for j in xrange(V):
-                #         for t in xrange(T):
+                # for i in range(self.M):
+                #     for j in range(V):
+                #         for t in range(T):
                 #             if x[t] == j:
                 #                 b_num[i,j] += alphas[n][t][i] * betas[n][t][i]
-                for i in xrange(self.M):
-                    for t in xrange(T):
+                for i in range(self.M):
+                    for t in range(T):
                         b_num[i,x[t]] += alphas[n][t,i] * betas[n][t,i]
             self.A = a_num / den1
             self.B = b_num / den2
-            # print "new A:", self.A
-            # break
-            # print "P:", P
-        print "A:", self.A
-        print "B:", self.B
-        print "pi:", self.pi
+        print("A:", self.A)
+        print("B:", self.B)
+        print("pi:", self.pi)
 
         plt.plot(costs)
         plt.show()
@@ -127,7 +123,7 @@ class HMM:
         alpha[0] = self.pi*self.B[:,x[0]]
         scale[0] = alpha[0].sum()
         alpha[0] /= scale[0]
-        for t in xrange(1, T):
+        for t in range(1, T):
             alpha_t_prime = alpha[t-1].dot(self.A) * self.B[:, x[t]]
             scale[t] = alpha_t_prime.sum()
             alpha[t] = alpha_t_prime / scale[t]
@@ -143,15 +139,15 @@ class HMM:
         delta = np.zeros((T, self.M))
         psi = np.zeros((T, self.M))
         delta[0] = np.log(self.pi) + np.log(self.B[:,x[0]])
-        for t in xrange(1, T):
-            for j in xrange(self.M):
+        for t in range(1, T):
+            for j in range(self.M):
                 delta[t,j] = np.max(delta[t-1] + np.log(self.A[:,j])) + np.log(self.B[j, x[t]])
                 psi[t,j] = np.argmax(delta[t-1] + np.log(self.A[:,j]))
 
         # backtrack
         states = np.zeros(T, dtype=np.int32)
         states[T-1] = np.argmax(delta[T-1])
-        for t in xrange(T-2, -1, -1):
+        for t in range(T-2, -1, -1):
             states[t] = psi[t+1, states[t+1]]
         return states
 
@@ -166,18 +162,18 @@ def fit_coin():
     hmm = HMM(2)
     hmm.fit(X)
     L = hmm.log_likelihood_multi(X).sum()
-    print "LL with fitted params:", L
+    print("LL with fitted params:", L)
 
     # try true values
     hmm.pi = np.array([0.5, 0.5])
     hmm.A = np.array([[0.1, 0.9], [0.8, 0.2]])
     hmm.B = np.array([[0.6, 0.4], [0.3, 0.7]])
     L = hmm.log_likelihood_multi(X).sum()
-    print "LL with true params:", L
+    print("LL with true params:", L)
 
     # try viterbi
-    print "Best state sequence for:", X[0]
-    print hmm.get_state_sequence(X[0])
+    print("Best state sequence for:", X[0])
+    print(hmm.get_state_sequence(X[0]))
 
 
 if __name__ == '__main__':
