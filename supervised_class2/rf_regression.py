@@ -2,6 +2,13 @@
 # https://www.udemy.com/machine-learning-in-python-random-forest-adaboost
 # uses house dataset from https://archive.ics.uci.edu/ml/machine-learning-databases/housing/
 # put all files in the folder ../large_files
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -45,7 +52,7 @@ class DataTransformer:
     D = len(NUMERICAL_COLS) + len(NO_TRANSFORM)
     X = np.zeros((N, D))
     i = 0
-    for col, scaler in self.scalers.iteritems():
+    for col, scaler in iteritems(self.scalers):
       X[:,i] = scaler.transform(df[col].as_matrix().reshape(-1, 1)).flatten()
       i += 1
     for col in NO_TRANSFORM:
@@ -84,7 +91,7 @@ def get_data():
   # shuffle the data
   N = len(df)
   train_idx = np.random.choice(N, size=int(0.7*N), replace=False)
-  test_idx = [i for i in xrange(N) if i not in train_idx]
+  test_idx = [i for i in range(N) if i not in train_idx]
   df_train = df.loc[train_idx]
   df_test = df.loc[test_idx]
 
@@ -108,7 +115,7 @@ if __name__ == '__main__':
   plt.ylabel("prediction")
   ymin = np.round( min( min(Ytest), min(predictions) ) )
   ymax = np.ceil( max( max(Ytest), max(predictions) ) )
-  print "ymin:", ymin, "ymax:", ymax
+  print("ymin:", ymin, "ymax:", ymax)
   r = range(int(ymin), int(ymax) + 1)
   plt.plot(r, r)
   plt.show()
@@ -121,14 +128,14 @@ if __name__ == '__main__':
   # do a quick baseline test
   baseline = LinearRegression()
   single_tree = DecisionTreeRegressor()
-  print "CV single tree:", cross_val_score(single_tree, Xtrain, Ytrain).mean()
-  print "CV baseline:", cross_val_score(baseline, Xtrain, Ytrain).mean()
-  print "CV forest:", cross_val_score(model, Xtrain, Ytrain).mean()
+  print("CV single tree:", cross_val_score(single_tree, Xtrain, Ytrain).mean())
+  print("CV baseline:", cross_val_score(baseline, Xtrain, Ytrain).mean())
+  print("CV forest:", cross_val_score(model, Xtrain, Ytrain).mean())
 
   # test score
   single_tree.fit(Xtrain, Ytrain)
   baseline.fit(Xtrain, Ytrain)
-  print "test score single tree:", single_tree.score(Xtest, Ytest)
-  print "test score baseline:", baseline.score(Xtest, Ytest)
-  print "test score forest:", model.score(Xtest, Ytest)
+  print("test score single tree:", single_tree.score(Xtest, Ytest))
+  print("test score baseline:", baseline.score(Xtest, Ytest))
+  print("test score forest:", model.score(Xtest, Ytest))
 

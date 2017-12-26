@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/machine-learning-in-python-random-forest-adaboost
 # https://www.udemy.com/machine-learning-in-python-random-forest-adaboost
+from __future__ import print_function, division
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -30,7 +36,7 @@ class BaggedTreeRegressor:
   def fit(self, X, Y):
     N = len(X)
     self.models = []
-    for b in xrange(self.B):
+    for b in range(self.B):
       idx = np.random.choice(N, size=N, replace=True)
       Xb = X[idx]
       Yb = Y[idx]
@@ -59,7 +65,7 @@ class BaggedTreeClassifier:
   def fit(self, X, Y):
     N = len(X)
     self.models = []
-    for b in xrange(self.B):
+    for b in range(self.B):
       idx = np.random.choice(N, size=N, replace=True)
       Xb = X[idx]
       Yb = Y[idx]

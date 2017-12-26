@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/machine-learning-in-python-random-forest-adaboost
 # https://www.udemy.com/machine-learning-in-python-random-forest-adaboost
+from __future__ import print_function, division
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,7 +17,7 @@ N = 15
 D = 100
 X = (np.random.random((N, D)) - 0.5)*10
 Y = X.sum(axis=1)**2 + 0.5*np.random.randn(N)
-Ntrain = N/2
+Ntrain = N//2
 Xtrain = X[:Ntrain]
 Ytrain = Y[:Ntrain]
 Xtest = X[Ntrain:]
@@ -29,7 +35,7 @@ Ytest = Y[Ntrain:]
 T = 300
 test_error_rf = np.empty(T)
 test_error_bag = np.empty(T)
-for num_trees in xrange(T):
+for num_trees in range(T):
   if num_trees == 0:
     test_error_rf[num_trees] = None
     test_error_bag[num_trees] = None
@@ -45,7 +51,7 @@ for num_trees in xrange(T):
     test_error_bag[num_trees] = bg.score(Xtest, Ytest)
 
   if num_trees % 10 == 0:
-    print "num_trees:", num_trees
+    print("num_trees:", num_trees)
 
 plt.plot(test_error_rf, label='rf')
 plt.plot(test_error_bag, label='bag')

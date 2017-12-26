@@ -3,6 +3,13 @@
 # mushroom data from:
 # https://archive.ics.uci.edu/ml/datasets/Mushroom
 # put all files in the folder ../large_files/
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -39,19 +46,19 @@ class DataTransformer:
 
     # find dimensionality
     self.D = len(NUMERICAL_COLS)
-    for col, encoder in self.labelEncoders.iteritems():
+    for col, encoder in iteritems(self.labelEncoders):
       self.D += len(encoder.classes_)
-    print "dimensionality:", self.D
+    print("dimensionality:", self.D)
 
   def transform(self, df):
     N, _ = df.shape
     X = np.zeros((N, self.D))
     i = 0
-    for col, scaler in self.scalers.iteritems():
+    for col, scaler in iteritems(self.scalers):
       X[:,i] = scaler.transform(df[col].as_matrix().reshape(-1, 1)).flatten()
       i += 1
 
-    for col, encoder in self.labelEncoders.iteritems():
+    for col, encoder in iteritems(self.labelEncoders):
       # print "transforming col:", col
       K = len(encoder.classes_)
       X[np.arange(N), encoder.transform(df[col]) + i] = 1
@@ -73,7 +80,7 @@ def replace_missing(df):
   # set a special value = 'missing'
   for col in CATEGORICAL_COLS:
     if np.any(df[col].isnull()):
-      print col
+      print(col)
       df.loc[ df[col].isnull(), col ] = 'missing'
 
 
@@ -100,11 +107,11 @@ if __name__ == '__main__':
 
   # do a quick baseline test
   baseline = LogisticRegression()
-  print "CV baseline:", cross_val_score(baseline, X, Y, cv=8).mean()
+  print("CV baseline:", cross_val_score(baseline, X, Y, cv=8).mean())
 
   # single tree
   tree = DecisionTreeClassifier()
-  print "CV one tree:", cross_val_score(tree, X, Y, cv=8).mean()
+  print("CV one tree:", cross_val_score(tree, X, Y, cv=8).mean())
 
   model = RandomForestClassifier(n_estimators=20) # try 10, 20, 50, 100, 200
-  print "CV forest:", cross_val_score(model, X, Y, cv=8).mean()
+  print("CV forest:", cross_val_score(model, X, Y, cv=8).mean())

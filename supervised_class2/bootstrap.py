@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/machine-learning-in-python-random-forest-adaboost
 # https://www.udemy.com/machine-learning-in-python-random-forest-adaboost
+from __future__ import print_function, division
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm, t
@@ -8,10 +14,10 @@ B = 200
 N = 20
 X = np.random.randn(N)
 
-print "sample mean of X:", X.mean()
+print("sample mean of X:", X.mean())
 
 individual_estimates = np.empty(B)
-for b in xrange(B):
+for b in range(B):
   sample = np.random.choice(X, size=N)
   individual_estimates[b] = sample.mean()
 
@@ -25,7 +31,7 @@ upper = bmean + norm.ppf(0.975)*bstd # norm.ppf(0.975) == +1.96
 lower2 = X.mean() + norm.ppf(0.025)*X.std()/np.sqrt(N)
 upper2 = X.mean() + norm.ppf(0.975)*X.std()/np.sqrt(N)
 
-print "bootstrap mean of X:", bmean
+print("bootstrap mean of X:", bmean)
 
 plt.hist(individual_estimates, bins=20)
 plt.axvline(x=lower, linestyle='--', color='g', label="lower bound for 95%% CI (bootstrap)")

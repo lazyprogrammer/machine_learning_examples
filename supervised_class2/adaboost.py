@@ -1,5 +1,11 @@
 # https://deeplearningcourses.com/c/machine-learning-in-python-random-forest-adaboost
 # https://www.udemy.com/machine-learning-in-python-random-forest-adaboost
+from __future__ import print_function, division
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
@@ -17,7 +23,7 @@ class AdaBoost:
     N, _ = X.shape
     W = np.ones(N) / N
 
-    for m in xrange(self.M):
+    for m in range(self.M):
       tree = DecisionTreeClassifier(max_depth=1)
       tree.fit(X, Y, sample_weight=W)
       P = tree.predict(X)
@@ -60,14 +66,14 @@ if __name__ == '__main__':
   train_errors = np.empty(T)
   test_losses = np.empty(T)
   test_errors = np.empty(T)
-  for num_trees in xrange(T):
+  for num_trees in range(T):
     if num_trees == 0:
       train_errors[num_trees] = None
       test_errors[num_trees] = None
       test_losses[num_trees] = None
       continue
     if num_trees % 20 == 0:
-      print num_trees
+      print(num_trees)
 
     model = AdaBoost(num_trees)
     model.fit(Xtrain, Ytrain)
@@ -78,8 +84,8 @@ if __name__ == '__main__':
     test_losses[num_trees] = loss
 
     if num_trees == T - 1:
-      print "final train error:", 1 - acc_train
-      print "final test error:", 1 - acc
+      print("final train error:", 1 - acc_train)
+      print("final test error:", 1 - acc)
 
   plt.plot(test_errors, label='test errors')
   plt.plot(test_losses, label='test losses')
