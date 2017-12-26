@@ -29,18 +29,19 @@ def gmm(X, K, max_iter=20, smoothing=1e-2):
     weighted_pdfs = np.zeros((N, K)) # we'll use these to store the PDF value of sample n and Gaussian k
     for i in range(max_iter):
         # step 1: determine assignments / resposibilities
-        for k in range(K):
-            for n in range(N):
-                weighted_pdfs[n,k] = pi[k]*multivariate_normal.pdf(X[n], M[k], C[k])
+        # this is the slow way
+        # for k in range(K):
+        #     for n in range(N):
+        #         weighted_pdfs[n,k] = pi[k]*multivariate_normal.pdf(X[n], M[k], C[k])
 
-        for k in range(K):
-            for n in range(N):
-                R[n,k] = weighted_pdfs[n,k] / weighted_pdfs[n,:].sum()
+        # for k in range(K):
+        #     for n in range(N):
+        #         R[n,k] = weighted_pdfs[n,k] / weighted_pdfs[n,:].sum()
 
         # a faster way to do step 1: "vectorization"
-        # for k in range(K):
-        #     weighted_pdfs[:,k] = pi[k]*multivariate_normal.pdf(X, M[k], C[k])
-        # R = weighted_pdfs / weighted_pdfs.sum(axis=1, keepdims=True)
+        for k in range(K):
+            weighted_pdfs[:,k] = pi[k]*multivariate_normal.pdf(X, M[k], C[k])
+        R = weighted_pdfs / weighted_pdfs.sum(axis=1, keepdims=True)
 
         # step 2: recalculate params
         for k in range(K):
