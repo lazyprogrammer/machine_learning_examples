@@ -6,6 +6,13 @@
 # there are N = 42000 samples
 # you can plot an image by reshaping to (28,28) and using plt.imshow()
 
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,7 +20,7 @@ from kmeans import plot_k_means, get_simple_data
 from datetime import datetime
 
 def get_data(limit=None):
-    print "Reading in and transforming data..."
+    print("Reading in and transforming data...")
     df = pd.read_csv('../large_files/train.csv')
     data = df.as_matrix()
     np.random.shuffle(data)
@@ -33,9 +40,9 @@ def purity2(Y, R):
     K = len(set(Y)) # number of labels
 
     total = 0.0
-    for k in xrange(K):
+    for k in range(K):
         max_intersection = 0
-        for j in xrange(K):
+        for j in range(K):
             intersection = ((C == k) & (Y == j)).sum()
             if intersection > max_intersection:
                 max_intersection = intersection
@@ -47,10 +54,10 @@ def purity(Y, R):
     # maximum purity is 1, higher is better
     N, K = R.shape
     p = 0
-    for k in xrange(K):
+    for k in range(K):
         best_target = -1 # we don't strictly need to store this
         max_intersection = 0
-        for j in xrange(K):
+        for j in range(K):
             intersection = R[Y==j, k].sum()
             if intersection > max_intersection:
                 max_intersection = intersection
@@ -68,7 +75,7 @@ def DBI2(X, R):
     sigma = np.zeros(K)
     M = np.zeros((K, D))
     assignments = np.argmax(R, axis=1)
-    for k in xrange(K):
+    for k in range(K):
         Xk = X[assignments == k]
         M[k] = Xk.mean(axis=0)
         # assert(Xk.mean(axis=0).shape == (D,))
@@ -80,9 +87,9 @@ def DBI2(X, R):
 
     # calculate Davies-Bouldin Index
     dbi = 0
-    for k in xrange(K):
+    for k in range(K):
         max_ratio = 0
-        for j in xrange(K):
+        for j in range(K):
             if k != j:
                 numerator = sigma[k] + sigma[j]
                 denominator = np.linalg.norm(M[k] - M[j])
@@ -102,7 +109,7 @@ def DBI(X, M, R):
 
     # get sigmas first
     sigma = np.zeros(K)
-    for k in xrange(K):
+    for k in range(K):
         diffs = X - M[k] # should be NxD
         squared_distances = (diffs * diffs).sum(axis=1) # now just N
         weighted_squared_distances = R[:,k]*squared_distances
@@ -110,9 +117,9 @@ def DBI(X, M, R):
 
     # calculate Davies-Bouldin Index
     dbi = 0
-    for k in xrange(K):
+    for k in range(K):
         max_ratio = 0
-        for j in xrange(K):
+        for j in range(K):
             if k != j:
                 numerator = sigma[k] + sigma[j]
                 denominator = np.linalg.norm(M[k] - M[j])
@@ -131,17 +138,17 @@ def main():
     # X = get_simple_data()
     # Y = np.array([0]*300 + [1]*300 + [2]*300)
 
-    print "Number of data points:", len(Y)
+    print("Number of data points:", len(Y))
     M, R = plot_k_means(X, len(set(Y)))
     # Exercise: Try different values of K and compare the evaluation metrics
-    print "Purity:", purity(Y, R)
-    print "Purity 2 (hard clusters):", purity2(Y, R)
-    print "DBI:", DBI(X, M, R)
-    print "DBI 2 (hard clusters):", DBI2(X, R)
+    print("Purity:", purity(Y, R))
+    print("Purity 2 (hard clusters):", purity2(Y, R))
+    print("DBI:", DBI(X, M, R))
+    print("DBI 2 (hard clusters):", DBI2(X, R))
 
     # plot the mean images
     # they should look like digits
-    for k in xrange(len(M)):
+    for k in range(len(M)):
         im = M[k].reshape(28, 28)
         plt.imshow(im, cmap='gray')
         plt.show()

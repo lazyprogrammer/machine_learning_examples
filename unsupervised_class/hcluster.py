@@ -1,5 +1,12 @@
 # https://deeplearningcourses.com/c/cluster-analysis-unsupervised-machine-learning-python
 # https://www.udemy.com/cluster-analysis-unsupervised-machine-learning-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -20,7 +27,7 @@ def main():
     X[600:, :] = np.random.randn(300, D) + mu3
 
     Z = linkage(X, 'ward')
-    print "Z.shape:", Z.shape
+    print("Z.shape:", Z.shape)
     # Z has the format [idx1, idx2, dist, sample_count]
     # therefore, its size will be (N-1, 4)
 

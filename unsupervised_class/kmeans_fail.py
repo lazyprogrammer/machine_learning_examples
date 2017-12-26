@@ -1,5 +1,12 @@
 # https://deeplearningcourses.com/c/cluster-analysis-unsupervised-machine-learning-python
 # https://www.udemy.com/cluster-analysis-unsupervised-machine-learning-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 from kmeans import plot_k_means
 
@@ -13,12 +20,12 @@ def donut():
 
     # distance from origin is radius + random normal
     # angle theta is uniformly distributed between (0, 2pi)
-    R1 = np.random.randn(N/2) + R_inner
-    theta = 2*np.pi*np.random.random(N/2)
+    R1 = np.random.randn(N//2) + R_inner
+    theta = 2*np.pi*np.random.random(N//2)
     X_inner = np.concatenate([[R1 * np.cos(theta)], [R1 * np.sin(theta)]]).T
 
-    R2 = np.random.randn(N/2) + R_outer
-    theta = 2*np.pi*np.random.random(N/2)
+    R2 = np.random.randn(N//2) + R_outer
+    theta = 2*np.pi*np.random.random(N//2)
     X_outer = np.concatenate([[R2 * np.cos(theta)], [R2 * np.sin(theta)]]).T
 
     X = np.concatenate([ X_inner, X_outer ])
