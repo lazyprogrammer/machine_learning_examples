@@ -1,5 +1,10 @@
 # https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
 # https://www.udemy.com/unsupervised-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 import numpy as np
 import theano
 import theano.tensor as T
@@ -18,8 +23,12 @@ class RBM(object):
         self.rng = RandomStreams()
 
     def fit(self, X, learning_rate=0.1, epochs=1, batch_sz=100, show_fig=False):
+        # cast to float32
+        learning_rate = np.float32(learning_rate)
+
+
         N, D = X.shape
-        n_batches = N / batch_sz
+        n_batches = N // batch_sz
 
         W0 = init_weights((D, self.M))
         self.W = theano.shared(W0, 'W_%s' % self.id)
@@ -27,14 +36,6 @@ class RBM(object):
         self.b = theano.shared(np.zeros(D), 'b_%s' % self.id)
         self.params = [self.W, self.c, self.b]
         self.forward_params = [self.W, self.c]
-
-        # we won't use this to fit the RBM but we will use these for backpropagation later
-        # TODO: technically they should be reset before doing backprop
-        self.dW = theano.shared(np.zeros(W0.shape), 'dW_%s' % self.id)
-        self.dc = theano.shared(np.zeros(self.M), 'dbh_%s' % self.id)
-        self.db = theano.shared(np.zeros(D), 'dbo_%s' % self.id)
-        self.dparams = [self.dW, self.dc, self.db]
-        self.forward_dparams = [self.dW, self.dc]
 
         X_in = T.matrix('X_%s' % self.id)
 
@@ -50,7 +51,7 @@ class RBM(object):
         # but we would like to see how this cost function changes
         # as we do contrastive divergence
         X_hat = self.forward_output(X_in)
-        cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).sum() / (batch_sz * D)
+        cost = -(X_in * T.log(X_hat) + (1 - X_in) * T.log(1 - X_hat)).mean()
         cost_op = theano.function(
             inputs=[X_in],
             outputs=cost,
@@ -71,15 +72,15 @@ class RBM(object):
         )
 
         costs = []
-        print "training rbm: %s" % self.id
-        for i in xrange(epochs):
-            print "epoch:", i
+        print("training rbm: %s" % self.id)
+        for i in range(epochs):
+            print("epoch:", i)
             X = shuffle(X)
-            for j in xrange(n_batches):
+            for j in range(n_batches):
                 batch = X[j*batch_sz:(j*batch_sz + batch_sz)]
                 train_op(batch)
                 the_cost = cost_op(X)  # technically we could also get the cost for Xtest here
-                print "j / n_batches:", j, "/", n_batches, "cost:", the_cost
+                print("j / n_batches:", j, "/", n_batches, "cost:", the_cost)
                 costs.append(the_cost)
         if show_fig:
             plt.plot(costs)

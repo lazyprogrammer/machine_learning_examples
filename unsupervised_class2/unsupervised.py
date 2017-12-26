@@ -1,5 +1,10 @@
 # https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
 # https://www.udemy.com/unsupervised-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 import numpy as np
 import theano
 import theano.tensor as T
@@ -10,7 +15,7 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 from theano.tensor.shared_randomstreams import RandomStreams
 from util import relu, error_rate, getKaggleMNIST, init_weights
-from autoencoder import AutoEncoder
+from autoencoder import AutoEncoder, momentum_updates
 from rbm import RBM
 
 
@@ -48,22 +53,31 @@ class DBN(object):
         # layer, not just the last layer.
         # Exercise for students: modify this function to be able
         # to activate neurons in the middle layers.
+
+        # cast hyperperams
+        learning_rate = np.float32(learning_rate)
+        mu = np.float32(mu)
+
+        # randomly initialize an image
         X0 = init_weights((1, self.D))
+
+        # make the image a shared so theano can update it
         X = theano.shared(X0, 'X_shared')
-        dX = theano.shared(np.zeros(X0.shape), 'dX_shared')
+
+        # get the output of the neural network
         Y = self.forward(X)
+
         # t = np.zeros(self.hidden_layers[-1].M)
         # t[k] = 1
 
         # # choose Y[0] b/c it's shape 1xD, we want just a D-size vector, not 1xD matrix
-        # cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum() + reg*(X * X).sum()
+        # cost = -(t*T.log(Y[0]) + (1 - t)*(T.log(1 - Y[0]))).sum()
 
-        cost = -T.log(Y[0,k]) + reg*(X * X).sum()
+        # k = which output node to look at
+        # there is only 1 image, so we select the 0th row of X
+        cost = -T.log(Y[0,k])
 
-        updates = [
-            (X, X + mu*dX - learning_rate*T.grad(cost, X)),
-            (dX, mu*dX - learning_rate*T.grad(cost, X)),
-        ]
+        updates = momentum_updates(cost, [X], mu, learning_rate)
         train = theano.function(
             inputs=[],
             outputs=[cost, Y],
@@ -71,12 +85,12 @@ class DBN(object):
         )
 
         costs = []
-        for i in xrange(epochs):
-            if i % 1000 == 0:
-                print "epoch:", i
+        for i in range(epochs):
+            if i % 10000 == 0:
+                print("epoch:", i)
             the_cost, out = train()
             if i == 0:
-                print "out.shape:", out.shape
+                print("out.shape:", out.shape)
             costs.append(the_cost)
         plt.plot(costs)
         plt.show()
@@ -93,7 +107,7 @@ class DBN(object):
         npz = np.load(filename)
         dbn.hidden_layers = []
         count = 0
-        for i in xrange(0, len(npz.files), 3):
+        for i in range(0, len(npz.files), 3):
             W = npz['arr_%s' % i]
             bh = npz['arr_%s' % (i + 1)]
             bo = npz['arr_%s' % (i + 2)]
@@ -112,26 +126,26 @@ def main():
     dbn = DBN([1000, 750, 500], UnsupervisedModel=AutoEncoder)
     # dbn = DBN([1000, 750, 500, 10])
     output = dbn.fit(Xtrain, pretrain_epochs=2)
-    print "output.shape", output.shape
+    print("output.shape", output.shape)
 
     # sample before using t-SNE because it requires lots of RAM
     sample_size = 600
     tsne = TSNE()
     reduced = tsne.fit_transform(output[:sample_size])
     plt.scatter(reduced[:,0], reduced[:,1], s=100, c=Ytrain[:sample_size], alpha=0.5)
-    plt.title("t-SNE visualization")
+    plt.title("t-SNE visualization on data transformed by DBN")
     plt.show()
 
     # t-SNE on raw data
     reduced = tsne.fit_transform(Xtrain[:sample_size])
     plt.scatter(reduced[:,0], reduced[:,1], s=100, c=Ytrain[:sample_size], alpha=0.5)
-    plt.title("t-SNE visualization")
+    plt.title("t-SNE visualization on raw data")
     plt.show()
 
     pca = PCA()
     reduced = pca.fit_transform(output)
     plt.scatter(reduced[:,0], reduced[:,1], s=100, c=Ytrain, alpha=0.5)
-    plt.title("PCA visualization")
+    plt.title("PCA visualization on data transformed by DBN")
     plt.show()
 
 if __name__ == '__main__':

@@ -14,19 +14,42 @@ from sklearn.utils import shuffle
 from util import relu, error_rate, getKaggleMNIST, init_weights
 
 
+def T_shared_zeros_like32(p):
+    # p is a Theano shared itself
+    return theano.shared(np.zeros_like(p.get_value(), dtype=np.float32))
+
+def momentum_updates(cost, params, mu, learning_rate):
+    # momentum changes
+    dparams = [T_shared_zeros_like32(p) for p in params]
+
+    updates = []
+    grads = T.grad(cost, params)
+    for p, dp, g in zip(params, dparams, grads):
+        dp_update = mu*dp - learning_rate*g
+        p_update = p + dp_update
+
+        updates.append((dp, dp_update))
+        updates.append((p, p_update))
+    return updates
+
+
 class AutoEncoder(object):
     def __init__(self, M, an_id):
         self.M = M
         self.id = an_id
 
     def fit(self, X, learning_rate=0.5, mu=0.99, epochs=1, batch_sz=100, show_fig=False):
+        # cast to float
+        mu = np.float32(mu)
+        learning_rate = np.float32(learning_rate)
+
         N, D = X.shape
         n_batches = N // batch_sz
 
         W0 = init_weights((D, self.M))
         self.W = theano.shared(W0, 'W_%s' % self.id)
-        self.bh = theano.shared(np.zeros(self.M), 'bh_%s' % self.id)
-        self.bo = theano.shared(np.zeros(D), 'bo_%s' % self.id)
+        self.bh = theano.shared(np.zeros(self.M, dtype=np.float32), 'bh_%s' % self.id)
+        self.bo = theano.shared(np.zeros(D, dtype=np.float32), 'bo_%s' % self.id)
         self.params = [self.W, self.bh, self.bo]
         self.forward_params = [self.W, self.bh]
 
@@ -61,11 +84,9 @@ class AutoEncoder(object):
             outputs=cost,
         )
 
-        updates = [
-            (p, p + mu*dp - learning_rate*T.grad(cost, p)) for p, dp in zip(self.params, self.dparams)
-        ] + [
-            (dp, mu*dp - learning_rate*T.grad(cost, p)) for p, dp in zip(self.params, self.dparams)
-        ]
+        
+
+        updates = momentum_updates(cost, self.params, mu, learning_rate)
         train_op = theano.function(
             inputs=[X_in],
             updates=updates,
@@ -73,6 +94,7 @@ class AutoEncoder(object):
 
         costs = []
         print("training autoencoder: %s" % self.id)
+        print("epochs to do:", epochs)
         for i in range(epochs):
             print("epoch:", i)
             X = shuffle(X)
@@ -117,9 +139,22 @@ class DNN(object):
             count += 1
 
 
-    def fit(self, X, Y, Xtest, Ytest, pretrain=True, learning_rate=0.01, mu=0.99, reg=0.1, epochs=1, batch_sz=100):
+    def fit(self, X, Y, Xtest, Ytest,
+        pretrain=True,
+        train_head_only=False,
+        learning_rate=0.1,
+        mu=0.99,
+        reg=0.0,
+        epochs=1,
+        batch_sz=100):
+
+        # cast to float32
+        learning_rate = np.float32(learning_rate)
+        mu = np.float32(mu)
+        reg = np.float32(reg)
+
         # greedy layer-wise training of autoencoders
-        pretrain_epochs = 1
+        pretrain_epochs = 2
         if not pretrain:
             pretrain_epochs = 0
 
@@ -135,38 +170,27 @@ class DNN(object):
         K = len(set(Y))
         W0 = init_weights((self.hidden_layers[-1].M, K))
         self.W = theano.shared(W0, "W_logreg")
-        self.b = theano.shared(np.zeros(K), "b_logreg")
+        self.b = theano.shared(np.zeros(K, dtype=np.float32), "b_logreg")
 
         self.params = [self.W, self.b]
-        for ae in self.hidden_layers:
-            self.params += ae.forward_params
-
-        # for momentum
-        self.dW = theano.shared(np.zeros(W0.shape), "dW_logreg")
-        self.db = theano.shared(np.zeros(K), "db_logreg")
-        self.dparams = [self.dW, self.db]
-        for ae in self.hidden_layers:
-            self.dparams += ae.forward_dparams
+        if not train_head_only:
+            for ae in self.hidden_layers:
+                self.params += ae.forward_params
 
         X_in = T.matrix('X_in')
         targets = T.ivector('Targets')
         pY = self.forward(X_in)
 
-        # squared_magnitude = [(p*p).sum() for p in self.params]
-        # reg_cost = T.sum(squared_magnitude)
-        cost = -T.mean( T.log(pY[T.arange(pY.shape[0]), targets]) ) #+ reg*reg_cost
+        squared_magnitude = [(p*p).sum() for p in self.params]
+        reg_cost = T.sum(squared_magnitude)
+        cost = -T.mean( T.log(pY[T.arange(pY.shape[0]), targets]) ) + reg*reg_cost
         prediction = self.predict(X_in)
         cost_predict_op = theano.function(
             inputs=[X_in, targets],
             outputs=[cost, prediction],
         )
 
-        updates = [
-            (p, p + mu*dp - learning_rate*T.grad(cost, p)) for p, dp in zip(self.params, self.dparams)
-        ] + [
-            (dp, mu*dp - learning_rate*T.grad(cost, p)) for p, dp in zip(self.params, self.dparams)
-        ]
-        # updates = [(p, p - learning_rate*T.grad(cost, p)) for p in self.params]
+        updates = momentum_updates(cost, self.params, mu, learning_rate)
         train_op = theano.function(
             inputs=[X_in, targets],
             updates=updates,
@@ -209,7 +233,8 @@ def main():
     # dnn.fit(Xtrain, Ytrain, Xtest, Ytest, epochs=3)
     # vs
     dnn = DNN([1000, 750, 500])
-    dnn.fit(Xtrain, Ytrain, Xtest, Ytest, pretrain=False, epochs=10)
+    dnn.fit(Xtrain, Ytrain, Xtest, Ytest, pretrain=True, train_head_only=False, epochs=3)
+    # note: try training the head only too! what does that mean?
 
 
 def test_single_autoencoder():
@@ -239,5 +264,5 @@ def test_single_autoencoder():
 
 
 if __name__ == '__main__':
-    # main()
-    test_single_autoencoder()
+    main()
+    # test_single_autoencoder()

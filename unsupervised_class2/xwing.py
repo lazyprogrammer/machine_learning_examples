@@ -1,5 +1,10 @@
 # https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
 # https://www.udemy.com/unsupervised-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 import numpy as np
 import theano
 import theano.tensor as T
@@ -7,20 +12,20 @@ import matplotlib.pyplot as plt
 
 from sklearn.utils import shuffle
 from util import relu, error_rate, getKaggleMNIST, init_weights
+from autoencoder import momentum_updates
 
 # new additions used to compare purity measure using GMM
 import os
 import sys
 sys.path.append(os.path.abspath('..'))
 from unsupervised_class.kmeans_mnist import purity
-# from unsupervised_class.gmm import gmm
 from sklearn.mixture import GaussianMixture
 
 class Layer(object):
     def __init__(self, m1, m2):
         W = init_weights((m1, m2))
-        bi = np.zeros(m2)
-        bo = np.zeros(m1)
+        bi = np.zeros(m2, dtype=np.float32)
+        bo = np.zeros(m1, dtype=np.float32)
         self.W = theano.shared(W)
         self.bi = theano.shared(bi)
         self.bo = theano.shared(bo)
@@ -38,8 +43,12 @@ class DeepAutoEncoder(object):
         self.hidden_layer_sizes = hidden_layer_sizes
 
     def fit(self, X, learning_rate=0.5, mu=0.99, epochs=50, batch_sz=100, show_fig=False):
+        # cast hyperparams
+        learning_rate = np.float32(learning_rate)
+        mu = np.float32(mu)
+
         N, D = X.shape
-        n_batches = N / batch_sz
+        n_batches = N // batch_sz
 
         mi = D
         self.layers = []
@@ -59,14 +68,7 @@ class DeepAutoEncoder(object):
             outputs=cost,
         )
 
-        dparams = [theano.shared(p.get_value()*0) for p in self.params]
-        grads = T.grad(cost, self.params)
-
-        updates = [
-            (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
-        ] + [
-            (dp, mu*dp - learning_rate*g) for dp, g in zip(dparams, grads)
-        ]
+        updates = momentum_updates(cost, self.params, mu, learning_rate)
         train_op = theano.function(
             inputs=[X_in],
             outputs=cost,
@@ -74,14 +76,14 @@ class DeepAutoEncoder(object):
         )
 
         costs = []
-        for i in xrange(epochs):
-            print "epoch:", i
+        for i in range(epochs):
+            print("epoch:", i)
             X = shuffle(X)
-            for j in xrange(n_batches):
+            for j in range(n_batches):
                 batch = X[j*batch_sz:(j*batch_sz + batch_sz)]
                 c = train_op(batch)
                 if j % 100 == 0:
-                    print "j / n_batches:", j, "/", n_batches, "cost:", c
+                    print("j / n_batches:", j, "/", n_batches, "cost:", c)
                 costs.append(c)
         if show_fig:
             plt.plot(costs)
@@ -97,7 +99,7 @@ class DeepAutoEncoder(object):
             outputs=Z,
         )
 
-        for i in xrange(len(self.layers)-1, -1, -1):
+        for i in range(len(self.layers)-1, -1, -1):
             Z = self.layers[i].forwardT(Z)
 
         return Z
@@ -112,14 +114,16 @@ def main():
     plt.show()
 
     # purity measure from unsupervised machine learning pt 1
+    # NOTE: this will take a long time (i.e. just leave it overnight)
     gmm = GaussianMixture(n_components=10)
     gmm.fit(Xtrain)
+    print("Finished GMM training")
     responsibilities_full = gmm.predict_proba(Xtrain)
-    print "full purity:", purity(Ytrain, responsibilities_full)
+    print("full purity:", purity(Ytrain, responsibilities_full))
 
     gmm.fit(mapping)
     responsibilities_reduced = gmm.predict_proba(mapping)
-    print "reduced purity:", purity(Ytrain, responsibilities_reduced)
+    print("reduced purity:", purity(Ytrain, responsibilities_reduced))
 
 
 if __name__ == '__main__':
