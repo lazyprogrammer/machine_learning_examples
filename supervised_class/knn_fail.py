@@ -1,5 +1,12 @@
 # https://deeplearningcourses.com/c/data-science-supervised-machine-learning-in-python
 # https://www.udemy.com/data-science-supervised-machine-learning-in-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from knn import KNN
@@ -12,9 +19,9 @@ def get_data():
     Y = np.zeros(N)
     n = 0
     start_t = 0
-    for i in xrange(width):
+    for i in range(width):
         t = start_t
-        for j in xrange(height):
+        for j in range(height):
             X[n] = [i, j]
             Y[n] = t
             n += 1
@@ -33,4 +40,4 @@ if __name__ == '__main__':
     # get the accuracy
     model = KNN(3)
     model.fit(X, Y)
-    print "Train accuracy:", model.score(X, Y)
+    print("Train accuracy:", model.score(X, Y))

@@ -2,6 +2,12 @@
 # https://www.udemy.com/data-science-supervised-machine-learning-in-python
 # This is an example of a K-Nearest Neighbors classifier on MNIST data.
 # We try k=1...5 to show how we might choose the best k.
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range, input
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -44,7 +50,7 @@ class KNN(object):
         # sample 0 --> [class0, class1, class1, class0, ...]
         # unfortunately there's no good way to vectorize this
         # https://stackoverflow.com/questions/19201972/can-numpy-bincount-work-with-2d-arrays
-        for i in xrange(N):
+        for i in range(N):
             y[i] = np.bincount(votes[i]).argmax()
 
         return y
@@ -63,23 +69,23 @@ if __name__ == '__main__':
     test_scores = []
     ks = (1,2,3,4,5)
     for k in ks:
-        print "\nk =", k
+        print("\nk =", k)
         knn = KNN(k)
         t0 = datetime.now()
         knn.fit(Xtrain, Ytrain)
-        print "Training time:", (datetime.now() - t0)
+        print("Training time:", (datetime.now() - t0))
 
         t0 = datetime.now()
         train_score = knn.score(Xtrain, Ytrain)
         train_scores.append(train_score)
-        print "Train accuracy:", train_score
-        print "Time to compute train accuracy:", (datetime.now() - t0), "Train size:", len(Ytrain)
+        print("Train accuracy:", train_score)
+        print("Time to compute train accuracy:", (datetime.now() - t0), "Train size:", len(Ytrain))
 
         t0 = datetime.now()
         test_score = knn.score(Xtest, Ytest)
-        print "Test accuracy:", test_score
+        print("Test accuracy:", test_score)
         test_scores.append(test_score)
-        print "Time to compute test accuracy:", (datetime.now() - t0), "Test size:", len(Ytest)
+        print("Time to compute test accuracy:", (datetime.now() - t0), "Test size:", len(Ytest))
 
     plt.plot(ks, train_scores, label='train scores')
     plt.plot(ks, test_scores, label='test scores')
