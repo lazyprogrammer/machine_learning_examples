@@ -1,6 +1,13 @@
 # Course URL:
 # https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
 # https://udemy.com/natural-language-processing-with-deep-learning-in-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import numpy as np
 
 def init_weight(Mi, Mo):
@@ -21,15 +28,15 @@ def find_analogies(w1, w2, w3, We, word2idx):
     for dist, name in [(dist1, 'Euclidean'), (dist2, 'cosine')]:
         min_dist = float('inf')
         best_word = ''
-        for word, idx in word2idx.iteritems():
+        for word, idx in iteritems(word2idx):
             if word not in (w1, w2, w3):
                 v1 = We[idx]
                 d = dist(v0, v1)
                 if d < min_dist:
                     min_dist = d
                     best_word = word
-        print "closest match by", name, "distance:", best_word
-        print w1, "-", w2, "=", best_word, "-", w3
+        print("closest match by", name, "distance:", best_word)
+        print(w1, "-", w2, "=", best_word, "-", w3)
 
 
 class Tree:
@@ -43,9 +50,9 @@ class Tree:
 def display_tree(t, lvl=0):
     prefix = ''.join(['>']*lvl)
     if t.word is not None:
-        print "%s%s %s" % (prefix, t.label, t.word)
+        print("%s%s %s" % (prefix, t.label, t.word))
     else:
-        print "%s%s -" % (prefix, t.label)
+        print("%s%s -" % (prefix, t.label))
         # if t.left is None or t.right is None:
         #     raise Exception("Tree node has no word but left and right child are None")
     if t.left:

@@ -223,7 +223,7 @@ class Glove:
                 for i in xrange(V):
                     # matrix = reg*np.eye(D) + np.sum((fX[i,j]*np.outer(U[j], U[j]) for j in xrange(V)), axis=0)
                     matrix = reg*np.eye(D) + (fX[i,:]*U.T).dot(U)
-                    # assert(np.abs(matrix - matrix2).sum() < 10e-5)
+                    # assert(np.abs(matrix - matrix2).sum() < 1e-5)
                     vector = (fX[i,:]*(logX[i,:] - b[i] - c - mu)).dot(U)
                     W[i] = np.linalg.solve(matrix, vector)
                 # print "fast way took:", (datetime.now() - t0)
@@ -238,8 +238,8 @@ class Glove:
                 #         vector2 += fX[i,j]*(logX[i,j] - b[i] - c[j])*U[j]
                 # print "slow way took:", (datetime.now() - t0)
 
-                    # assert(np.abs(matrix - matrix2).sum() < 10e-5)
-                    # assert(np.abs(vector - vector2).sum() < 10e-5)
+                    # assert(np.abs(matrix - matrix2).sum() < 1e-5)
+                    # assert(np.abs(vector - vector2).sum() < 1e-5)
                     # W[i] = np.linalg.solve(matrix, vector)
                 # print "updated W"
 
@@ -257,7 +257,7 @@ class Glove:
                 for j in xrange(V):
                     # matrix = reg*np.eye(D) + np.sum((fX[i,j]*np.outer(W[i], W[i]) for i in xrange(V)), axis=0)
                     matrix = reg*np.eye(D) + (fX[:,j]*W.T).dot(W)
-                    # assert(np.abs(matrix - matrix2).sum() < 10e-8)
+                    # assert(np.abs(matrix - matrix2).sum() < 1e-8)
                     vector = (fX[:,j]*(logX[:,j] - b - c[j] - mu)).dot(W)
                     # matrix = reg*np.eye(D)
                     # vector = 0
@@ -323,7 +323,7 @@ def main(we_file, w2i_file, use_brown=True, n_files=50):
     model.fit(
         sentences,
         cc_matrix=cc_matrix,
-        learning_rate=3*10e-5,
+        learning_rate=3e-4,
         reg=0.1,
         epochs=10,
         gd=True,

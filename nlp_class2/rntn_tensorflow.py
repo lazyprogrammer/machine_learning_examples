@@ -68,7 +68,7 @@ class RNTN:
         self.bo = tf.Variable(bo.astype(np.float32))
         self.params = [self.We, self.W11, self.W22, self.W12, self.W1, self.W2, self.Wo]
 
-    def fit(self, trees, lr=10e-3, mu=0.9, reg=10e-2, epochs=5):
+    def fit(self, trees, lr=1e-2, mu=0.9, reg=1e-1, epochs=5):
         train_ops = []
         costs = []
         predictions = []

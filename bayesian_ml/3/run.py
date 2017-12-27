@@ -66,7 +66,7 @@ def objective(X, Y, C, mu, a, b, e, f, a0, b0, e0, f0):
   # e3 = gamma_dist.entropy(e, scale=1.0/f)
   # e4 = -e_ln_q_gamma(e, f)
   # print "e3:", e3, "e4:", e4
-  # assert(np.abs(e3 - e4) < 10e-8)
+  # assert(np.abs(e3 - e4) < 1e-8)
   total += gamma_dist.entropy(e, scale=1.0/f)
   # total -= e_ln_q_gamma(e, f)
   # print "total after lnq(lambda):", total

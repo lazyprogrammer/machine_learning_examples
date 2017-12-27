@@ -50,7 +50,7 @@ def plot_k_means(X, K, max_iter=20, beta=1.0, show_plots=True):
                 exponents[n,k] = np.exp(-beta*d(M[k], X[n]))
 
         R = exponents / exponents.sum(axis=1, keepdims=True)
-        # assert(np.abs(R - R2).sum() < 10e-10)
+        # assert(np.abs(R - R2).sum() < 1e-10)
 
         # step 2: recalculate means
         for k in range(K):

@@ -57,7 +57,7 @@ def plot_k_means(X, K, max_iter=20, beta=1.0):
 
         costs[i] = cost(X, R, M)
         if i > 0:
-            if np.abs(costs[i] - costs[i-1]) < 10e-5:
+            if np.abs(costs[i] - costs[i-1]) < 1e-5:
                 break
     plt.show()
 

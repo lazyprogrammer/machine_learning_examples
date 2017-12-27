@@ -43,7 +43,7 @@ class AutoEncoder(object):
         )
 
         self.train_op = tf.train.AdamOptimizer(1e-1).minimize(self.cost)
-        # self.train_op = tf.train.MomentumOptimizer(10e-4, momentum=0.9).minimize(self.cost)
+        # self.train_op = tf.train.MomentumOptimizer(1e-3, momentum=0.9).minimize(self.cost)
 
     def fit(self, X, epochs=1, batch_sz=100, show_fig=False):
         N, D = X.shape

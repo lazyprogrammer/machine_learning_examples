@@ -100,7 +100,7 @@ class DQN:
       cost = tf.reduce_mean(tf.square(self.G - selected_action_values))
       # self.train_op = tf.train.AdamOptimizer(1e-2).minimize(cost)
       # self.train_op = tf.train.AdagradOptimizer(1e-2).minimize(cost)
-      # self.train_op = tf.train.RMSPropOptimizer(2.5e-4, decay=0.99, epsilon=10e-3).minimize(cost)
+      # self.train_op = tf.train.RMSPropOptimizer(2.5e-4, decay=0.99, epsilon=1e-3).minimize(cost)
       self.train_op = tf.train.RMSPropOptimizer(0.00025, 0.99, 0.0, 1e-6).minimize(cost)
       # self.train_op = tf.train.MomentumOptimizer(1e-3, momentum=0.9).minimize(cost)
       # self.train_op = tf.train.GradientDescentOptimizer(1e-4).minimize(cost)

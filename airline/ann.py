@@ -38,7 +38,7 @@ class ANN(object):
     def __init__(self, hidden_layer_sizes):
         self.hidden_layer_sizes = hidden_layer_sizes
 
-    def fit(self, X, Y, activation=T.tanh, learning_rate=10e-4, mu=0.5, reg=0, epochs=5000, batch_sz=None, print_period=100, show_fig=True):
+    def fit(self, X, Y, activation=T.tanh, learning_rate=1e-3, mu=0.5, reg=0, epochs=5000, batch_sz=None, print_period=100, show_fig=True):
         X = X.astype(np.float32)
         Y = Y.astype(np.float32)
 
