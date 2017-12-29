@@ -1,6 +1,13 @@
 # Course URL:
 # https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
 # https://udemy.com/natural-language-processing-with-deep-learning-in-python
+from __future__ import print_function, division
+from future.utils import iteritems
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import json
 import numpy as np
 import theano
@@ -15,6 +22,20 @@ import sys
 sys.path.append(os.path.abspath('..'))
 from rnn_class.util import get_wikipedia_data
 from rnn_class.brown import get_sentences_with_word2idx_limit_vocab, get_sentences_with_word2idx
+
+
+def get_text8():
+    words = open('../large_files/text8').read()
+    word2idx = {}
+    sents = [[]]
+    count = 0
+    for word in words.split():
+        if word not in word2idx:
+            word2idx[word] = count
+            count += 1
+        sents[0].append(word2idx[word])
+    print("count:", count)
+    return sents, word2idx
 
 
 def sigmoid(x):
@@ -44,9 +65,9 @@ class Model(object):
                     word_freq[xj] = 0
                 word_freq[xj] += 1
         self.Pnw = np.zeros(self.V)
-        for j in xrange(2, self.V): # 0 and 1 are the start and end tokens, we won't use those here
+        for j in range(2, self.V): # 0 and 1 are the start and end tokens, we won't use those here
             self.Pnw[j] = (word_freq[j] / float(word_count))**0.75
-        # print "self.Pnw[2000]:", self.Pnw[2000]
+
         assert(np.all(self.Pnw[2:] > 0))
         return self.Pnw
 
@@ -55,16 +76,14 @@ class Model(object):
         saved = {}
         for context_idx in context:
             saved[context_idx] = self.Pnw[context_idx]
-            # print "saving -- context id:", context_idx, "value:", self.Pnw[context_idx]
             self.Pnw[context_idx] = 0
         neg_samples = np.random.choice(
-            xrange(self.V),
+            range(self.V),
             size=num_neg_samples, # this is arbitrary - number of negative samples to take
             replace=False,
             p=self.Pnw / np.sum(self.Pnw),
         )
-        # print "saved:", saved
-        for j, pnwj in saved.iteritems():
+        for j, pnwj in iteritems(saved):
             self.Pnw[j] = pnwj
         assert(np.all(self.Pnw[2:] > 0))
         return neg_samples
@@ -84,11 +103,11 @@ class Model(object):
         costs = []
         cost_per_epoch = []
         sample_indices = range(N)
-        for i in xrange(epochs):
+        for i in range(epochs):
             t0 = datetime.now()
             sample_indices = shuffle(sample_indices)
             cost_per_epoch_i = []
-            for it in xrange(N):
+            for it in range(N):
                 j = sample_indices[it]
                 x = X[j] # one sentence
 
@@ -98,7 +117,7 @@ class Model(object):
 
                 cj = []
                 n = len(x)
-                # for jj in xrange(n):
+                # for jj in range(n):
                 ########## try one random window per sentence ###########
                 jj = np.random.choice(n)
                 
@@ -111,7 +130,6 @@ class Model(object):
                 # NOTE: context can contain DUPLICATES!
                 # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
                 context = np.array(list(set(context)), dtype=np.int32)
-                # print "context:", context
 
                 posA = Z.dot(self.W2[:,context])
                 pos_pY = sigmoid(posA)
@@ -120,7 +138,6 @@ class Model(object):
 
                 # technically can remove this line now but leave for sanity checking
                 # neg_samples = np.setdiff1d(neg_samples, Y[j])
-                # print "number of negative samples:", len(neg_samples)
                 negA = Z.dot(self.W2[:,neg_samples])
                 neg_pY = sigmoid(-negA)
                 c = -np.log(pos_pY).sum() - np.log(neg_pY).sum()
@@ -155,7 +172,10 @@ class Model(object):
 
             epoch_cost = np.mean(cost_per_epoch_i)
             cost_per_epoch.append(epoch_cost)
-            print "time to complete epoch %d:" % i, (datetime.now() - t0), "cost:", epoch_cost
+            print(
+                "time to complete epoch %d:" % i, (datetime.now() - t0),
+                "cost:", epoch_cost
+            )
         plt.plot(costs)
         plt.title("Numpy costs")
         plt.show()
@@ -213,11 +233,11 @@ class Model(object):
         costs = []
         cost_per_epoch = []
         sample_indices = range(N)
-        for i in xrange(epochs):
+        for i in range(epochs):
             t0 = datetime.now()
             sample_indices = shuffle(sample_indices)
             cost_per_epoch_i = []
-            for it in xrange(N):
+            for it in range(N):
                 j = sample_indices[it]
                 x = X[j] # one sentence
 
@@ -227,7 +247,7 @@ class Model(object):
 
                 cj = []
                 n = len(x)
-                # for jj in xrange(n):
+                # for jj in range(n):
 
                 #     start = max(0, jj - self.context_sz)
                 #     end = min(n, jj + 1 + self.context_sz)
@@ -264,7 +284,10 @@ class Model(object):
 
             epoch_cost = np.mean(cost_per_epoch_i)
             cost_per_epoch.append(epoch_cost)
-            print "time to complete epoch %d:" % i, (datetime.now() - t0), "cost:", epoch_cost
+            print(
+                "time to complete epoch %d:" % i, (datetime.now() - t0),
+                "cost:", epoch_cost
+            )
 
         self.W1 = W1.get_value()
         self.W2 = W2.get_value()
@@ -284,8 +307,9 @@ class Model(object):
 
 def main(use_brown=True):
     if use_brown:
-        # sentences, word2idx = get_sentences_with_word2idx_limit_vocab()
-        sentences, word2idx = get_sentences_with_word2idx()
+        sentences, word2idx = get_sentences_with_word2idx_limit_vocab()
+        # sentences, word2idx = get_sentences_with_word2idx()
+        # sentences, word2idx = get_text8()
     else:
         sentences, word2idx = get_wikipedia_data(n_files=1, n_vocab=2000)
     with open('w2v_word2idx.json', 'w') as f:
@@ -293,7 +317,13 @@ def main(use_brown=True):
 
     V = len(word2idx)
     model = Model(50, V, 5)
-    model.fit(sentences, learning_rate=1e-3, mu=0, epochs=3, num_neg_samples=5)
+
+    # use numpy
+    # model.fit(sentences, learning_rate=1e-3, mu=0, epochs=5, num_neg_samples=5)
+
+    # use theano
+    model.fitt(sentences, learning_rate=1e-3, mu=0, epochs=5, num_neg_samples=5)
+
     model.save('w2v_model.npz')
 
 
@@ -309,7 +339,7 @@ def find_analogies(w1, w2, w3, concat=True, we_file='w2v_model.npz', w2i_file='w
 
     if concat:
         We = np.hstack([W1, W2.T])
-        print "We.shape:", We.shape
+        print("We.shape:", We.shape)
         assert(V == We.shape[0])
     else:
         We = (W1 + W2.T) / 2
@@ -317,9 +347,9 @@ def find_analogies(w1, w2, w3, concat=True, we_file='w2v_model.npz', w2i_file='w
     _find_analogies(w1, w2, w3, We, word2idx)
 
 if __name__ == '__main__':
-    main(use_brown=True)
+    main(use_brown=False)
     for concat in (True, False):
-        print "** concat:", concat
+        print("** concat:", concat)
         find_analogies('king', 'man', 'woman', concat=concat)
         find_analogies('france', 'paris', 'london', concat=concat)
         find_analogies('france', 'paris', 'rome', concat=concat)

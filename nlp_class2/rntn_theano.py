@@ -1,6 +1,12 @@
 # Course URL:
 # https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
 # https://udemy.com/natural-language-processing-with-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,17 +19,79 @@ from datetime import datetime
 from sklearn.metrics import f1_score
 
 
+# helper for adam optimizer
+# use tensorflow defaults
+# def adam(cost, params, lr0=1e-4, beta1=0.9, beta2=0.999, eps=1e-8):
+#   grads = T.grad(cost, params)
+#   updates = []
+#   time = theano.shared(0)
+#   new_time = time + 1
+#   updates.append((time, new_time))
+#   lr = lr0*T.sqrt(1 - beta2**new_time) / (1 - beta1**new_time)
+#   for p, g in zip(params, grads):
+#     m = theano.shared(p.get_value() * 0.)
+#     v = theano.shared(p.get_value() * 0.)
+#     new_m = beta1*m + (1 - beta1)*g
+#     new_v = beta2*v + (1 - beta2)*g*g
+#     new_p = p - lr*new_m / (T.sqrt(new_v) + eps)
+#     updates.append((m, new_m))
+#     updates.append((v, new_v))
+#     updates.append((p, new_p))
+#   return updates
+
+
+# def momentum_updates(cost, params, learning_rate=1e-3, mu=0.99):
+#     # momentum changes
+#     dparams = [theano.shared(p.get_value() * 0.) for p in params]
+
+#     updates = []
+#     grads = T.grad(cost, params)
+#     for p, dp, g in zip(params, dparams, grads):
+#         dp_update = mu*dp - learning_rate*g
+#         p_update = p + dp_update
+
+#         updates.append((dp, dp_update))
+#         updates.append((p, p_update))
+#     return updates
+
+
+# def rmsprop(cost, params, lr=1e-3, decay=0.999, eps=1e-10):
+#     grads = T.grad(cost, params)
+#     caches = [theano.shared(np.ones_like(p.get_value())) for p in params]
+#     new_caches = [decay*c + (1. - decay)*g*g for c, g in zip(caches, grads)]
+
+#     c_update = [(c, new_c) for c, new_c in zip(caches, new_caches)]
+#     g_update = [
+#       (p, p - lr*g / T.sqrt(new_c + eps)) for p, new_c, g in zip(params, new_caches, grads)
+#     ]
+#     updates = c_update + g_update
+#     return updates
+
+
+def adagrad(cost, params, lr, eps=1e-10):
+    grads = T.grad(cost, params)
+    caches = [theano.shared(np.ones_like(p.get_value())) for p in params]
+    new_caches = [c + g*g for c, g in zip(caches, grads)]
+
+    c_update = [(c, new_c) for c, new_c in zip(caches, new_caches)]
+    g_update = [
+      (p, p - lr*g / T.sqrt(new_c + eps)) for p, new_c, g in zip(params, new_caches, grads)
+    ]
+    updates = c_update + g_update
+    return updates
+
+
 class RecursiveNN:
-    def __init__(self, V, D, K):
+    def __init__(self, V, D, K, activation=T.tanh):
         self.V = V
         self.D = D
         self.K = K
+        self.f = activation
 
-    def fit(self, trees, learning_rate=1e-3, mu=0.5, reg=1e-2, eps=1e-2, epochs=20, activation=T.tanh, train_inner_nodes=False):
+    def fit(self, trees, reg=1e-3, epochs=8, train_inner_nodes=False):
         D = self.D
         V = self.V
         K = self.K
-        self.f = activation
         N = len(trees)
 
         We = init_weight(V, D)
@@ -47,6 +115,7 @@ class RecursiveNN:
         self.bo = theano.shared(bo)
         self.params = [self.We, self.W11, self.W22, self.W12, self.W1, self.W2, self.bh, self.Wo, self.bo]
 
+        lr = T.scalar('learning_rate')
         words = T.ivector('words')
         left_children = T.ivector('left_children')
         right_children = T.ivector('right_children')
@@ -85,26 +154,14 @@ class RecursiveNN:
 
         prediction = T.argmax(py_x, axis=1)
         
-        rcost = reg*T.mean([(p*p).sum() for p in self.params])
+        rcost = reg*T.sum([(p*p).sum() for p in self.params])
         if train_inner_nodes:
             cost = -T.mean(T.log(py_x[T.arange(labels.shape[0]), labels])) + rcost
         else:
             cost = -T.mean(T.log(py_x[-1, labels[-1]])) + rcost
-        grads = T.grad(cost, self.params)
-        # dparams = [theano.shared(p.get_value()*0) for p in self.params]
-        cache = [theano.shared(p.get_value()*0) for p in self.params]
+        
 
-        # momentum
-        # updates = [
-        #     (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
-        # ] + [
-        #     (dp, mu*dp - learning_rate*g) for dp, g in zip(dparams, grads)
-        # ]
-        updates = [
-            (c, c + g*g) for c, g in zip(cache, grads)
-        ] + [
-            (p, p - learning_rate*g / T.sqrt(c + eps)) for p, c, g in zip(self.params, cache, grads)
-        ]
+        updates = adagrad(cost, self.params, lr)
 
         self.cost_predict_op = theano.function(
             inputs=[words, left_children, right_children, labels],
@@ -113,18 +170,19 @@ class RecursiveNN:
         )
 
         self.train_op = theano.function(
-            inputs=[words, left_children, right_children, labels],
+            inputs=[words, left_children, right_children, labels, lr],
             outputs=[cost, prediction],
             updates=updates
         )
 
+        lr_ = 8e-3 # initial learning rate
         costs = []
         sequence_indexes = range(N)
         if train_inner_nodes:
             n_total = sum(len(words) for words, _, _, _ in trees)
         else:
             n_total = N
-        for i in xrange(epochs):
+        for i in range(epochs):
             t0 = datetime.now()
             sequence_indexes = shuffle(sequence_indexes)
             n_correct = 0
@@ -132,9 +190,12 @@ class RecursiveNN:
             it = 0
             for j in sequence_indexes:
                 words, left, right, lab = trees[j]
-                c, p = self.train_op(words, left, right, lab)
+                c, p = self.train_op(words, left, right, lab, lr_)
                 if np.isnan(c):
-                    print "Cost is nan! Let's stop here. Why don't you try decreasing the learning rate?"
+                    print("Cost is nan! Let's stop here. \
+                        Why don't you try decreasing the learning rate?")
+                    for p in self.params:
+                        print(p.get_value().sum())
                     exit()
                 cost += c
                 if train_inner_nodes:
@@ -143,9 +204,16 @@ class RecursiveNN:
                     n_correct += (p[-1] == lab[-1])
                 it += 1
                 if it % 1 == 0:
-                    sys.stdout.write("j/N: %d/%d correct rate so far: %f, cost so far: %f\r" % (it, N, float(n_correct)/n_total, cost))
+                    sys.stdout.write(
+                        "j/N: %d/%d correct rate so far: %f, cost so far: %f\r" %
+                        (it, N, float(n_correct)/n_total, cost)
+                    )
                     sys.stdout.flush()
-            print "i:", i, "cost:", cost, "correct rate:", (float(n_correct)/n_total), "time for epoch:", (datetime.now() - t0)
+            print(
+                "i:", i, "cost:", cost,
+                "correct rate:", (float(n_correct)/n_total),
+                "time for epoch:", (datetime.now() - t0)
+            )
             costs.append(cost)
 
         plt.plot(costs)
@@ -230,25 +298,25 @@ def main(is_binary=True):
         test = [t for t in test if t[3][-1] >= 0] # for filtering binary labels
 
     train = shuffle(train)
-    train = train[:5000]
+    # train = train[:5000]
     # n_pos = sum(t[3][-1] for t in train)
-    # print "n_pos train:", n_pos
+    # print("n_pos train:", n_pos)
     test = shuffle(test)
     test = test[:1000]
     # n_pos = sum(t[3][-1] for t in test)
-    # print "n_pos test:", n_pos
+    # print("n_pos test:", n_pos)
 
     V = len(word2idx)
-    print "vocab size:", V
+    print("vocab size:", V)
     D = 20
     K = 2 if is_binary else 5
 
     model = RecursiveNN(V, D, K)
     model.fit(train)
-    print "train accuracy:", model.score(train)
-    print "test accuracy:", model.score(test)
-    print "train f1:", model.f1_score(train)
-    print "test f1:", model.f1_score(test)
+    print("train accuracy:", model.score(train))
+    print("test accuracy:", model.score(test))
+    print("train f1:", model.f1_score(train))
+    print("test f1:", model.f1_score(test))
 
 
 if __name__ == '__main__':
