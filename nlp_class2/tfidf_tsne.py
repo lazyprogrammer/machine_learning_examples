@@ -26,10 +26,28 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 
 def main():
-    sentences, word2idx = get_sentences_with_word2idx_limit_vocab(n_vocab=1500)
-    # sentences, word2idx = get_wikipedia_data(n_files=10, n_vocab=1500, by_paragraph=True)
-    with open('w2v_word2idx.json', 'w') as f:
-        json.dump(word2idx, f)
+    analogies_to_try = (
+        ('king', 'man', 'woman'),
+        ('france', 'paris', 'london'),
+        ('france', 'paris', 'rome'),
+        ('paris', 'france', 'italy'),
+    )
+
+    # sentences, word2idx = get_sentences_with_word2idx_limit_vocab(n_vocab=1500)
+    sentences, word2idx = get_wikipedia_data(n_files=20, n_vocab=2000, by_paragraph=True)
+    # with open('tfidf_word2idx.json', 'w') as f:
+    #     json.dump(word2idx, f)
+
+    notfound = False
+    for word_list in analogies_to_try:
+        for w in word_list:
+            if w not in word2idx:
+                print("%s not found in vocab, remove it from \
+                    analogies to try or increase vocab size")
+                notfound = True
+    if notfound:
+        exit()
+
 
     # build term document matrix
     V = len(word2idx)
@@ -61,16 +79,18 @@ def main():
             plt.annotate(s=idx2word[i].encode("utf8").decode("utf8"), xy=(Z[i,0], Z[i,1]))
         except:
             print("bad string:", idx2word[i])
-    plt.show()
+    plt.draw()
 
     # create a higher-D word embedding, try word analogies
     # tsne = TSNE(n_components=3)
     # We = tsne.fit_transform(A)
     We = Z
-    find_analogies('king', 'man', 'woman', We, word2idx)
-    find_analogies('france', 'paris', 'london', We, word2idx)
-    find_analogies('france', 'paris', 'rome', We, word2idx)
-    find_analogies('paris', 'france', 'italy', We, word2idx)
+
+    for word_list in analogies_to_try:
+        w1, w2, w3 = word_list
+        find_analogies(w1, w2, w3, We, word2idx)
+
+    plt.show() # pause script until plot is closed
 
 
 if __name__ == '__main__':
