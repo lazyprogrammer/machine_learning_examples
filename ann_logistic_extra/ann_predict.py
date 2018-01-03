@@ -7,7 +7,7 @@ from builtins import range
 import numpy as np
 from process import get_data
 
-X, Y = get_data()
+X, Y, _, _ = get_data()
 
 # randomly initialize weights
 M = 5

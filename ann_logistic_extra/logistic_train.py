@@ -10,17 +10,11 @@ import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from process import get_binary_data
 
-X, Y = get_binary_data()
-X, Y = shuffle(X, Y)
-
-# create train and test sets
-Xtrain = X[:-100]
-Ytrain = Y[:-100]
-Xtest = X[-100:]
-Ytest = Y[-100:]
+# get the data
+Xtrain, Ytrain, Xtest, Ytest = get_binary_data()
 
 # randomly initialize weights
-D = X.shape[1]
+D = Xtrain.shape[1]
 W = np.random.randn(D)
 b = 0 # bias term
 

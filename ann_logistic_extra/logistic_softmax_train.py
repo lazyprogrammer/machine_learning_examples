@@ -17,18 +17,12 @@ def y2indicator(y, K):
         ind[i, y[i]] = 1
     return ind
 
-X, Y = get_data()
-X, Y = shuffle(X, Y)
-Y = Y.astype(np.int32)
-D = X.shape[1]
-K = len(set(Y))
+Xtrain, Ytrain, Xtest, Ytest = get_data()
+D = Xtrain.shape[1]
+K = len(set(Ytrain) | set(Ytest))
 
-# create train and test sets
-Xtrain = X[:-100]
-Ytrain = Y[:-100]
+# convert to indicator
 Ytrain_ind = y2indicator(Ytrain, K)
-Xtest = X[-100:]
-Ytest = Y[-100:]
 Ytest_ind = y2indicator(Ytest, K)
 
 # randomly initialize weights

@@ -7,7 +7,7 @@ from builtins import range
 import numpy as np
 from process import get_binary_data
 
-X, Y = get_binary_data()
+X, Y, _, _ = get_binary_data()
 
 # randomly initialize weights
 D = X.shape[1]
