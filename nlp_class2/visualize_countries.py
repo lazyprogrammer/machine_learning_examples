@@ -1,6 +1,12 @@
 # Course URL:
 # https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
 # https://udemy.com/natural-language-processing-with-deep-learning-in-python
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import json
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,7 +30,7 @@ def main(we_file='glove_model_50.npz', w2i_file='glove_word2idx_50.json'):
     Z = tsne.fit_transform(We)
     Z = Z[idx]
     plt.scatter(Z[:,0], Z[:,1])
-    for i in xrange(len(words)):
+    for i in range(len(words)):
         plt.annotate(s=words[i], xy=(Z[i,0], Z[i,1]))
     plt.show()
 

@@ -2,6 +2,11 @@
 # https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
 # https://udemy.com/natural-language-processing-with-deep-learning-in-python
 # data is from: http://nlp.stanford.edu/sentiment/
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
 
 import sys
 import tensorflow as tf
@@ -56,7 +61,7 @@ class TNN:
         all_labels = []
         i = 0
         N = len(trees)
-        print "Compiling ops"
+        print("Compiling ops")
         for t in trees:
             i += 1
             sys.stdout.write("%d/%d\r" % (i, N))
@@ -86,7 +91,7 @@ class TNN:
         with tf.Session() as session:
             session.run(init)
 
-            for i in xrange(epochs):
+            for i in range(epochs):
                 t0 = datetime.now()
 
                 train_ops, costs, predictions, all_labels = shuffle(train_ops, costs, predictions, all_labels)
@@ -107,7 +112,10 @@ class TNN:
                         sys.stdout.write("j: %d, N: %d, c: %f\r" % (j, N, c))
                         sys.stdout.flush()
 
-                print "epoch:", i, "cost:", epoch_cost, "elapsed time:", (datetime.now() - t0)
+                print(
+                    "epoch:", i, "cost:", epoch_cost,
+                    "elapsed time:", (datetime.now() - t0)
+                )
 
                 per_epoch_costs.append(epoch_cost)
                 correct_rates.append(n_correct / float(n_total))
@@ -127,7 +135,12 @@ class TNN:
         plt.show()
 
     def get_cost(self, logits, labels, reg):
-        cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
+        cost = tf.reduce_mean(
+            tf.nn.sparse_softmax_cross_entropy_with_logits(
+                logits=logits,
+                labels=labels
+            )
+        )
         rcost = sum(tf.nn.l2_loss(p) for p in self.params)
         cost += reg*rcost
         return cost
@@ -159,7 +172,7 @@ class TNN:
         # except Exception as e:
         #     display_tree(tree)
         #     raise e
-        return tf.concat(0, logits)
+        return tf.concat(logits, 0)
 
     def score(self, trees):
         if trees is None:
@@ -173,7 +186,7 @@ class TNN:
 
             i = 0
             N = len(trees)
-            print "Compiling ops"
+            print("Compiling ops")
             for t in trees:
 
                 i += 1
@@ -211,8 +224,8 @@ def main():
 
     model = TNN(V, D, K, tf.nn.relu)
     model.fit(train)
-    print "train accuracy:", model.score(None)
-    print "test accuracy:", model.score(test)
+    print("train accuracy:", model.score(None))
+    print("test accuracy:", model.score(test))
 
 
 if __name__ == '__main__':

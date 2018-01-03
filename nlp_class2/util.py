@@ -8,6 +8,7 @@ from builtins import range
 # sudo pip install -U future
 
 
+import os
 import numpy as np
 
 def init_weight(Mi, Mo):
@@ -132,6 +133,20 @@ def get_ptb_data():
     # word2idx mapping, sentences
     # here the sentences should be Tree objects
 
+    if not os.path.exists('../large_files/trees'):
+        print("Please create ../large_files/trees relative to this file.")
+        print("train.txt and test.txt should be stored in there.")
+        print("Please download the data from http://nlp.stanford.edu/sentiment/")
+        exit()
+    elif not os.path.exists('../large_files/trees/train.txt'):
+        print("train.txt is not in ../large_files/trees/train.txt")
+        print("Please download the data from http://nlp.stanford.edu/sentiment/")
+        exit()
+    elif not os.path.exists('../large_files/trees/test.txt'):
+        print("test.txt is not in ../large_files/trees/test.txt")
+        print("Please download the data from http://nlp.stanford.edu/sentiment/")
+        exit()
+
     word2idx = {}
     train = []
     test = []
@@ -149,7 +164,7 @@ def get_ptb_data():
             # break
 
     # test set
-    for line in open('../large_files/trees/train.txt'):
+    for line in open('../large_files/trees/test.txt'):
         line = line.rstrip()
         if line:
             t = str2tree(line, word2idx)

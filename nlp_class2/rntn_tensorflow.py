@@ -3,6 +3,12 @@
 # https://udemy.com/natural-language-processing-with-deep-learning-in-python
 # data is from: http://nlp.stanford.edu/sentiment/
 
+from __future__ import print_function, division
+from builtins import range
+# Note: you may need to update your version of future
+# sudo pip install -U future
+
+
 import sys
 import tensorflow as tf
 import numpy as np
@@ -75,7 +81,7 @@ class RNTN:
         all_labels = []
         i = 0
         N = len(trees)
-        print "Compiling ops"
+        print("Compiling ops")
         for t in trees:
             i += 1
             sys.stdout.write("%d/%d\r" % (i, N))
@@ -105,7 +111,7 @@ class RNTN:
         with tf.Session() as session:
             session.run(init)
 
-            for i in xrange(epochs):
+            for i in range(epochs):
                 train_ops, costs, predictions, all_labels = shuffle(train_ops, costs, predictions, all_labels)
                 epoch_cost = 0
                 n_correct = 0
@@ -158,9 +164,9 @@ class RNTN:
             x = tf.nn.embedding_lookup(self.We, [tree.word])
         else:
             # if tree.left is None or tree.right is None:
-            #     print "This tree node has no word but also has no children:"
+            #     print("This tree node has no word but also has no children:")
             #     display_tree(tree)
-            #     print ""
+            #     print("")
             # this node has children
             x1 = self.get_output_recursive(tree.left, list_of_logits, is_root=False)
             x2 = self.get_output_recursive(tree.right, list_of_logits, is_root=False)
@@ -198,7 +204,7 @@ class RNTN:
 
             i = 0
             N = len(trees)
-            print "Compiling ops"
+            print("Compiling ops")
             for t in trees:
 
                 i += 1
@@ -219,8 +225,8 @@ class RNTN:
 
             for prediction, y in zip(predictions, all_labels):
                 p = session.run(prediction)
-                # print "pred:", p
-                # print "label:", y
+                # print("pred:", p)
+                # print("label:", y)
                 # n_correct += np.sum(p == y)
                 n_correct += (p[-1] == y[-1]) # we only care about the root
                 n_total += len(y)
@@ -240,8 +246,8 @@ def main():
 
     model = RNTN(V, D, K, tf.nn.relu)
     model.fit(train)
-    print "train accuracy:", model.score(None)
-    print "test accuracy:", model.score(test)
+    print("train accuracy:", model.score(None))
+    print("test accuracy:", model.score(test))
 
 
 if __name__ == '__main__':
