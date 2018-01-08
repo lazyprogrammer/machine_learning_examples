@@ -19,10 +19,6 @@ from datetime import datetime
 from sklearn.utils import shuffle
 from word2vec import get_wikipedia_data, find_analogies, get_sentences_with_word2idx_limit_vocab
 
-# Experiments
-# previous results did not make sense b/c X was built incorrectly
-# redo b/c b and c were not being added correctly as 2-D objects
-
 # using ALS, what's the least # files to get correct analogies?
 # use this for word2vec training to make it faster
 # first tried 20 files --> not enough
