@@ -30,7 +30,7 @@ class KNN(object):
     def predict(self, X):
         y = np.zeros(len(X))
         for i,x in enumerate(X): # test points
-            sl = SortedList(load=self.k) # stores (distance, class) tuples
+            sl = SortedList() # stores (distance, class) tuples
             for j,xt in enumerate(self.X): # training points
                 diff = x - xt
                 d = diff.dot(diff)
