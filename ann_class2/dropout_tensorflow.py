@@ -124,8 +124,7 @@ class ANN(object):
 
     def forward_test(self, X):
         Z = X
-        Z = tf.nn.dropout(Z, self.dropout_rates[0])
-        for h, p in zip(self.hidden_layers, self.dropout_rates[1:]):
+        for h in zip(self.hidden_layers):
             Z = h.forward(Z)
         return tf.matmul(Z, self.W) + self.b
 
