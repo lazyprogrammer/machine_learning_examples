@@ -124,7 +124,7 @@ class ANN(object):
 
     def forward_test(self, X):
         Z = X
-        for h in zip(self.hidden_layers):
+        for h in self.hidden_layers:
             Z = h.forward(Z)
         return tf.matmul(Z, self.W) + self.b
 
