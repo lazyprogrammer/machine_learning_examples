@@ -54,17 +54,21 @@ class SimpleRNN:
         # X_one_hot.dot(We)
         XW = tf.nn.embedding_lookup(We, self.tfX)
 
+        # multiply it by input->hidden so we don't have to do
+        # it inside recurrence
+        XW_Wx = tf.matmul(XW, self.Wx)
 
-        def recurrence(h_t1, xWe_t):
+
+        def recurrence(h_t1, XW_Wx_t):
             # returns h(t), y(t)
             h_t1 = tf.reshape(h_t1, (1, M))
-            h_t = self.f(xWe_t + tf.matmul(h_t1, self.Wh) + self.bh)
+            h_t = self.f(XW_Wx_t + tf.matmul(h_t1, self.Wh) + self.bh)
             h_t = tf.reshape(h_t, (M,))
             return h_t
 
         h = tf.scan(
             fn=recurrence,
-            elems=XW,
+            elems=XW_Wx,
             initializer=self.h0,
         )
 

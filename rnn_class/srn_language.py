@@ -79,7 +79,7 @@ class SimpleRNN:
 
         updates = []
         for p, dp, g in zip(self.params, dparams, grads):
-            new_dp = mu*dp - lr*g
+            new_dp = mu*dp - learning_rate*g
             updates.append((dp, new_dp))
 
             new_p = p + new_dp
@@ -235,7 +235,7 @@ def wikipedia():
     rnn.fit(sentences, learning_rate=1e-4, show_fig=True, activation=T.nnet.relu)
 
 if __name__ == '__main__':
-    # train_poetry()
+    train_poetry()
     generate_poetry()
     # wikipedia()
 
