@@ -195,6 +195,42 @@ class HMM:
             alpha[t] = alpha_t_prime / scale[t]
         return np.log(scale).sum()
 
+    def get_state_sequence(self, x):
+        # returns the most likely state sequence given observed sequence x
+        # using the Viterbi algorithm
+        T = len(x)
+
+        # make the emission matrix B
+        logB = np.zeros((self.M, T))
+        for j in range(self.M):
+            for t in range(T):
+                for k in range(self.K):
+                    p = np.log(self.R[j,k]) + mvn.logpdf(x[t], self.mu[j,k], self.sigma[j,k])
+                    logB[j,t] += p
+        print("logB:", logB)
+
+        # perform Viterbi as usual
+        delta = np.zeros((T, self.M))
+        psi = np.zeros((T, self.M))
+
+        # smooth pi in case it is 0
+        pi = self.pi + 1e-10
+        pi /= pi.sum()
+
+        delta[0] = np.log(pi) + logB[:,0]
+        for t in range(1, T):
+            for j in range(self.M):
+                next_delta = delta[t-1] + np.log(self.A[:,j])
+                delta[t,j] = np.max(next_delta) + logB[j,t]
+                psi[t,j] = np.argmax(next_delta)
+
+        # backtrack
+        states = np.zeros(T, dtype=np.int32)
+        states[T-1] = np.argmax(delta[T-1])
+        for t in range(T-2, -1, -1):
+            states[t] = psi[t+1, states[t+1]]
+        return states
+
     def log_likelihood_multi(self, X):
         return np.array([self.log_likelihood(x) for x in X])
 
@@ -247,7 +283,11 @@ def fake_signal(init=big_init):
     L = hmm.log_likelihood_multi(signals).sum()
     print("LL for actual params:", L)
 
+    # print most likely state sequence
+    print("Most likely state sequence for initial observation:")
+    print(hmm.get_state_sequence(signals[0]))
+
 if __name__ == '__main__':
-    real_signal()
-    # fake_signal()
+    # real_signal()
+    fake_signal()
 
