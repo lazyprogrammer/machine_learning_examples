@@ -1,4 +1,4 @@
-# https://deeplearningcourses.com/advanced-computer-vision
+# https://deeplearningcourses.com/c/advanced-computer-vision
 # https://www.udemy.com/advanced-computer-vision
 
 from __future__ import print_function, division
