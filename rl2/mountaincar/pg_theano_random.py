@@ -191,6 +191,7 @@ def random_search(env, pmodel, gamma):
 
     if avg_totalrewards > best_avg_totalreward:
       best_pmodel = tmp_pmodel
+      best_avg_totalreward = avg_totalrewards
   return totalrewards, best_pmodel
 
 

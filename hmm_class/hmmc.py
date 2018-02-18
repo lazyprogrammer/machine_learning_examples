@@ -191,6 +191,35 @@ class HMM:
             alpha[t] = alpha[t-1].dot(self.A) * B[:,t]
         return alpha[-1].sum()
 
+    def get_state_sequence(self, x):
+        # returns the most likely state sequence given observed sequence x
+        # using the Viterbi algorithm
+        T = len(x)
+
+        # make the emission matrix B
+        B = np.zeros((self.M, T))
+        for j in range(self.M):
+            for t in range(T):
+                for k in range(self.K):
+                    p = self.R[j,k] * mvn.pdf(x[t], self.mu[j,k], self.sigma[j,k])
+                    B[j,t] += p
+
+        # perform Viterbi as usual
+        delta = np.zeros((T, self.M))
+        psi = np.zeros((T, self.M))
+        delta[0] = self.pi*B[:,0]
+        for t in range(1, T):
+            for j in range(self.M):
+                delta[t,j] = np.max(delta[t-1]*self.A[:,j]) * B[j,t]
+                psi[t,j] = np.argmax(delta[t-1]*self.A[:,j])
+
+        # backtrack
+        states = np.zeros(T, dtype=np.int32)
+        states[T-1] = np.argmax(delta[T-1])
+        for t in range(T-2, -1, -1):
+            states[t] = psi[t+1, states[t+1]]
+        return states
+
     def likelihood_multi(self, X):
         return np.array([self.likelihood(x) for x in X])
 
@@ -244,6 +273,10 @@ def fake_signal(init=simple_init):
     hmm.set(pi, A, R, mu, sigma)
     L = hmm.log_likelihood_multi(signals).sum()
     print("LL for actual params:", L)
+
+    # print most likely state sequence
+    print("Most likely state sequence for initial observation:")
+    print(hmm.get_state_sequence(signals[0]))
 
 if __name__ == '__main__':
     # real_signal() # will break
