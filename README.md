@@ -65,3 +65,5 @@ https://deeplearningcourses.com/c/deep-reinforcement-learning-in-python
 Deep Learning: GANs and Variational Autoencoders
 https://deeplearningcourses.com/c/deep-learning-gans-and-variational-autoencoders
 
+Deep Learning: Advanced Computer Vision
+https://deeplearningcourses.com/c/advanced-computer-vision
