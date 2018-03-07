@@ -9,7 +9,16 @@ import util
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-st = tf.contrib.bayesflow.stochastic_tensor
+
+st = None
+try:
+  st = tf.contrib.bayesflow.stochastic_tensor
+except:
+  # doesn't exist in later versions of TF
+  # we will use the reparameterization trick instead
+  # watch the later lecture on the reparameterization trick
+  # to learn about it.
+  pass
 Normal = tf.contrib.distributions.Normal
 Bernoulli = tf.contrib.distributions.Bernoulli
 
@@ -73,10 +82,20 @@ class VariationalAutoencoder:
     # get a sample of Z
     # we need to use a stochastic tensor
     # in order for the errors to be backpropagated past this point
-    with st.value_type(st.SampleValue()):
-      self.Z = st.StochasticTensor(Normal(loc=self.means, scale=self.stddev))
-      # to get back Q(Z), the distribution of Z
-      # we will later use self.Z.distribution
+    if st is None:
+      # doesn't exist in later versions of Tensorflow
+      # we'll use the same trick we use in Theano
+      standard_normal = Normal(
+        loc=np.zeros(M, dtype=np.float32),
+        scale=np.ones(M, dtype=np.float32)
+      )
+      e = standard_normal.sample(tf.shape(self.means)[0])
+      self.Z = e * self.stddev + self.means
+    else:
+      with st.value_type(st.SampleValue()):
+        self.Z = st.StochasticTensor(Normal(loc=self.means, scale=self.stddev))
+        # to get back Q(Z), the distribution of Z
+        # we will later use self.Z.distribution
 
 
     # decoder
@@ -139,12 +158,16 @@ class VariationalAutoencoder:
 
 
     # now build the cost
-    kl = tf.reduce_sum(
-      tf.contrib.distributions.kl_divergence(
-        self.Z.distribution, standard_normal
-      ),
-      1
-    )
+    if st is None:
+      kl = -tf.log(self.stddev) + 0.5*(self.stddev**2 + self.means**2) - 0.5
+      kl = tf.reduce_sum(kl, axis=1)
+    else:
+      kl = tf.reduce_sum(
+        tf.contrib.distributions.kl_divergence(
+          self.Z.distribution, standard_normal
+        ),
+        1
+      )
     expected_log_likelihood = tf.reduce_sum(
       self.X_hat_distribution.log_prob(self.X),
       1
