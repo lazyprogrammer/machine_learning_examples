@@ -27,6 +27,10 @@ wordnet_lemmatizer = WordNetLemmatizer()
 # from http://www.lextek.com/manuals/onix/stopwords1.html
 stopwords = set(w.rstrip() for w in open('stopwords.txt'))
 
+# note: an alternative source of stopwords
+# from nltk.corpus import stopwords
+# stopwords.words('english')
+
 # load the reviews
 # data courtesy of http://www.cs.jhu.edu/~mdredze/datasets/sentiment/index2.html
 positive_reviews = BeautifulSoup(open('electronics/positive.review').read())

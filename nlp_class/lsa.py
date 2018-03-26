@@ -22,6 +22,11 @@ titles = [line.rstrip() for line in open('all_book_titles.txt')]
 
 # copy tokenizer from sentiment example
 stopwords = set(w.rstrip() for w in open('stopwords.txt'))
+
+# note: an alternative source of stopwords
+# from nltk.corpus import stopwords
+# stopwords.words('english')
+
 # add more stopwords specific to this problem
 stopwords = stopwords.union({
     'introduction', 'edition', 'series', 'application',
