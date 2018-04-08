@@ -91,6 +91,14 @@ class VariationalAutoencoder:
       )
       e = standard_normal.sample(tf.shape(self.means)[0])
       self.Z = e * self.stddev + self.means
+
+      # note: this also works because Tensorflow
+      # now does the "magic" for you
+      # n = Normal(
+      #   loc=self.means,
+      #   scale=self.stddev,
+      # )
+      # self.Z = n.sample()
     else:
       with st.value_type(st.SampleValue()):
         self.Z = st.StochasticTensor(Normal(loc=self.means, scale=self.stddev))
