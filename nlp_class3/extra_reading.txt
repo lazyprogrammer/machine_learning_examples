@@ -1,0 +1,44 @@
+https://deeplearningcourses.com/c/deep-learning-advanced-nlp
+
+Bidirectional Recurrent Neural Networks
+https://maxwell.ict.griffith.edu.au/spl/publications/papers/ieeesp97_schuster.pdf
+
+Translation Modeling with Bidirectional Recurrent Neural Networks
+http://emnlp2014.org/papers/pdf/EMNLP2014003.pdf
+
+Sequence to Sequence Learning with Neural Networks
+https://arxiv.org/abs/1409.3215
+
+A Neural Conversational Model
+https://arxiv.org/abs/1506.05869v3
+
+Neural Machine Translation by Jointly Learning to Align and Translate (Attention)
+https://arxiv.org/abs/1409.0473
+
+Feed-Forward Networks with Attention Can Solve Some Long-Term Memory Problems (Simplified Attention)
+https://arxiv.org/abs/1512.08756
+
+Memory Networks
+https://arxiv.org/abs/1410.3916
+
+Towards AI-Complete Question Answering: A Set of Prerequisite Toy Tasks
+http://arxiv.org/abs/1502.05698
+
+End-To-End Memory Networks
+http://arxiv.org/abs/1503.08895
+
+Ask Me Anything: Dynamic Memory Networks for Natural Language Processing
+https://arxiv.org/abs/1506.07285
+
+WaveNet
+https://deepmind.com/blog/wavenet-generative-model-raw-audio/
+
+Tacotron
+https://google.github.io/tacotron/
+
+Tacotron 2
+https://research.googleblog.com/2017/12/tacotron-2-generating-human-like-speech.html
+
+An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling
+https://arxiv.org/abs/1803.01271
+(just released March 2018!)
