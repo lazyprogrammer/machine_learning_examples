@@ -87,8 +87,7 @@ class HMM:
         return -self.cost_op(x)
 
     def get_cost_multi(self, X):
-        P = np.random.random(len(X))
-        return np.array([self.get_cost(x) for x, p in zip(X, P)])
+        return np.array([self.get_cost(x) for x in X])
 
     def set(self, preSoftmaxPi, preSoftmaxA, preSoftmaxB):
         self.preSoftmaxPi = theano.shared(preSoftmaxPi)

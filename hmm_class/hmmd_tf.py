@@ -51,8 +51,7 @@ class HMM:
         return -self.session.run(self.cost, feed_dict={self.tfx: x})
 
     def get_cost_multi(self, X):
-        P = np.random.random(len(X))
-        return np.array([self.get_cost(x) for x, p in zip(X, P)])
+        return np.array([self.get_cost(x) for x in X])
 
     def build(self, preSoftmaxPi, preSoftmaxA, preSoftmaxB):
         M, V = preSoftmaxB.shape
