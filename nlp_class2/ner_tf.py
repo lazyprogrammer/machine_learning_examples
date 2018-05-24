@@ -25,20 +25,6 @@ from tensorflow.contrib.rnn import BasicRNNCell, GRUCell
 
 
 def get_data(split_sequences=False):
-  if not os.path.exists('chunking'):
-    print("Please create a folder in your local directory called 'chunking'")
-    print("train.txt and test.txt should be stored in there.")
-    print("Please check the comments to get the download link.")
-    exit()
-  elif not os.path.exists('chunking/train.txt'):
-    print("train.txt is not in chunking/train.txt")
-    print("Please check the comments to get the download link.")
-    exit()
-  elif not os.path.exists('chunking/test.txt'):
-    print("test.txt is not in chunking/test.txt")
-    print("Please check the comments to get the download link.")
-    exit()
-
   word2idx = {}
   tag2idx = {}
   word_idx = 1
@@ -47,11 +33,12 @@ def get_data(split_sequences=False):
   Ytrain = []
   currentX = []
   currentY = []
-  for line in open('chunking/train.txt'):
+  for line in open('ner.txt'):
     line = line.rstrip()
     if line:
       r = line.split()
-      word, tag, _ = r
+      word, tag = r
+      word = word.lower()
       if word not in word2idx:
         word2idx[word] = word_idx
         word_idx += 1
@@ -71,31 +58,16 @@ def get_data(split_sequences=False):
     Xtrain = currentX
     Ytrain = currentY
 
-  # load and score test data
-  Xtest = []
-  Ytest = []
-  currentX = []
-  currentY = []
-  for line in open('chunking/test.txt'):
-    line = line.rstrip()
-    if line:
-      r = line.split()
-      word, tag, _ = r
-      if word in word2idx:
-        currentX.append(word2idx[word])
-      else:
-        currentX.append(word_idx) # use this as unknown
-      currentY.append(tag2idx[tag])
-    elif split_sequences:
-      Xtest.append(currentX)
-      Ytest.append(currentY)
-      currentX = []
-      currentY = []
-  if not split_sequences:
-    Xtest = currentX
-    Ytest = currentY
+  print("number of samples:", len(Xtrain))
+  Xtrain, Ytrain = shuffle(Xtrain, Ytrain)
+  Ntest = int(0.3*len(Xtrain))
+  Xtest = Xtrain[:Ntest]
+  Ytest = Ytrain[:Ntest]
+  Xtrain = Xtrain[Ntest:]
+  Ytrain = Ytrain[Ntest:]
+  print("number of classes:", len(tag2idx))
+  return Xtrain, Ytrain, Xtest, Ytest, word2idx, tag2idx
 
-  return Xtrain, Ytrain, Xtest, Ytest, word2idx
 
 
 def flatten(l):
@@ -104,13 +76,13 @@ def flatten(l):
 
 
 # get the data
-Xtrain, Ytrain, Xtest, Ytest, word2idx = get_data(split_sequences=True)
-V = len(word2idx) + 2 # vocab size (+1 for unknown, +1 b/c start from 1)
+Xtrain, Ytrain, Xtest, Ytest, word2idx, tag2idx = get_data(split_sequences=True)
+V = len(word2idx) + 2 # vocab size (+1 for unknown, +1 for pad)
 K = len(set(flatten(Ytrain)) | set(flatten(Ytest))) + 1 # num classes
 
 
 # training config
-epochs = 20
+epochs = 5
 learning_rate = 1e-2
 mu = 0.99
 batch_size = 32
