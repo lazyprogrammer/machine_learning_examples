@@ -18,19 +18,12 @@ from datetime import datetime
 from sklearn.utils import shuffle
 from word2vec import get_wikipedia_data, find_analogies, get_sentences_with_word2idx_limit_vocab
 
-# using ALS, what's the least # files to get correct analogies?
-# use this for word2vec training to make it faster
-# first tried 20 files --> not enough
-# how about 30 files --> some correct but still not enough
-# 40 files --> half right but 50 is better
-
 
 def momentum_updates(cost, params, lr=1e-4, mu=0.9):
   grads = T.grad(cost, params)
   velocities = [theano.shared(
     np.zeros_like(p.get_value()).astype(np.float32)
   ) for p in params]
-  # updates = [(p, p - learning_rate*g) for p, g in zip(params, grads)]
   updates = []
   for p, v, g in zip(params, velocities, grads):
     newv = mu*v - lr*g
@@ -150,8 +143,6 @@ class Glove:
         # regularization
         regularized_cost = thCost + reg*((thW * thW).sum() + (thU * thU).sum())
 
-        # grads = T.grad(regularized_cost, params)
-        # updates = [(p, p - learning_rate*g) for p, g in zip(params, grads)]
         updates = momentum_updates(regularized_cost, params, learning_rate)
 
         train_op = theano.function(
