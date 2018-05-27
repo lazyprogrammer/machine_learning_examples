@@ -105,6 +105,7 @@ if __name__ == '__main__':
 
       # next state becomes current state
       s = s2
+      a = a2
      
     deltas.append(biggest_change)
 
