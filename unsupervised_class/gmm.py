@@ -48,7 +48,13 @@ def gmm(X, K, max_iter=20, smoothing=1e-2):
             Nk = R[:,k].sum()
             pi[k] = Nk / N
             M[k] = R[:,k].dot(X) / Nk
-            C[k] = np.sum(R[n,k]*np.outer(X[n] - M[k], X[n] - M[k]) for n in range(N)) / Nk + np.eye(D)*smoothing
+
+            ## faster
+            delta = X - M[k] # N x D
+            Rdelta = np.expand_dims(R[:,k], -1) * delta # multiplies R[:,k] by each col. of delta - N x D
+            C[k] = Rdelta.T.dot(delta) / Nk + np.eye(D)*smoothing # D x D
+            ## slower
+            # C[k] = np.sum(R[n,k]*np.outer(X[n] - M[k], X[n] - M[k]) for n in range(N)) / Nk + np.eye(D)*smoothing
 
 
         costs[i] = np.log(weighted_pdfs.sum(axis=1)).sum()

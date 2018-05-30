@@ -151,7 +151,7 @@ c_probs = c_probs.reshape(1, V)
 # PMI(w, c) = #(w, c) / #(w) / p(c)
 pmi = wc_counts / wc_counts.sum(axis=1) / c_probs
 print("type(pmi):", type(pmi))
-logX = np.log(pmi.A + 1) #+ np.log(100)
+logX = np.log(pmi.A + 1)
 print("type(logX):", type(logX))
 logX[logX < 0] = 0
 
@@ -180,10 +180,13 @@ for epoch in range(10):
   costs.append(cost)
 
   # update W
-  for i in range(V):
-    matrix = reg*np.eye(D) + U.T.dot(U)
-    vector = (logX[i,:] - b[i] - c - mu).dot(U)
-    W[i] = np.linalg.solve(matrix, vector)
+  # for i in range(V):
+  #   matrix = reg*np.eye(D) + U.T.dot(U)
+  #   vector = (logX[i,:] - b[i] - c - mu).dot(U)
+  #   W[i] = np.linalg.solve(matrix, vector)
+  matrix = reg*np.eye(D) + U.T.dot(U)
+  vector = (logX - b.reshape(V, 1) - c.reshape(1, V) - mu).dot(U)
+  W = np.linalg.solve(matrix, vector)
 
   # update b
   for i in range(V):
