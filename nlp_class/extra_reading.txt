@@ -1,0 +1,23 @@
+LEARNING THE NAIVE BAYES CLASSIFIER WITH OPTIMIZATION MODELS
+https://pdfs.semanticscholar.org/059c/36439a84c8d51443022352a94e2751c60d1c.pdf
+
+RANDOM FORESTS
+https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf
+
+Explaining AdaBoost
+http://rob.schapire.net/papers/explaining-adaboost.pdf
+
+Understanding logistic regression analysis
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3936971/
+
+Indexing by Latent Semantic Analysis
+http://lsa.colorado.edu/papers/JASIS.lsi.90.pdf
+
+Language Modeling
+http://www.cs.columbia.edu/~mcollins/lm-spring2013.pdf
+
+Natural Language Processing with Python – Analyzing Text with the Natural Language Toolkit
+https://www.nltk.org/book/
+
+NLTK Documentation
+https://media.readthedocs.org/pdf/nltk/latest/nltk.pdf
