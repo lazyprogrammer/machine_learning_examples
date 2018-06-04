@@ -154,8 +154,8 @@ rnn_unit = GRUCell(num_units=hidden_layer_size, activation=tf.nn.relu)
 # get the output
 x = tf.nn.embedding_lookup(tfWe, inputs)
 
-# converts x from a tensor of shape N x T x D
-# into a list of length T, where each element is a tensor of shape N x D
+# converts x from a tensor of shape N x T x M
+# into a list of length T, where each element is a tensor of shape N x M
 x = tf.unstack(x, sequence_length, 1)
 
 # get the rnn output
@@ -167,7 +167,7 @@ outputs, states = get_rnn_output(rnn_unit, x, dtype=tf.float32)
 outputs = tf.transpose(outputs, (1, 0, 2))
 outputs = tf.reshape(outputs, (sequence_length*num_samples, hidden_layer_size)) # NT x M
 
-# Linear activation, using rnn inner loop last output
+# final dense layer
 logits = tf.matmul(outputs, tfWo) + tfbo # NT x K
 predictions = tf.argmax(logits, 1)
 predict_op = tf.reshape(predictions, (num_samples, sequence_length))
