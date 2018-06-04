@@ -16,6 +16,7 @@ from scipy.sparse import lil_matrix, csr_matrix, save_npz, load_npz
 from scipy.spatial.distance import cosine as cos_dist
 from sklearn.metrics.pairwise import pairwise_distances
 from glob import glob
+from datetime import datetime
 
 
 # input files
@@ -173,36 +174,56 @@ mu = logX.mean()
 
 
 costs = []
+t0 = datetime.now()
 for epoch in range(10):
   print("epoch:", epoch)
   delta = W.dot(U.T) + b.reshape(V, 1) + c.reshape(1, V) + mu - logX
   cost = ( delta * delta ).sum()
   costs.append(cost)
 
+  ### partially vectorized updates ###
   # update W
+  # matrix = reg*np.eye(D) + U.T.dot(U)
   # for i in range(V):
-  #   matrix = reg*np.eye(D) + U.T.dot(U)
   #   vector = (logX[i,:] - b[i] - c - mu).dot(U)
   #   W[i] = np.linalg.solve(matrix, vector)
+
+  # # update b
+  # for i in range(V):
+  #   numerator = (logX[i,:] - W[i].dot(U.T) - c - mu).sum()
+  #   b[i] = numerator / V #/ (1 + reg)
+
+  # # update U
+  # matrix = reg*np.eye(D) + W.T.dot(W)
+  # for j in range(V):
+  #   vector = (logX[:,j] - b - c[j] - mu).dot(W)
+  #   U[j] = np.linalg.solve(matrix, vector)
+
+  # # update c
+  # for j in range(V):
+  #   numerator = (logX[:,j] - W.dot(U[j]) - b  - mu).sum()
+  #   c[j] = numerator / V #/ (1 + reg)
+
+
+  ### vectorized updates ###
+  # vectorized update W
   matrix = reg*np.eye(D) + U.T.dot(U)
-  vector = (logX - b.reshape(V, 1) - c.reshape(1, V) - mu).dot(U)
-  W = np.linalg.solve(matrix, vector)
+  vector = (logX - b.reshape(V, 1) - c.reshape(1, V) - mu).dot(U).T
+  W = np.linalg.solve(matrix, vector).T
 
-  # update b
-  for i in range(V):
-    numerator = (logX[i,:] - W[i].dot(U.T) - c - mu).sum()
-    b[i] = numerator / V #/ (1 + reg)
+  # vectorized update b
+  b = (logX - W.dot(U.T) - c.reshape(1, V) - mu).sum(axis=1) / V
 
-  # update U
-  for j in range(V):
-    matrix = reg*np.eye(D) + W.T.dot(W)
-    vector = (logX[:,j] - b - c[j] - mu).dot(W)
-    U[j] = np.linalg.solve(matrix, vector)
+  # vectorized update U
+  matrix = reg*np.eye(D) + W.T.dot(W)
+  vector = (logX - b.reshape(V, 1) - c.reshape(1, V) - mu).T.dot(W).T
+  U = np.linalg.solve(matrix, vector).T
 
-  # update c
-  for j in range(V):
-    numerator = (logX[:,j] - W.dot(U[j]) - b  - mu).sum()
-    c[j] = numerator / V #/ (1 + reg)
+  # vectorized update c
+  c = (logX - W.dot(U.T) - b.reshape(V, 1)  - mu).sum(axis=0) / V
+
+
+print("train duration:", datetime.now() - t0)
 
 plt.plot(costs)
 plt.show()

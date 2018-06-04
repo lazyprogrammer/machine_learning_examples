@@ -53,6 +53,7 @@ def find_analogies(w1, w2, w3):
   for w in (w1, w2, w3):
     if w not in word2vec:
       print("%s not in dictionary" % w)
+      return
 
   king = word2vec[w1]
   man = word2vec[w2]
@@ -64,6 +65,20 @@ def find_analogies(w1, w2, w3):
   best_word = idx2word[idx]
 
   print(w1, "-", w2, "=", best_word, "-", w3)
+
+
+def nearest_neighbors(w, n=5):
+  if w not in word2vec:
+    print("%s not in dictionary:" % w)
+    return
+
+  v = word2vec[w]
+  distances = pairwise_distances(v.reshape(1, D), embedding, metric=metric).reshape(V)
+  idxs = distances.argsort()[1:n+1]
+  print("neighbors of: %s" % w)
+  for idx in idxs:
+    print("\t%s" % idx2word[idx])
+
 
 
 # load in pre-trained word vectors
@@ -111,3 +126,12 @@ find_analogies('france', 'paris', 'beijing')
 find_analogies('february', 'january', 'november')
 find_analogies('france', 'paris', 'rome')
 find_analogies('paris', 'france', 'italy')
+
+nearest_neighbors('king')
+nearest_neighbors('france')
+nearest_neighbors('japan')
+nearest_neighbors('einstein')
+nearest_neighbors('woman')
+nearest_neighbors('nephew')
+nearest_neighbors('february')
+nearest_neighbors('rome')
