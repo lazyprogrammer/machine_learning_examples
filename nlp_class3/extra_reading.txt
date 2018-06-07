@@ -42,3 +42,6 @@ https://research.googleblog.com/2017/12/tacotron-2-generating-human-like-speech.
 An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling
 https://arxiv.org/abs/1803.01271
 (just released March 2018!)
+
+Relational recurrent neural networks
+https://arxiv.org/abs/1806.01822
