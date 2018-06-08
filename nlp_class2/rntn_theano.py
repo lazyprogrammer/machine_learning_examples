@@ -88,7 +88,7 @@ class RecursiveNN:
         self.K = K
         self.f = activation
 
-    def fit(self, trees, reg=1e-3, epochs=8, train_inner_nodes=False):
+    def fit(self, trees, test_trees, reg=1e-3, epochs=8, train_inner_nodes=False):
         D = self.D
         V = self.V
         K = self.K
@@ -156,7 +156,8 @@ class RecursiveNN:
         
         rcost = reg*T.sum([(p*p).sum() for p in self.params])
         if train_inner_nodes:
-            cost = -T.mean(T.log(py_x[T.arange(labels.shape[0]), labels])) + rcost
+            relevant_labels = labels[labels >= 0]
+            cost = -T.mean(T.log(py_x[labels >= 0, relevant_labels])) + rcost
         else:
             cost = -T.mean(T.log(py_x[-1, labels[-1]])) + rcost
         
@@ -178,14 +179,15 @@ class RecursiveNN:
         lr_ = 8e-3 # initial learning rate
         costs = []
         sequence_indexes = range(N)
-        if train_inner_nodes:
-            n_total = sum(len(words) for words, _, _, _ in trees)
-        else:
-            n_total = N
+        # if train_inner_nodes:
+        #     n_total = sum(len(words) for words, _, _, _ in trees)
+        # else:
+        #     n_total = N
         for i in range(epochs):
             t0 = datetime.now()
             sequence_indexes = shuffle(sequence_indexes)
             n_correct = 0
+            n_total = 0
             cost = 0
             it = 0
             for j in sequence_indexes:
@@ -198,20 +200,28 @@ class RecursiveNN:
                         print(p.get_value().sum())
                     exit()
                 cost += c
-                if train_inner_nodes:
-                    n_correct += np.sum(p == lab)
-                else:
-                    n_correct += (p[-1] == lab[-1])
+                n_correct += (p[-1] == lab[-1])
+                n_total += 1
                 it += 1
-                if it % 1 == 0:
+                if it % 10 == 0:
                     sys.stdout.write(
                         "j/N: %d/%d correct rate so far: %f, cost so far: %f\r" %
                         (it, N, float(n_correct)/n_total, cost)
                     )
                     sys.stdout.flush()
+
+            # calculate the test score
+            n_test_correct = 0
+            n_test_total = 0
+            for words, left, right, lab in test_trees:
+                _, p = self.cost_predict_op(words, left, right, lab)
+                n_test_correct += (p[-1] == lab[-1])
+                n_test_total += 1
+
             print(
                 "i:", i, "cost:", cost,
-                "correct rate:", (float(n_correct)/n_total),
+                "train acc:", float(n_correct)/n_total,
+                "test acc:", float(n_test_correct)/n_test_total,
                 "time for epoch:", (datetime.now() - t0)
             )
             costs.append(cost)
@@ -272,6 +282,7 @@ def tree2list(tree, parent_idx, is_binary=False):
         if tree.label > 2:
             label = 1
         elif tree.label < 2:
+        # else:
             label = 0
         else:
             label = -1 # we will eventually filter these out
@@ -297,12 +308,35 @@ def main(is_binary=True):
     if is_binary:
         test = [t for t in test if t[3][-1] >= 0] # for filtering binary labels
 
+    # check imbalance
+    # pos = 0
+    # neg = 0
+    # mid = 0
+    # label_counts = np.zeros(5)
+    # for t in train + test:
+    #     words, left_child, right_child, labels = t
+    #     # for l in labels:
+    #     #     if l == 0:
+    #     #         neg += 1
+    #     #     elif l == 1:
+    #     #         pos += 1
+    #     #     else:
+    #     #         mid += 1
+    #     for l in labels:
+    #         label_counts[l] += 1
+    # # print("pos / total:", float(pos) / (pos + neg + mid))
+    # # print("mid / total:", float(mid) / (pos + neg + mid))
+    # # print("neg / total:", float(neg) / (pos + neg + mid))
+    # print("label proportions:", label_counts / label_counts.sum())
+    # exit()
+
+
     train = shuffle(train)
     # train = train[:5000]
     # n_pos = sum(t[3][-1] for t in train)
     # print("n_pos train:", n_pos)
     test = shuffle(test)
-    test = test[:1000]
+    smalltest = test[:1000]
     # n_pos = sum(t[3][-1] for t in test)
     # print("n_pos test:", n_pos)
 
@@ -312,7 +346,7 @@ def main(is_binary=True):
     K = 2 if is_binary else 5
 
     model = RecursiveNN(V, D, K)
-    model.fit(train)
+    model.fit(train, smalltest, epochs=20, train_inner_nodes=True)
     print("train accuracy:", model.score(train))
     print("test accuracy:", model.score(test))
     print("train f1:", model.f1_score(train))

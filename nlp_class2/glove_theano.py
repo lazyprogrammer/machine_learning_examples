@@ -10,17 +10,28 @@ from builtins import range
 import os
 import json
 import numpy as np
+import theano
+import theano.tensor as T
 import matplotlib.pyplot as plt
 
 from datetime import datetime
 from sklearn.utils import shuffle
 from word2vec import get_wikipedia_data, find_analogies, get_sentences_with_word2idx_limit_vocab
 
-# using ALS, what's the least # files to get correct analogies?
-# use this for word2vec training to make it faster
-# first tried 20 files --> not enough
-# how about 30 files --> some correct but still not enough
-# 40 files --> half right but 50 is better
+
+def momentum_updates(cost, params, lr=1e-4, mu=0.9):
+  grads = T.grad(cost, params)
+  velocities = [theano.shared(
+    np.zeros_like(p.get_value()).astype(np.float32)
+  ) for p in params]
+  updates = []
+  for p, v, g in zip(params, velocities, grads):
+    newv = mu*v - lr*g
+    newp = p + newv
+    updates.append((p, newp))
+    updates.append((v, newv))
+  return updates
+
 
 class Glove:
     def __init__(self, D, V, context_sz):
@@ -101,6 +112,10 @@ class Glove:
         # target
         logX = np.log(X + 1)
 
+        # cast
+        fX = fX.astype(np.float32)
+        logX = logX.astype(np.float32)
+
         print("max in log(X):", logX.max())
 
         print("time to build co-occurrence matrix:", (datetime.now() - t0))
@@ -112,114 +127,42 @@ class Glove:
         c = np.zeros(V)
         mu = logX.mean()
 
+        # initialize weights, inputs, targets placeholders
+        thW = theano.shared(W.astype(np.float32))
+        thb = theano.shared(b.astype(np.float32))
+        thU = theano.shared(U.astype(np.float32))
+        thc = theano.shared(c.astype(np.float32))
+        thLogX = T.matrix('logX')
+        thfX = T.matrix('fX')
+
+        params = [thW, thb, thU, thc]
+
+        thDelta = thW.dot(thU.T) + T.reshape(thb, (V, 1)) + T.reshape(thc, (1, V)) + mu - thLogX
+        thCost = ( thfX * thDelta * thDelta ).sum()
+
+        # regularization
+        regularized_cost = thCost + reg*((thW * thW).sum() + (thU * thU).sum())
+
+        updates = momentum_updates(regularized_cost, params, learning_rate)
+
+        train_op = theano.function(
+            inputs=[thfX, thLogX],
+            updates=updates,
+        )
+
+        cost_op = theano.function(inputs=[thfX, thLogX], outputs=thCost)
 
         costs = []
         sentence_indexes = range(len(sentences))
         for epoch in range(epochs):
-            delta = W.dot(U.T) + b.reshape(V, 1) + c.reshape(1, V) + mu - logX
-            cost = ( fX * delta * delta ).sum()
+            train_op(fX, logX)
+            cost = cost_op(fX, logX)
             costs.append(cost)
             print("epoch:", epoch, "cost:", cost)
 
-            if gd:
-                # gradient descent method
-                # update W
-                # oldW = W.copy()
-                for i in range(V):
-                    # for j in range(V):
-                    #     W[i] -= learning_rate*fX[i,j]*(W[i].dot(U[j]) + b[i] + c[j] + mu - logX[i,j])*U[j]
-                    W[i] -= learning_rate*(fX[i,:]*delta[i,:]).dot(U)
-                W -= learning_rate*reg*W
-                # print "updated W"
 
-                # update b
-                for i in range(V):
-                    # for j in range(V):
-                    #     b[i] -= learning_rate*fX[i,j]*(W[i].dot(U[j]) + b[i] + c[j] + mu - logX[i,j])
-                    b[i] -= learning_rate*fX[i,:].dot(delta[i,:])
-                # b -= learning_rate*reg*b
-                # print "updated b"
-
-                # update U
-                for j in range(V):
-                    # for i in range(V):
-                    #     U[j] -= learning_rate*fX[i,j]*(W[i].dot(U[j]) + b[i] + c[j] + mu - logX[i,j])*W[i]
-                    U[j] -= learning_rate*(fX[:,j]*delta[:,j]).dot(W)
-                U -= learning_rate*reg*U
-                # print "updated U"
-
-                # update c
-                for j in range(V):
-                    # for i in range(V):
-                    #     c[j] -= learning_rate*fX[i,j]*(W[i].dot(U[j]) + b[i] + c[j] + mu - logX[i,j])
-                    c[j] -= learning_rate*fX[:,j].dot(delta[:,j])
-                # c -= learning_rate*reg*c
-                # print "updated c"
-
-            else:
-                # ALS method
-
-                # update W
-                # fast way
-                # t0 = datetime.now()
-                for i in range(V):
-                    # matrix = reg*np.eye(D) + np.sum((fX[i,j]*np.outer(U[j], U[j]) for j in range(V)), axis=0)
-                    matrix = reg*np.eye(D) + (fX[i,:]*U.T).dot(U)
-                    # assert(np.abs(matrix - matrix2).sum() < 1e-5)
-                    vector = (fX[i,:]*(logX[i,:] - b[i] - c - mu)).dot(U)
-                    W[i] = np.linalg.solve(matrix, vector)
-                # print "fast way took:", (datetime.now() - t0)
-
-                # slow way
-                # t0 = datetime.now()
-                # for i in range(V):
-                #     matrix2 = reg*np.eye(D)
-                #     vector2 = 0
-                #     for j in range(V):
-                #         matrix2 += fX[i,j]*np.outer(U[j], U[j])
-                #         vector2 += fX[i,j]*(logX[i,j] - b[i] - c[j])*U[j]
-                # print "slow way took:", (datetime.now() - t0)
-
-                    # assert(np.abs(matrix - matrix2).sum() < 1e-5)
-                    # assert(np.abs(vector - vector2).sum() < 1e-5)
-                    # W[i] = np.linalg.solve(matrix, vector)
-                # print "updated W"
-
-                # update b
-                for i in range(V):
-                    denominator = fX[i,:].sum()
-                    # assert(denominator > 0)
-                    numerator = fX[i,:].dot(logX[i,:] - W[i].dot(U.T) - c - mu)
-                    # for j in range(V):
-                    #     numerator += fX[i,j]*(logX[i,j] - W[i].dot(U[j]) - c[j])
-                    b[i] = numerator / denominator / (1 + reg)
-                # print "updated b"
-
-                # update U
-                for j in range(V):
-                    # matrix = reg*np.eye(D) + np.sum((fX[i,j]*np.outer(W[i], W[i]) for i in range(V)), axis=0)
-                    matrix = reg*np.eye(D) + (fX[:,j]*W.T).dot(W)
-                    # assert(np.abs(matrix - matrix2).sum() < 1e-8)
-                    vector = (fX[:,j]*(logX[:,j] - b - c[j] - mu)).dot(W)
-                    # matrix = reg*np.eye(D)
-                    # vector = 0
-                    # for i in range(V):
-                    #     matrix += fX[i,j]*np.outer(W[i], W[i])
-                    #     vector += fX[i,j]*(logX[i,j] - b[i] - c[j])*W[i]
-                    U[j] = np.linalg.solve(matrix, vector)
-                # print "updated U"
-
-                # update c
-                for j in range(V):
-                    denominator = fX[:,j].sum()
-                    numerator = fX[:,j].dot(logX[:,j] - W.dot(U[j]) - b  - mu)
-                    # for i in range(V):
-                    #     numerator += fX[i,j]*(logX[i,j] - W[i].dot(U[j]) - b[i])
-                    c[j] = numerator / denominator / (1 + reg)
-                # print "updated c"
-
-        self.W = W
-        self.U = U
+        self.W = thW.get_value()
+        self.U = thU.get_value()
 
         plt.plot(costs)
         plt.show()
@@ -261,18 +204,12 @@ def main(we_file, w2i_file, use_brown=True, n_files=50):
 
     V = len(word2idx)
     model = Glove(100, V, 10)
-
-    # alternating least squares method
-    # model.fit(sentences, cc_matrix=cc_matrix, epochs=20)
-
-    # gradient descent method
     model.fit(
         sentences,
         cc_matrix=cc_matrix,
-        learning_rate=5e-4,
+        learning_rate=1e-4,
         reg=0.1,
-        epochs=500,
-        gd=True,
+        epochs=200,
     )
     model.save(we_file)
 
