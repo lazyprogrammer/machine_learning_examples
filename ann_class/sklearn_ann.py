@@ -17,7 +17,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.utils import shuffle
 
 # get the data
-X, Y = get_data()
+X, Y, dummy1, dummy2 = get_data()
 
 # split into train and test
 X, Y = shuffle(X, Y)
