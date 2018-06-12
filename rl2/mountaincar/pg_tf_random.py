@@ -94,9 +94,10 @@ class PolicyModel:
 
     # calculate output and cost
     mean = get_output(self.mean_layers)
-    var = get_output(self.var_layers) + 1e-4 # smoothing
+    std = get_output(self.var_layers) + 1e-4 # smoothing
 
-    norm = tf.contrib.distributions.Normal(mean, var)
+    # note: the 'variance' is actually standard deviation
+    norm = tf.contrib.distributions.Normal(mean, std)
     self.predict_op = tf.clip_by_value(norm.sample(), -1, 1)
 
 
