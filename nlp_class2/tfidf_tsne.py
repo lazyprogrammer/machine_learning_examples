@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from sklearn.manifold import TSNE
+from sklearn.decomposition import TruncatedSVD, PCA, KernelPCA
 from datetime import datetime
 
 import os
@@ -33,8 +34,9 @@ def main():
         ('paris', 'france', 'italy'),
     )
 
+    ### choose a data source ###
     # sentences, word2idx = get_sentences_with_word2idx_limit_vocab(n_vocab=1500)
-    sentences, word2idx = get_wikipedia_data(n_files=20, n_vocab=2000, by_paragraph=True)
+    sentences, word2idx = get_wikipedia_data(n_files=3, n_vocab=2000, by_paragraph=True)
     # with open('tfidf_word2idx.json', 'w') as f:
     #     json.dump(word2idx, f)
 
@@ -63,11 +65,12 @@ def main():
     print("finished getting raw counts")
 
     transformer = TfidfTransformer()
-    A = transformer.fit_transform(A)
-    # print("type(A):", type(A))
-    # exit()
+    A = transformer.fit_transform(A.T).T
+
+    # tsne requires a dense array
     A = A.toarray()
 
+    # map back to word in plot
     idx2word = {v:k for k, v in iteritems(word2idx)}
 
     # plot the data in 2-D
@@ -81,14 +84,21 @@ def main():
             print("bad string:", idx2word[i])
     plt.draw()
 
-    # create a higher-D word embedding, try word analogies
-    # tsne = TSNE(n_components=3)
-    # We = tsne.fit_transform(A)
-    We = Z
+    ### multiple ways to create vectors for each word ###
+    # 1) simply set it to the TF-IDF matrix
+    # We = A
+
+    # 2) create a higher-D word embedding
+    tsne = TSNE(n_components=3)
+    We = tsne.fit_transform(A)
+
+    # 3) use a classic dimensionality reduction technique
+    # svd = KernelPCA(n_components=20, kernel='rbf')
+    # We = svd.fit_transform(A)
 
     for word_list in analogies_to_try:
         w1, w2, w3 = word_list
-        find_analogies(w1, w2, w3, We, word2idx)
+        find_analogies(w1, w2, w3, We, word2idx, idx2word)
 
     plt.show() # pause script until plot is closed
 
