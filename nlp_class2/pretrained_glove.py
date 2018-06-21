@@ -11,6 +11,7 @@ from builtins import range
 
 # WHERE TO GET THE VECTORS:
 # GloVe: https://nlp.stanford.edu/projects/glove/
+# Direct link: http://nlp.stanford.edu/data/glove.6B.zip
 
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
