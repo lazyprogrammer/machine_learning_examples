@@ -1,8 +1,6 @@
-# Course URL:
 # https://deeplearningcourses.com/c/natural-language-processing-with-deep-learning-in-python
 # https://udemy.com/natural-language-processing-with-deep-learning-in-python
 from __future__ import print_function, division
-from future.utils import iteritems
 from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
@@ -10,347 +8,364 @@ from builtins import range
 
 import json
 import numpy as np
-import theano
-import theano.tensor as T
 import matplotlib.pyplot as plt
+from scipy.special import expit as sigmoid
 from sklearn.utils import shuffle
 from datetime import datetime
-from util import find_analogies as _find_analogies
+# from util import find_analogies
+
+from scipy.spatial.distance import cosine as cos_dist
+from sklearn.metrics.pairwise import pairwise_distances
+
+
+from glob import glob
 
 import os
 import sys
+import string
+
 sys.path.append(os.path.abspath('..'))
-from rnn_class.util import get_wikipedia_data
-from rnn_class.brown import get_sentences_with_word2idx_limit_vocab, get_sentences_with_word2idx
+from rnn_class.brown import get_sentences_with_word2idx_limit_vocab as get_brown
 
 
-def get_text8():
-    words = open('../large_files/text8').read()
-    word2idx = {}
-    sents = [[]]
-    count = 0
-    for word in words.split():
-        if word not in word2idx:
-            word2idx[word] = count
-            count += 1
-        sents[0].append(word2idx[word])
-    print("count:", count)
-    return sents, word2idx
+
+# unfortunately these work different ways
+def remove_punctuation_2(s):
+    return s.translate(None, string.punctuation)
+
+def remove_punctuation_3(s):
+    return s.translate(str.maketrans('','',string.punctuation))
+
+if sys.version.startswith('2'):
+    remove_punctuation = remove_punctuation_2
+else:
+    remove_punctuation = remove_punctuation_3
 
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
 
 
-def init_weights(shape):
-    return np.random.randn(*shape).astype(np.float32) / np.sqrt(sum(shape))
+def get_wiki():
+  V = 20000
+  files = glob('../large_files/enwiki*.txt')
+  all_word_counts = {}
+  for f in files:
+    for line in open(f):
+      if line and line[0] not in '[*-|=\{\}':
+        s = remove_punctuation(line).lower().split()
+        if len(s) > 1:
+          for word in s:
+            if word not in all_word_counts:
+              all_word_counts[word] = 0
+            all_word_counts[word] += 1
+  print("finished counting")
+
+  V = min(V, len(all_word_counts))
+  all_word_counts = sorted(all_word_counts.items(), key=lambda x: x[1], reverse=True)
+
+  top_words = [w for w, count in all_word_counts[:V-1]] + ['<UNK>']
+  word2idx = {w:i for i, w in enumerate(top_words)}
+  unk = word2idx['<UNK>']
+
+  sents = []
+  for f in files:
+    for line in open(f):
+      if line and line[0] not in '[*-|=\{\}':
+        s = remove_punctuation(line).lower().split()
+        if len(s) > 1:
+          # if a word is not nearby another word, there won't be any context!
+          # and hence nothing to train!
+          sent = [word2idx[w] if w in word2idx else unk for w in s]
+          sents.append(sent)
+  return sents, word2idx
 
 
-class Model(object):
-    def __init__(self, D, V, context_sz):
-        self.D = D # embedding dimension
-        self.V = V # vocab size
-        # NOTE: we will look context_sz to the right AND context_sz to the left
-        #       so the total number of targets is 2*context_sz
-        self.context_sz = context_sz
-
-    def _get_pnw(self, X):
-        # calculate Pn(w) - probability distribution for negative sampling
-        # basically just the word probability ^ 3/4
-        word_freq = {}
-        word_count = sum(len(x) for x in X)
-        for x in X:
-            for xj in x:
-                if xj not in word_freq:
-                    word_freq[xj] = 0
-                word_freq[xj] += 1
-        self.Pnw = np.zeros(self.V)
-        for j in range(2, self.V): # 0 and 1 are the start and end tokens, we won't use those here
-            self.Pnw[j] = (word_freq[j] / float(word_count))**0.75
-
-        assert(np.all(self.Pnw[2:] > 0))
-        return self.Pnw
-
-    def _get_negative_samples(self, context, num_neg_samples):
-        # temporarily save context values because we don't want to negative sample these
-        saved = {}
-        for context_idx in context:
-            saved[context_idx] = self.Pnw[context_idx]
-            self.Pnw[context_idx] = 0
-        neg_samples = np.random.choice(
-            range(self.V),
-            size=num_neg_samples, # this is arbitrary - number of negative samples to take
-            replace=False,
-            p=self.Pnw / np.sum(self.Pnw),
-        )
-        for j, pnwj in iteritems(saved):
-            self.Pnw[j] = pnwj
-        assert(np.all(self.Pnw[2:] > 0))
-        return neg_samples
-
-    def fit(self, X, num_neg_samples=10, learning_rate=1e-4, mu=0.99, reg=0.1, epochs=10):
-        N = len(X)
-        V = self.V
-        D = self.D
-        self._get_pnw(X)
-
-        # initialize weights and momentum changes
-        self.W1 = init_weights((V, D))
-        self.W2 = init_weights((D, V))
-        dW1 = np.zeros(self.W1.shape)
-        dW2 = np.zeros(self.W2.shape)
-
-        costs = []
-        cost_per_epoch = []
-        sample_indices = range(N)
-        for i in range(epochs):
-            t0 = datetime.now()
-            sample_indices = shuffle(sample_indices)
-            cost_per_epoch_i = []
-            for it in range(N):
-                j = sample_indices[it]
-                x = X[j] # one sentence
-
-                # too short to do 1 iteration, skip
-                if len(x) < 2 * self.context_sz + 1:
-                    continue
-
-                cj = []
-                n = len(x)
-                # for jj in range(n):
-                ########## try one random window per sentence ###########
-                jj = np.random.choice(n)
-                
-                # do the updates manually
-                Z = self.W1[x[jj],:] # note: paper uses linear activation function
-
-                start = max(0, jj - self.context_sz)
-                end = min(n, jj + 1 + self.context_sz)
-                context = np.concatenate([x[start:jj], x[(jj+1):end]])
-                # NOTE: context can contain DUPLICATES!
-                # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
-                context = np.array(list(set(context)), dtype=np.int32)
-
-                posA = Z.dot(self.W2[:,context])
-                pos_pY = sigmoid(posA)
-
-                neg_samples = self._get_negative_samples(context, num_neg_samples)
-
-                # technically can remove this line now but leave for sanity checking
-                # neg_samples = np.setdiff1d(neg_samples, Y[j])
-                negA = Z.dot(self.W2[:,neg_samples])
-                neg_pY = sigmoid(-negA)
-                c = -np.log(pos_pY).sum() - np.log(neg_pY).sum()
-                cj.append(c / (num_neg_samples + len(context)))
-
-                # positive samples
-                pos_err = pos_pY - 1
-                dW2[:, context] = mu*dW2[:, context] - learning_rate*(np.outer(Z, pos_err) + reg*self.W2[:, context])
-
-                # negative samples
-                neg_err = 1 - neg_pY
-                dW2[:, neg_samples] = mu*dW2[:, neg_samples] - learning_rate*(np.outer(Z, neg_err) + reg*self.W2[:, neg_samples])
-
-                self.W2[:, context] += dW2[:, context]
-                # self.W2[:, context] /= np.linalg.norm(self.W2[:, context], axis=1, keepdims=True)
-                self.W2[:, neg_samples] += dW2[:, neg_samples]
-                # self.W2[:, neg_samples] /= np.linalg.norm(self.W2[:, neg_samples], axis=1, keepdims=True)
-
-                # input weights
-                gradW1 = pos_err.dot(self.W2[:, context].T) + neg_err.dot(self.W2[:, neg_samples].T)
-                dW1[x[jj], :] = mu*dW1[x[jj], :] - learning_rate*(gradW1 + reg*self.W1[x[jj], :])
-
-                self.W1[x[jj], :] += dW1[x[jj], :]
-                # self.W1[x[jj], :] /= np.linalg.norm(self.W1[x[jj], :])
-
-                cj = np.mean(cj)
-                cost_per_epoch_i.append(cj)
-                costs.append(cj)
-                if it % 500 == 0:
-                    sys.stdout.write("epoch: %d j: %d/ %d cost: %f\r" % (i, it, N, cj))
-                    sys.stdout.flush()
-
-            epoch_cost = np.mean(cost_per_epoch_i)
-            cost_per_epoch.append(epoch_cost)
-            print(
-                "time to complete epoch %d:" % i, (datetime.now() - t0),
-                "cost:", epoch_cost
-            )
-        plt.plot(costs)
-        plt.title("Numpy costs")
-        plt.show()
-
-        plt.plot(cost_per_epoch)
-        plt.title("Numpy cost at each epoch")
-        plt.show()
-
-    def fitt(self, X, num_neg_samples=10, learning_rate=1e-4, mu=0.99, reg=0.1, epochs=10):
-        N = len(X)
-        V = self.V
-        D = self.D
-        self._get_pnw(X)
-
-        # initialize weights and momentum changes
-        W1 = init_weights((V, D))
-        W2 = init_weights((D, V))
-        W1 = theano.shared(W1)
-        W2 = theano.shared(W2)
-
-        thInput = T.iscalar('input_word')
-        thContext = T.ivector('context')
-        thNegSamples = T.ivector('negative_samples')
-
-        W1_subset = W1[thInput]
-        W2_psubset = W2[:, thContext]
-        W2_nsubset = W2[:, thNegSamples]
-        p_activation = W1_subset.dot(W2_psubset)
-        pos_pY = T.nnet.sigmoid(p_activation)
-        n_activation = W1_subset.dot(W2_nsubset)
-        neg_pY = T.nnet.sigmoid(-n_activation)
-        cost = -T.log(pos_pY).sum() - T.log(neg_pY).sum()
-
-        W1_grad = T.grad(cost, W1_subset)
-        W2_pgrad = T.grad(cost, W2_psubset)
-        W2_ngrad = T.grad(cost, W2_nsubset)
-
-        W1_update = T.inc_subtensor(W1_subset, -learning_rate*W1_grad)
-        W2_update = T.inc_subtensor(
-            T.inc_subtensor(W2_psubset, -learning_rate*W2_pgrad)[:,thNegSamples], -learning_rate*W2_ngrad)
-        # 2 updates for 1 variable
-        # http://stackoverflow.com/questions/15917849/how-can-i-assign-update-subset-of-tensor-shared-variable-in-theano
-        # http://deeplearning.net/software/theano/tutorial/faq_tutorial.html
-        # https://groups.google.com/forum/#!topic/theano-users/hdwaFyrNvHQ
-
-        updates = [(W1, W1_update), (W2, W2_update)]
-
-        train_op = theano.function(
-            inputs=[thInput, thContext, thNegSamples],
-            outputs=cost,
-            updates=updates,
-            allow_input_downcast=True,
-        )
-
-        costs = []
-        cost_per_epoch = []
-        sample_indices = range(N)
-        for i in range(epochs):
-            t0 = datetime.now()
-            sample_indices = shuffle(sample_indices)
-            cost_per_epoch_i = []
-            for it in range(N):
-                j = sample_indices[it]
-                x = X[j] # one sentence
-
-                # too short to do 1 iteration, skip
-                if len(x) < 2 * self.context_sz + 1:
-                    continue
-
-                cj = []
-                n = len(x)
-                # for jj in range(n):
-
-                #     start = max(0, jj - self.context_sz)
-                #     end = min(n, jj + 1 + self.context_sz)
-                #     context = np.concatenate([x[start:jj], x[(jj+1):end]])
-                #     # NOTE: context can contain DUPLICATES!
-                #     # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
-                #     context = np.array(list(set(context)), dtype=np.int32)
-                #     neg_samples = self._get_negative_samples(context, num_neg_samples)
-
-                #     c = train_op(x[jj], context, neg_samples)
-                #     cj.append(c / (num_neg_samples + len(context)))
-
-                ########## try one random window per sentence ###########
-                jj = np.random.choice(n)
-                start = max(0, jj - self.context_sz)
-                end = min(n, jj + 1 + self.context_sz)
-                context = np.concatenate([x[start:jj], x[(jj+1):end]])
-                # NOTE: context can contain DUPLICATES!
-                # e.g. "<UNKOWN> <UNKOWN> cats and dogs"
-                context = np.array(list(set(context)), dtype=np.int32)
-                neg_samples = self._get_negative_samples(context, num_neg_samples)
-
-                c = train_op(x[jj], context, neg_samples)
-                cj.append(c / (num_neg_samples + len(context)))
-                #########################################################
 
 
-                cj = np.mean(cj)
-                cost_per_epoch_i.append(cj)
-                costs.append(cj)
-                if it % 100 == 0:
-                    sys.stdout.write("epoch: %d j: %d/ %d cost: %f\r" % (i, it, N, cj))
-                    sys.stdout.flush()
-
-            epoch_cost = np.mean(cost_per_epoch_i)
-            cost_per_epoch.append(epoch_cost)
-            print(
-                "time to complete epoch %d:" % i, (datetime.now() - t0),
-                "cost:", epoch_cost
-            )
-
-        self.W1 = W1.get_value()
-        self.W2 = W2.get_value()
-
-        plt.plot(costs)
-        plt.title("Theano costs")
-        plt.show()
-
-        plt.plot(cost_per_epoch)
-        plt.title("Theano cost at each epoch")
-        plt.show()
-
-    def save(self, fn):
-        arrays = [self.W1, self.W2]
-        np.savez(fn, *arrays)
+def train_model(savedir):
+  # get the data
+  sentences, word2idx = get_wiki() #get_brown()
 
 
-def main(use_brown=True):
-    if use_brown:
-        sentences, word2idx = get_sentences_with_word2idx_limit_vocab()
-        # sentences, word2idx = get_sentences_with_word2idx()
-        # sentences, word2idx = get_text8()
-    else:
-        sentences, word2idx = get_wikipedia_data(n_files=1, n_vocab=2000)
-    with open('w2v_word2idx.json', 'w') as f:
-        json.dump(word2idx, f)
-
-    V = len(word2idx)
-    model = Model(50, V, 5)
-
-    # use numpy
-    # model.fit(sentences, learning_rate=1e-3, mu=0, epochs=5, num_neg_samples=5)
-
-    # use theano
-    model.fitt(sentences, learning_rate=1e-3, mu=0, epochs=5, num_neg_samples=5)
-
-    model.save('w2v_model.npz')
+  # number of unique words
+  vocab_size = len(word2idx)
 
 
-def find_analogies(w1, w2, w3, concat=True, we_file='w2v_model.npz', w2i_file='w2v_word2idx.json'):
-    npz = np.load(we_file)
-    W1 = npz['arr_0']
-    W2 = npz['arr_1']
+  # config
+  window_size = 5
+  learning_rate = 0.025
+  final_learning_rate = 0.0001
+  num_negatives = 5 # number of negative samples to draw per input word
+  samples_per_epoch = int(1e5)
+  epochs = 20
+  D = 50 # word embedding size
 
-    with open(w2i_file) as f:
-        word2idx = json.load(f)
 
-    V = len(word2idx)
+  # learning rate decay
+  learning_rate_delta = (learning_rate - final_learning_rate) / epochs
 
-    if concat:
-        We = np.hstack([W1, W2.T])
-        print("We.shape:", We.shape)
-        assert(V == We.shape[0])
-    else:
-        We = (W1 + W2.T) / 2
 
-    _find_analogies(w1, w2, w3, We, word2idx)
+  # params
+  W = np.random.randn(vocab_size, D) # input-to-hidden
+  V = np.random.randn(D, vocab_size) # hidden-to-output
+
+
+  # distribution for drawing negative samples
+  p_neg = get_negative_sampling_distribution(sentences)
+
+
+  # save the costs to plot them per iteration
+  costs = []
+
+
+  # number of total words in corpus
+  total_words = sum(len(sentence) for sentence in sentences)
+  print("total number of words in corpus:", total_words)
+
+
+  # train the model
+  for epoch in range(epochs):
+    # randomly order sentences so we don't always see
+    # sentences in the same order
+    np.random.shuffle(sentences)
+
+    # accumulate the cost
+    cost = 0
+    counter = 0
+    for sentence in sentences:
+      # randomly order words so we don't always see
+      # samples in the same order
+      # randomly_ordered_positions = [pos for pos in range(len(sentence)) \
+      #   if p_neg[sentence[pos]] > np.random.random()]
+      randomly_ordered_positions = np.random.choice(
+        len(sentence),
+        size=np.random.randint(1, len(sentence) + 1), #samples_per_epoch,
+        replace=False,
+      )
+
+
+      # keep only certain words based on p_neg
+      threshold = 1e-5
+      p_drop = 1 - np.sqrt(threshold / p_neg)
+      randomly_ordered_positions = [i for i in randomly_ordered_positions \
+        if np.random.random() < (1 - p_drop[sentence[i]])
+      ]
+      # print("Reduced sentence size from %s to %s" % (len(sentence), len(randomly_ordered_positions)))
+      if len(randomly_ordered_positions) == 0:
+        continue
+
+      
+      for pos in randomly_ordered_positions:
+        # the middle word
+        word = sentence[pos]
+
+        # get the positive context words/negative samples
+        context_words = get_context(pos, sentence, window_size)
+        # negative_samples = get_negative_samples(context_words, num_negatives, p_neg)
+        # print("V:", V, "p_neg.shape:", p_neg.shape)
+        neg_word = np.random.choice(vocab_size, p=p_neg)
+
+        # combine them so we can loop over them all at once
+        # also shuffle, so we don't do all +ve then all-ve
+        # words_and_labels = join_samples(context_words, negative_samples)
+        targets = np.array(context_words)
+        # for other_word, label in words_and_labels:
+
+        # do one iteration of stochastic gradient descent
+        c = sgd(word, targets, 1, learning_rate, W, V)
+        cost += c
+        c = sgd(neg_word, targets, 0, learning_rate, W, V)
+        cost += c
+
+      counter += 1
+      if counter % 100 == 0:
+        sys.stdout.write("processed %s / %s\r" % (counter, len(sentences)))
+        sys.stdout.flush()
+        # break
+
+
+    # print stuff so we don't stare at a blank screen
+    print("epoch complete:", epoch)
+
+    # save the cost
+    costs.append(cost)
+
+    # update the learning rate
+    learning_rate -= learning_rate_delta
+
+
+  # plot the cost per iteration
+  plt.plot(costs)
+  plt.show()
+
+
+  # save the model
+  if not os.path.exists(savedir):
+    os.mkdir(savedir)
+
+  with open('%s/word2idx.json' % savedir, 'w') as f:
+    json.dump(word2idx, f)
+
+  np.savez('%s/weights.npz' % savedir, W, V)
+
+  # return the model
+  return word2idx, W, V
+
+
+def get_negative_sampling_distribution(sentences):
+  # Pn(w) = prob of word occuring
+  # we would like to sample the negative samples
+  # such that words that occur more often
+  # should be sampled more often
+
+  word_freq = {}
+  word_count = sum(len(sentence) for sentence in sentences)
+  for sentence in sentences:
+      for word in sentence:
+          if word not in word_freq:
+              word_freq[word] = 0
+          word_freq[word] += 1
+  
+  # vocab size
+  V = len(word_freq)
+
+  p_neg = np.zeros(V)
+  for j in range(V):
+      p_neg[j] = word_freq[j]**0.75
+
+  # normalize it
+  p_neg = p_neg / p_neg.sum()
+
+  assert(np.all(p_neg > 0))
+  return p_neg
+
+
+def get_context(pos, sentence, window_size):
+  # input:
+  # a sentence of the form: x x x x c c c pos c c c x x x x
+  # output:
+  # the context word indices: c c c c c c
+
+  start = max(0, pos - window_size)
+  end_  = min(len(sentence), pos + window_size)
+
+  context = []
+  for ctx_pos, ctx_word_idx in enumerate(sentence[start:end_], start=start):
+    if ctx_pos != pos:
+      # don't include the input word itself as a target
+      context.append(ctx_word_idx)
+  return context
+
+
+def sgd(input_, targets, label, learning_rate, W, V):
+  # W[input_] shape: D
+  # V[:,targets] shape: D x N
+  # activation shape: N
+  # print("input_:", input_, "targets:", targets)
+  activation = W[input_].dot(V[:,targets])
+  prob = sigmoid(activation)
+
+  # gradients
+  gV = np.outer(W[input_], prob - label) # D x N
+  gW = np.sum((prob - label)*V[:,targets], axis=1) # D
+
+  V[:,targets] -= learning_rate*gV # D x N
+  W[input_] -= learning_rate*gW # D
+
+  # return cost (binary cross entropy)
+  cost = label * np.log(prob + 1e-10) + (1 - label) * np.log(1 - prob + 1e-10)
+  return cost.sum()
+
+
+def load_model(savedir):
+  with open('%s/word2idx.json' % savedir) as f:
+    word2idx = json.load(f)
+  npz = np.load('%s/weights.npz' % savedir)
+  W = npz['arr_0']
+  V = npz['arr_1']
+  return word2idx, W, V
+
+
+
+def analogy(pos1, neg1, pos2, neg2, word2idx, idx2word, W):
+  V, D = W.shape
+
+  # don't actually use pos2 in calculation, just print what's expected
+  print("testing: %s - %s = %s - %s" % (pos1, neg1, pos2, neg2))
+  for w in (pos1, neg1, pos2, neg2):
+    if w not in word2idx:
+      print("Sorry, %s not in word2idx" % w)
+      return
+
+  p1 = W[word2idx[pos1]]
+  n1 = W[word2idx[neg1]]
+  p2 = W[word2idx[pos2]]
+  n2 = W[word2idx[neg2]]
+
+  vec = p1 - n1 + n2
+
+  distances = pairwise_distances(vec.reshape(1, D), W, metric='cosine').reshape(V)
+  idx = distances.argsort()[:10]
+
+  # pick one that's not p1, n1, or n2
+  best_idx = -1
+  keep_out = [word2idx[w] for w in (pos1, neg1, neg2)]
+  # print("keep_out:", keep_out)
+  for i in idx:
+    if i not in keep_out:
+      best_idx = i
+      break
+  # print("best_idx:", best_idx)
+
+  print("got: %s - %s = %s - %s" % (pos1, neg1, idx2word[best_idx], neg2))
+  print("closest 10:")
+  for i in idx:
+    print(idx2word[i], distances[i])
+
+  print("dist to %s:" % pos2, cos_dist(p2, vec))
+
+
+def test_model(word2idx, W, V):
+  # there are multiple ways to get the "final" word embedding
+  # We = (W + V.T) / 2
+  # We = W
+
+  idx2word = {i:w for w, i in word2idx.items()}
+
+  for We in (W, (W + V.T) / 2):
+    print("**********")
+
+    analogy('king', 'man', 'queen', 'woman', word2idx, idx2word, We)
+    analogy('king', 'prince', 'queen', 'princess', word2idx, idx2word, We)
+    analogy('miami', 'florida', 'dallas', 'texas', word2idx, idx2word, We)
+    analogy('einstein', 'scientist', 'picasso', 'painter', word2idx, idx2word, We)
+    analogy('japan', 'sushi', 'germany', 'bratwurst', word2idx, idx2word, We)
+    analogy('man', 'woman', 'he', 'she', word2idx, idx2word, We)
+    analogy('man', 'woman', 'uncle', 'aunt', word2idx, idx2word, We)
+    analogy('man', 'woman', 'brother', 'sister', word2idx, idx2word, We)
+    analogy('man', 'woman', 'husband', 'wife', word2idx, idx2word, We)
+    analogy('man', 'woman', 'actor', 'actress', word2idx, idx2word, We)
+    analogy('man', 'woman', 'father', 'mother', word2idx, idx2word, We)
+    analogy('heir', 'heiress', 'prince', 'princess', word2idx, idx2word, We)
+    analogy('nephew', 'niece', 'uncle', 'aunt', word2idx, idx2word, We)
+    analogy('france', 'paris', 'japan', 'tokyo', word2idx, idx2word, We)
+    analogy('france', 'paris', 'china', 'beijing', word2idx, idx2word, We)
+    analogy('february', 'january', 'december', 'november', word2idx, idx2word, We)
+    analogy('france', 'paris', 'germany', 'berlin', word2idx, idx2word, We)
+    analogy('week', 'day', 'year', 'month', word2idx, idx2word, We)
+    analogy('week', 'day', 'hour', 'minute', word2idx, idx2word, We)
+    analogy('france', 'paris', 'italy', 'rome', word2idx, idx2word, We)
+    analogy('paris', 'france', 'rome', 'italy', word2idx, idx2word, We)
+    analogy('france', 'french', 'england', 'english', word2idx, idx2word, We)
+    analogy('japan', 'japanese', 'china', 'chinese', word2idx, idx2word, We)
+    analogy('china', 'chinese', 'america', 'american', word2idx, idx2word, We)
+    analogy('japan', 'japanese', 'italy', 'italian', word2idx, idx2word, We)
+    analogy('japan', 'japanese', 'australia', 'australian', word2idx, idx2word, We)
+    analogy('walk', 'walking', 'swim', 'swimming', word2idx, idx2word, We)
+
+
 
 if __name__ == '__main__':
-    main(use_brown=False)
-    for concat in (True, False):
-        print("** concat:", concat)
-        find_analogies('king', 'man', 'woman', concat=concat)
-        find_analogies('france', 'paris', 'london', concat=concat)
-        find_analogies('france', 'paris', 'rome', concat=concat)
-        find_analogies('paris', 'france', 'italy', concat=concat)
+  word2idx, W, V = train_model('w2v_model')
+  # word2idx, W, V = load_model('w2v_model')
+  test_model(word2idx, W, V)
+
