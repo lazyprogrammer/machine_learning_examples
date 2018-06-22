@@ -95,8 +95,7 @@ def train_model(savedir):
   learning_rate = 0.025
   final_learning_rate = 0.0001
   num_negatives = 5 # number of negative samples to draw per input word
-  samples_per_epoch = int(1e5)
-  epochs = 20
+  epochs = 5
   D = 50 # word embedding size
 
 
@@ -110,7 +109,7 @@ def train_model(savedir):
 
 
   # distribution for drawing negative samples
-  p_neg = get_negative_sampling_distribution(sentences)
+  p_neg = get_negative_sampling_distribution(sentences, vocab_size)
 
 
   # save the costs to plot them per iteration
@@ -138,7 +137,7 @@ def train_model(savedir):
       #   if p_neg[sentence[pos]] > np.random.random()]
       randomly_ordered_positions = np.random.choice(
         len(sentence),
-        size=np.random.randint(1, len(sentence) + 1), #samples_per_epoch,
+        size=np.random.randint(1, len(sentence) + 1),
         replace=False,
       )
 
@@ -184,7 +183,7 @@ def train_model(savedir):
 
 
     # print stuff so we don't stare at a blank screen
-    print("epoch complete:", epoch)
+    print("epoch complete:", epoch, "cost:", cost)
 
     # save the cost
     costs.append(cost)
@@ -211,26 +210,20 @@ def train_model(savedir):
   return word2idx, W, V
 
 
-def get_negative_sampling_distribution(sentences):
+def get_negative_sampling_distribution(sentences, vocab_size):
   # Pn(w) = prob of word occuring
   # we would like to sample the negative samples
   # such that words that occur more often
   # should be sampled more often
 
-  word_freq = {}
+  word_freq = np.zeros(vocab_size)
   word_count = sum(len(sentence) for sentence in sentences)
   for sentence in sentences:
       for word in sentence:
-          if word not in word_freq:
-              word_freq[word] = 0
           word_freq[word] += 1
-  
-  # vocab size
-  V = len(word_freq)
 
-  p_neg = np.zeros(V)
-  for j in range(V):
-      p_neg[j] = word_freq[j]**0.75
+  # smooth it
+  p_neg = word_freq**0.75
 
   # normalize it
   p_neg = p_neg / p_neg.sum()
