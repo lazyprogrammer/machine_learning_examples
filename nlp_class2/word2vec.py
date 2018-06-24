@@ -95,7 +95,7 @@ def train_model(savedir):
   learning_rate = 0.025
   final_learning_rate = 0.0001
   num_negatives = 5 # number of negative samples to draw per input word
-  epochs = 5
+  epochs = 20
   D = 50 # word embedding size
 
 
@@ -120,6 +120,10 @@ def train_model(savedir):
   total_words = sum(len(sentence) for sentence in sentences)
   print("total number of words in corpus:", total_words)
 
+  # for subsampling each sentence
+  threshold = 1e-5
+  p_drop = 1 - np.sqrt(threshold / p_neg)
+
 
   # train the model
   for epoch in range(epochs):
@@ -130,27 +134,23 @@ def train_model(savedir):
     # accumulate the cost
     cost = 0
     counter = 0
+    t0 = datetime.now()
     for sentence in sentences:
+      # keep only certain words based on p_neg
+      sentence = [w for w in sentence \
+        if np.random.random() < (1 - p_drop[w])
+      ]
+      if len(sentence) < 2:
+        continue
+
+
       # randomly order words so we don't always see
       # samples in the same order
-      # randomly_ordered_positions = [pos for pos in range(len(sentence)) \
-      #   if p_neg[sentence[pos]] > np.random.random()]
       randomly_ordered_positions = np.random.choice(
         len(sentence),
-        size=np.random.randint(1, len(sentence) + 1),
+        size=len(sentence),#np.random.randint(1, len(sentence) + 1),
         replace=False,
       )
-
-
-      # keep only certain words based on p_neg
-      threshold = 1e-5
-      p_drop = 1 - np.sqrt(threshold / p_neg)
-      randomly_ordered_positions = [i for i in randomly_ordered_positions \
-        if np.random.random() < (1 - p_drop[sentence[i]])
-      ]
-      # print("Reduced sentence size from %s to %s" % (len(sentence), len(randomly_ordered_positions)))
-      if len(randomly_ordered_positions) == 0:
-        continue
 
       
       for pos in randomly_ordered_positions:
@@ -159,15 +159,8 @@ def train_model(savedir):
 
         # get the positive context words/negative samples
         context_words = get_context(pos, sentence, window_size)
-        # negative_samples = get_negative_samples(context_words, num_negatives, p_neg)
-        # print("V:", V, "p_neg.shape:", p_neg.shape)
         neg_word = np.random.choice(vocab_size, p=p_neg)
-
-        # combine them so we can loop over them all at once
-        # also shuffle, so we don't do all +ve then all-ve
-        # words_and_labels = join_samples(context_words, negative_samples)
         targets = np.array(context_words)
-        # for other_word, label in words_and_labels:
 
         # do one iteration of stochastic gradient descent
         c = sgd(word, targets, 1, learning_rate, W, V)
@@ -183,7 +176,8 @@ def train_model(savedir):
 
 
     # print stuff so we don't stare at a blank screen
-    print("epoch complete:", epoch, "cost:", cost)
+    dt = datetime.now() - t0
+    print("epoch complete:", epoch, "cost:", cost, "dt:", dt)
 
     # save the cost
     costs.append(cost)
