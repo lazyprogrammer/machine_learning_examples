@@ -115,7 +115,7 @@ def train_model(savedir):
   final_learning_rate = 0.0001
   num_negatives = 5 # number of negative samples to draw per input word
   samples_per_epoch = int(1e5)
-  epochs = 25
+  epochs = 20
   D = 50 # word embedding size
 
   # learning rate decay
@@ -197,6 +197,11 @@ def train_model(savedir):
   print("total number of words in corpus:", total_words)
 
 
+  # for subsampling each sentence
+  threshold = 1e-5
+  p_drop = 1 - np.sqrt(threshold / p_neg)
+
+
   # train the model
   for epoch in range(epochs):
     # randomly order sentences so we don't always see
@@ -209,33 +214,27 @@ def train_model(savedir):
     inputs = []
     targets = []
     negwords = []
+    t0 = datetime.now()
     for sentence in sentences:
+
+      # keep only certain words based on p_neg
+      sentence = [w for w in sentence \
+        if np.random.random() < (1 - p_drop[w])
+      ]
+      if len(sentence) < 2:
+        continue
+
+
       # randomly order words so we don't always see
       # samples in the same order
-      # randomly_ordered_positions = [pos for pos in range(len(sentence)) \
-      #   if p_neg[sentence[pos]] > np.random.random()]
       randomly_ordered_positions = np.random.choice(
         len(sentence),
-        size=np.random.randint(1, len(sentence) + 1), #samples_per_epoch,
+        # size=np.random.randint(1, len(sentence) + 1),
+        size=len(sentence),
         replace=False,
       )
 
 
-      # keep only certain words based on p_neg
-      threshold = 1e-5
-      p_drop = 1 - np.sqrt(threshold / p_neg)
-      randomly_ordered_positions = [i for i in randomly_ordered_positions \
-        if np.random.random() < (1 - p_drop[sentence[i]])
-      ]
-      # print("Reduced sentence size from %s to %s" % (len(sentence), len(randomly_ordered_positions)))
-      if len(randomly_ordered_positions) == 0:
-        continue
-      
-      # init
-      # TODO: don't need to randomly order positions
-      # since we'll do the whole sentence at once
-      # move call to train op outside the loop
-      
       for j, pos in enumerate(randomly_ordered_positions):
         # the middle word
         word = sentence[pos]
@@ -244,10 +243,6 @@ def train_model(savedir):
         context_words = get_context(pos, sentence, window_size)
         neg_word = np.random.choice(vocab_size, p=p_neg)
 
-        # combine them so we can loop over them all at once
-        # also shuffle, so we don't do all +ve then all-ve
-        # words_and_labels = join_samples(context_words, negative_samples)
-        # targets_ = np.array(context_words)
         
         n = len(context_words)
         inputs += [word]*n
@@ -290,7 +285,8 @@ def train_model(savedir):
 
 
     # print stuff so we don't stare at a blank screen
-    print("epoch complete:", epoch)
+    dt = datetime.now() - t0
+    print("epoch complete:", epoch, "cost:", cost, "dt:", dt)
 
     # save the cost
     costs.append(cost)
@@ -339,7 +335,7 @@ def get_negative_sampling_distribution(sentences):
 
   p_neg = np.zeros(V)
   for j in range(V):
-      p_neg[j] = (word_freq[j] / float(V))**0.75
+      p_neg[j] = word_freq[j]**0.75
 
   # normalize it
   p_neg = p_neg / p_neg.sum()
@@ -363,38 +359,6 @@ def get_context(pos, sentence, window_size):
       # don't include the input word itself as a target
       context.append(ctx_word_idx)
   return context
-
-
-def get_negative_samples(context, num_negatives, p_neg):
-  # randomly select some words not in the context
-
-  # first copy p_neg so we can modify it by
-  # setting the sentence's word's probabilities to 0
-  p_neg = p_neg.copy()
-
-  for word in context:
-    p_neg[word] = 0
-
-  # re-normalize it so it remains a valid distribution
-  p_neg = p_neg / p_neg.sum()
-
-  # draw the samples
-  neg_samples = np.random.choice(
-    len(p_neg), # vocab size
-    size=num_negatives,
-    replace=False,
-    p=p_neg,
-  )
-  return neg_samples
-
-
-def join_samples(context_words, negative_samples):
-  # we want to return a list of tuples of:
-  # word -> label
-  words_and_labels = [(w, 1) for w in context_words] + \
-                     [(w, 0) for w in negative_samples]
-  np.random.shuffle(words_and_labels)
-  return words_and_labels
 
 
 
