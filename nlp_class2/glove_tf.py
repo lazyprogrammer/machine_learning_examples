@@ -15,7 +15,13 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 from sklearn.utils import shuffle
-from word2vec import get_wikipedia_data, find_analogies, get_sentences_with_word2idx_limit_vocab
+from util import find_analogies
+
+import sys
+sys.path.append(os.path.abspath('..'))
+from rnn_class.util import get_wikipedia_data
+from rnn_class.brown import get_sentences_with_word2idx_limit_vocab, get_sentences_with_word2idx
+
 
 
 class Glove:
@@ -24,7 +30,7 @@ class Glove:
         self.V = V
         self.context_sz = context_sz
 
-    def fit(self, sentences, cc_matrix=None, learning_rate=1e-4, reg=0.1, xmax=100, alpha=0.75, epochs=10, gd=False, use_theano=False, use_tensorflow=False):
+    def fit(self, sentences, cc_matrix=None, learning_rate=1e-4, reg=0.1, xmax=100, alpha=0.75, epochs=10):
         # build co-occurrence matrix
         # paper calls it X, so we will call it X, instead of calling
         # the training data X
@@ -119,7 +125,7 @@ class Glove:
         delta = tf.matmul(tfW, tf.transpose(tfU)) + tfb + tfc + mu - tfLogX
         cost = tf.reduce_sum(tffX * delta * delta)
         regularized_cost = cost
-        for param in (tfW, tfb, tfU, tfc):
+        for param in (tfW, tfU):
             regularized_cost += reg*tf.reduce_sum(param * param)
 
         train_op = tf.train.MomentumOptimizer(
@@ -189,14 +195,31 @@ if __name__ == '__main__':
     we = 'glove_model_50.npz'
     w2i = 'glove_word2idx_50.json'
     main(we, w2i, use_brown=False)
+
+    # load back embeddings
+    npz = np.load(we)
+    W1 = npz['arr_0']
+    W2 = npz['arr_1']
+
+    with open(w2i) as f:
+        word2idx = json.load(f)
+        idx2word = {i:w for w,i in word2idx.items()}
+
     for concat in (True, False):
         print("** concat:", concat)
-        find_analogies('king', 'man', 'woman', concat, we, w2i)
-        find_analogies('france', 'paris', 'london', concat, we, w2i)
-        find_analogies('france', 'paris', 'rome', concat, we, w2i)
-        find_analogies('paris', 'france', 'italy', concat, we, w2i)
-        find_analogies('france', 'french', 'english', concat, we, w2i)
-        find_analogies('japan', 'japanese', 'chinese', concat, we, w2i)
-        find_analogies('japan', 'japanese', 'italian', concat, we, w2i)
-        find_analogies('japan', 'japanese', 'australian', concat, we, w2i)
-        find_analogies('december', 'november', 'june', concat, we, w2i)
+
+        if concat:
+            We = np.hstack([W1, W2.T])
+        else:
+            We = (W1 + W2.T) / 2
+
+
+        find_analogies('king', 'man', 'woman', We, word2idx, idx2word)
+        find_analogies('france', 'paris', 'london', We, word2idx, idx2word)
+        find_analogies('france', 'paris', 'rome', We, word2idx, idx2word)
+        find_analogies('paris', 'france', 'italy', We, word2idx, idx2word)
+        find_analogies('france', 'french', 'english', We, word2idx, idx2word)
+        find_analogies('japan', 'japanese', 'chinese', We, word2idx, idx2word)
+        find_analogies('japan', 'japanese', 'italian', We, word2idx, idx2word)
+        find_analogies('japan', 'japanese', 'australian', We, word2idx, idx2word)
+        find_analogies('december', 'november', 'june', We, word2idx, idx2word)
