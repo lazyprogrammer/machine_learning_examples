@@ -1,2 +1,11 @@
 Neural Word Embedding as Implicit Matrix Factorization
 http://papers.nips.cc/paper/5477-neural-word-embedding-as-implicit-matrix-factorization.pdf
+
+Hierarchical Softmax
+http://www.iro.umontreal.ca/~lisa/pointeurs/hierarchical-nnlm-aistats05.pdf
+
+More about Hierarchical Softmax
+http://papers.nips.cc/paper/3583-a-scalable-hierarchical-distributed-language-model.pdf
+
+Distributed Representations of Words and Phrases and their Compositionality
+https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf

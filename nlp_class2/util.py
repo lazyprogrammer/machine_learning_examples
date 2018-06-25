@@ -54,8 +54,17 @@ def find_analogies(w1, w2, w3, We, word2idx, idx2word):
 
     for dist in ('euclidean', 'cosine'):
         distances = pairwise_distances(v0.reshape(1, D), We, metric=dist).reshape(V)
-        idx = distances.argmin()
-        best_word = idx2word[idx]
+        # idx = distances.argmin()
+        # best_word = idx2word[idx]
+        idx = distances.argsort()[:4]
+        best_idx = -1
+        keep_out = [word2idx[w] for w in (w1, w2, w3)]
+        for i in idx:
+            if i not in keep_out:
+                best_idx = i
+                break
+        best_word = idx2word[best_idx]
+
 
         print("closest match by", dist, "distance:", best_word)
         print(w1, "-", w2, "=", best_word, "-", w3)
