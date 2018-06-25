@@ -148,7 +148,7 @@ class RecursiveNN:
         # NOTE: If you're using GPU, InteractiveSession breaks
         # AdagradOptimizer and some other optimizers
         # change to tf.Session() if so.
-        self.session = tf.InteractiveSession()
+        self.session = tf.Session()
         init_op = tf.global_variables_initializer()
         self.session.run(init_op)
 
