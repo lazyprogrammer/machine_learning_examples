@@ -16,6 +16,7 @@ from builtins import range
 
 import nltk
 import numpy as np
+from sklearn.utils import shuffle
 
 from nltk.stem import WordNetLemmatizer
 from sklearn.linear_model import LogisticRegression
@@ -76,8 +77,10 @@ word_index_map = {}
 current_index = 0
 positive_tokenized = []
 negative_tokenized = []
+orig_reviews = []
 
 for review in positive_reviews:
+    orig_reviews.append(review.text)
     tokens = my_tokenizer(review.text)
     positive_tokenized.append(tokens)
     for token in tokens:
@@ -86,6 +89,7 @@ for review in positive_reviews:
             current_index += 1
 
 for review in negative_reviews:
+    orig_reviews.append(review.text)
     tokens = my_tokenizer(review.text)
     negative_tokenized.append(tokens)
     for token in tokens:
@@ -93,6 +97,7 @@ for review in negative_reviews:
             word_index_map[token] = current_index
             current_index += 1
 
+print("len(word_index_map):", len(word_index_map))
 
 # now let's create our input matrices
 def tokens_to_vector(tokens, label):
@@ -120,7 +125,7 @@ for tokens in negative_tokenized:
 
 # shuffle the data and create train/test splits
 # try it multiple times!
-np.random.shuffle(data)
+orig_reviews, data = shuffle(orig_reviews, data)
 
 X = data[:,:-1]
 Y = data[:,-1]
@@ -133,7 +138,8 @@ Ytest = Y[-100:,]
 
 model = LogisticRegression()
 model.fit(Xtrain, Ytrain)
-print("Classification rate:", model.score(Xtest, Ytest))
+print("Train accuracy:", model.score(Xtrain, Ytrain))
+print("Test accuracy:", model.score(Xtest, Ytest))
 
 
 # let's look at the weights for each word
@@ -143,3 +149,30 @@ for word, index in iteritems(word_index_map):
     weight = model.coef_[0][index]
     if weight > threshold or weight < -threshold:
         print(word, weight)
+
+
+# check misclassified examples
+P = model.predict_proba(X)[:,1] # p(y = 1 | x)
+
+# since there are many, just print the "most" wrong samples
+minP_whenYis1 = 1
+maxP_whenYis0 = 0
+wrong_positive_review = None
+wrong_negative_review = None
+for i in range(N):
+    p = P[i]
+    y = Y[i]
+    if y == 1 and p < 0.5:
+        if p < minP_whenYis1:
+            wrong_positive_review = orig_reviews[i]
+            minP_whenYis1 = p
+    elif y == 0 and p > 0.5:
+        if p > maxP_whenYis0:
+            wrong_negative_review = orig_reviews[i]
+            maxP_whenYis0 = p
+
+print("Most wrong positive review (prob = %s):" % minP_whenYis1)
+print(wrong_positive_review)
+print("Most wrong negative review (prob = %s):" % maxP_whenYis0)
+print(wrong_negative_review)
+
