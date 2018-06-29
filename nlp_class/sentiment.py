@@ -152,6 +152,7 @@ for word, index in iteritems(word_index_map):
 
 
 # check misclassified examples
+preds = model.predict(X)
 P = model.predict_proba(X)[:,1] # p(y = 1 | x)
 
 # since there are many, just print the "most" wrong samples
@@ -159,20 +160,24 @@ minP_whenYis1 = 1
 maxP_whenYis0 = 0
 wrong_positive_review = None
 wrong_negative_review = None
+wrong_positive_prediction = None
+wrong_negative_prediction = None
 for i in range(N):
     p = P[i]
     y = Y[i]
     if y == 1 and p < 0.5:
         if p < minP_whenYis1:
             wrong_positive_review = orig_reviews[i]
+            wrong_positive_prediction = preds[i]
             minP_whenYis1 = p
     elif y == 0 and p > 0.5:
         if p > maxP_whenYis0:
             wrong_negative_review = orig_reviews[i]
+            wrong_negative_prediction = preds[i]
             maxP_whenYis0 = p
 
-print("Most wrong positive review (prob = %s):" % minP_whenYis1)
+print("Most wrong positive review (prob = %s, pred = %s):" % (minP_whenYis1, wrong_positive_prediction))
 print(wrong_positive_review)
-print("Most wrong negative review (prob = %s):" % maxP_whenYis0)
+print("Most wrong negative review (prob = %s, pred = %s):" % (maxP_whenYis0, wrong_negative_prediction))
 print(wrong_negative_review)
 
