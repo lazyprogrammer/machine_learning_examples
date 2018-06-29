@@ -133,7 +133,9 @@ if not os.path.exists('pmi_counts_%s.npz' % V):
 
           start = max(0, i - context_size)
           end   = min(len(line_as_idx), i + context_size)
-          for c in line_as_idx[start:end]:
+          for c in line_as_idx[start:i]:
+            wc_counts[w, c] += 1
+          for c in line_as_idx[i+1:end]:
             wc_counts[w, c] += 1
   print("Finished counting")
 
@@ -161,8 +163,8 @@ logX[logX < 0] = 0
 
 
 # latent dimension
-D = 50
-reg = 0.
+D = 100
+reg = 0.1
 
 
 # initialize weights
