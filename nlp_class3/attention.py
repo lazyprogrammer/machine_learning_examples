@@ -202,7 +202,11 @@ for i, d in enumerate(decoder_targets):
 # Set up the encoder - simple!
 encoder_inputs_placeholder = Input(shape=(max_len_input,))
 x = embedding_layer(encoder_inputs_placeholder)
-encoder = Bidirectional(LSTM(LATENT_DIM, return_sequences=True, dropout=0.5))
+encoder = Bidirectional(LSTM(
+  LATENT_DIM,
+  return_sequences=True,
+  # dropout=0.5 # dropout not available on gpu
+))
 encoder_outputs = encoder(x)
 
 
