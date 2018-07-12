@@ -15,6 +15,11 @@ from keras.utils import to_categorical
 import numpy as np
 import matplotlib.pyplot as plt
 
+import keras.backend as K
+if len(K.tensorflow_backend._get_available_gpus()) > 0:
+  from keras.layers import CuDNNLSTM as LSTM
+  from keras.layers import CuDNNGRU as GRU
+
 
 # some config
 BATCH_SIZE = 64  # Batch size for training.

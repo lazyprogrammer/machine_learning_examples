@@ -19,6 +19,11 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.optimizers import Adam
 from sklearn.metrics import roc_auc_score
 
+import keras.backend as K
+if len(K.tensorflow_backend._get_available_gpus()) > 0:
+  from keras.layers import CuDNNLSTM as LSTM
+  from keras.layers import CuDNNGRU as GRU
+
 
 # Download the data:
 # https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge

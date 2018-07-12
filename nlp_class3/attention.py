@@ -16,6 +16,10 @@ import keras.backend as K
 import numpy as np
 import matplotlib.pyplot as plt
 
+if len(K.tensorflow_backend._get_available_gpus()) > 0:
+  from keras.layers import CuDNNLSTM as LSTM
+  from keras.layers import CuDNNGRU as GRU
+
 
 # make sure we do softmax over the time axis
 # expected shape is N x T x D
