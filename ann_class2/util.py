@@ -78,19 +78,40 @@ def get_transformed_data():
         exit()
 
     df = pd.read_csv('../large_files/train.csv')
-    data = df.as_matrix().astype(np.float32)
+    data = df.values.astype(np.float32)
     np.random.shuffle(data)
 
     X = data[:, 1:]
-    mu = X.mean(axis=0)
-    X = X - mu # center the data
-    pca = PCA()
-    Z = pca.fit_transform(X)
     Y = data[:, 0].astype(np.int32)
+
+    Xtrain = X[:-1000]
+    Ytrain = Y[:-1000]
+    Xtest  = X[-1000:]
+    Ytest  = Y[-1000:]
+
+    # center the data
+    mu = Xtrain.mean(axis=0)
+    Xtrain = Xtrain - mu
+    Xtest  = Xtest - mu
+
+    # transform the data
+    pca = PCA()
+    Ztrain = pca.fit_transform(Xtrain)
+    Ztest  = pca.transform(Xtest)
 
     plot_cumulative_variance(pca)
 
-    return Z, Y, pca, mu
+    # take first 300 cols of Z
+    Ztrain = Ztrain[:, :300]
+    Ztest = Ztest[:, :300]
+
+    # normalize Z
+    mu = Ztrain.mean(axis=0)
+    std = Ztrain.std(axis=0)
+    Ztrain = (Ztrain - mu) / std
+    Ztest = (Ztest - mu) / std
+
+    return Ztrain, Ztest, Ytrain, Ytest
 
 
 def get_normalized_data():
@@ -104,15 +125,24 @@ def get_normalized_data():
         exit()
 
     df = pd.read_csv('../large_files/train.csv')
-    data = df.as_matrix().astype(np.float32)
+    data = df.values.astype(np.float32)
     np.random.shuffle(data)
     X = data[:, 1:]
-    mu = X.mean(axis=0)
-    std = X.std(axis=0)
-    np.place(std, std == 0, 1)
-    X = (X - mu) / std # normalize the data
     Y = data[:, 0]
-    return X, Y
+
+    Xtrain = X[:-1000]
+    Ytrain = Y[:-1000]
+    Xtest  = X[-1000:]
+    Ytest  = Y[-1000:]
+
+    # normalize the data
+    mu = Xtrain.mean(axis=0)
+    std = Xtrain.std(axis=0)
+    np.place(std, std == 0, 1)
+    Xtrain = (Xtrain - mu) / std
+    Xtest = (Xtest - mu) / std
+    
+    return Xtrain, Xtest, Ytrain, Ytest
 
 
 def plot_cumulative_variance(pca):
@@ -167,25 +197,11 @@ def y2indicator(y):
 
 
 def benchmark_full():
-    X, Y = get_normalized_data()
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
     print("Performing logistic regression...")
     # lr = LogisticRegression(solver='lbfgs')
 
-    # # test on the last 1000 points
-    # lr.fit(X[:-1000, :200], Y[:-1000]) # use only first 200 dimensions
-    # print lr.score(X[-1000:, :200], Y[-1000:])
-    # print "X:", X
-
-    # normalize X first
-    # mu = X.mean(axis=0)
-    # std = X.std(axis=0)
-    # X = (X - mu) / std
-
-    Xtrain = X[:-1000,]
-    Ytrain = Y[:-1000]
-    Xtest  = X[-1000:,]
-    Ytest  = Y[-1000:]
 
     # convert Ytrain and Ytest to (N x K) matrices of indicator variables
     N, D = Xtrain.shape
@@ -237,19 +253,8 @@ def benchmark_full():
 
 
 def benchmark_pca():
-    X, Y, _, _ = get_transformed_data()
-    X = X[:, :300]
-
-    # normalize X first
-    mu = X.mean(axis=0)
-    std = X.std(axis=0)
-    X = (X - mu) / std
-
+    Xtrain, Xtest, Ytrain, Ytest = get_transformed_data()
     print("Performing logistic regression...")
-    Xtrain = X[:-1000,]
-    Ytrain = Y[:-1000]
-    Xtest  = X[-1000:,]
-    Ytest  = Y[-1000:]
 
     N, D = Xtrain.shape
     Ytrain_ind = np.zeros((N, 10))
@@ -299,6 +304,6 @@ def benchmark_pca():
 
 
 if __name__ == '__main__':
-    benchmark_pca()
-    # benchmark_full()
+    # benchmark_pca()
+    benchmark_full()
 

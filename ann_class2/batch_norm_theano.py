@@ -202,11 +202,7 @@ class ANN(object):
 
 def main():
   # step 1: get the data and define all the usual variables
-  X, Y = get_normalized_data()
-  # Xtrain, Xtest, Ytrain, Ytest = train_test_split(X, Y, test_size=0.3)
-  X, Y = shuffle(X, Y)
-  Xtrain, Ytrain = X[:-1000], Y[:-1000]
-  Xtest, Ytest = X[-1000:], Y[-1000:]
+  Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
   ann = ANN([500, 300])
   ann.fit(Xtrain, Ytrain, Xtest, Ytest, show_fig=True)

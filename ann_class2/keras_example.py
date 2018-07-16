@@ -19,17 +19,18 @@ import matplotlib.pyplot as plt
 
 # get the data, same as Theano + Tensorflow examples
 # no need to split now, the fit() function will do it
-X, Y = get_normalized_data()
+Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
 # get shapes
-N, D = X.shape
-K = len(set(Y))
+N, D = Xtrain.shape
+K = len(set(Ytrain))
 
 # by default Keras wants one-hot encoded labels
 # there's another cost function we can use
 # where we can just pass in the integer labels directly
 # just like Tensorflow / Theano
-Y = y2indicator(Y)
+Ytrain = y2indicator(Ytrain)
+Ytest = y2indicator(Ytest)
 
 
 # the model will be a sequence of layers
@@ -60,7 +61,7 @@ model.compile(
 
 
 # gives us back a <keras.callbacks.History object at 0x112e61a90>
-r = model.fit(X, Y, validation_split=0.33, epochs=15, batch_size=32)
+r = model.fit(Xtrain, Ytrain, validation_data=(Xtest, Ytest), epochs=15, batch_size=32)
 print("Returned:", r)
 
 # print the available keys

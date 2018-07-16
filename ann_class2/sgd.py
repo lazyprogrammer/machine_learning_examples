@@ -28,19 +28,8 @@ from util import get_transformed_data, forward, error_rate, cost, gradW, gradb, 
 
 
 def main():
-    X, Y, _, _ = get_transformed_data()
-    X = X[:, :300]
-
-    # normalize X first
-    mu = X.mean(axis=0)
-    std = X.std(axis=0)
-    X = (X - mu) / std
-
+    Xtrain, Xtest, Ytrain, Ytest = get_transformed_data()
     print("Performing logistic regression...")
-    Xtrain = X[:-1000,]
-    Ytrain = Y[:-1000]
-    Xtest  = X[-1000:,]
-    Ytest  = Y[-1000:]
 
     N, D = Xtrain.shape
     Ytrain_ind = y2indicator(Ytrain)
@@ -53,7 +42,7 @@ def main():
     lr = 0.0001
     reg = 0.01
     t0 = datetime.now()
-    for i in range(200):
+    for i in range(50):
         p_y = forward(Xtrain, W, b)
 
         W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W)
@@ -63,10 +52,11 @@ def main():
         p_y_test = forward(Xtest, W, b)
         ll = cost(p_y_test, Ytest_ind)
         LL.append(ll)
-        if i % 10 == 0:
+        if i % 1 == 0:
             err = error_rate(p_y_test, Ytest)
-            print("Cost at iteration %d: %.6f" % (i, ll))
-            print("Error rate:", err)
+            if i % 10 == 0:
+                print("Cost at iteration %d: %.6f" % (i, ll))
+                print("Error rate:", err)
     p_y = forward(Xtest, W, b)
     print("Final error rate:", error_rate(p_y, Ytest))
     print("Elapsted time for full GD:", datetime.now() - t0)
@@ -80,7 +70,7 @@ def main():
     reg = 0.01
 
     t0 = datetime.now()
-    for i in range(1): # takes very long since we're computing cost for 41k samples
+    for i in range(50): # takes very long since we're computing cost for 41k samples
         tmpX, tmpY = shuffle(Xtrain, Ytrain_ind)
         for n in range(min(N, 500)): # shortcut so it won't take so long...
             x = tmpX[n,:].reshape(1,D)
@@ -94,8 +84,9 @@ def main():
             ll = cost(p_y_test, Ytest_ind)
             LL_stochastic.append(ll)
 
-            if n % (N//2) == 0:
-                err = error_rate(p_y_test, Ytest)
+        if i % 1 == 0:
+            err = error_rate(p_y_test, Ytest)
+            if i % 10 == 0:
                 print("Cost at iteration %d: %.6f" % (i, ll))
                 print("Error rate:", err)
     p_y = forward(Xtest, W, b)
@@ -126,8 +117,9 @@ def main():
             p_y_test = forward(Xtest, W, b)
             ll = cost(p_y_test, Ytest_ind)
             LL_batch.append(ll)
-            if j % (n_batches//2) == 0:
-                err = error_rate(p_y_test, Ytest)
+        if i % 1 == 0:
+            err = error_rate(p_y_test, Ytest)
+            if i % 10 == 0:
                 print("Cost at iteration %d: %.6f" % (i, ll))
                 print("Error rate:", err)
     p_y = forward(Xtest, W, b)

@@ -39,13 +39,11 @@ class ANN(object):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.dropout_rates = p_keep
 
-    def fit(self, X, Y, learning_rate=1e-4, mu=0.9, decay=0.9, epochs=8, batch_sz=100, show_fig=False):
-        # make a validation set
-        X, Y = shuffle(X, Y)
+    def fit(self, X, Y, Xvalid, Yvalid, learning_rate=1e-4, mu=0.9, decay=0.9, epochs=8, batch_sz=100, show_fig=False):
         X = X.astype(np.float32)
         Y = Y.astype(np.int32)
-        Xvalid, Yvalid = X[-1000:], Y[-1000:]
-        X, Y = X[:-1000], Y[:-1000]
+        Xvalid = Xvalid.astype(np.float32)
+        Yvalid = Yvalid.astype(np.int32)
 
         self.rng = RandomStreams()
 
@@ -125,7 +123,7 @@ class ANN(object):
 
                 train_op(Xbatch, Ybatch)
 
-                if j % 20 == 0:
+                if j % 50 == 0:
                     c, p = cost_predict_op(Xvalid, Yvalid)
                     costs.append(c)
                     e = error_rate(Yvalid, p)
@@ -166,10 +164,10 @@ def relu(a):
 
 def main():
     # step 1: get the data and define all the usual variables
-    X, Y = get_normalized_data()
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
     ann = ANN([500, 300], [0.8, 0.5, 0.5])
-    ann.fit(X, Y, show_fig=True)
+    ann.fit(Xtrain, Ytrain, Xtest, Ytest, show_fig=True)
 
 
 if __name__ == '__main__':

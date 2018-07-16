@@ -5,6 +5,7 @@ from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
+import os
 import json
 import numpy as np
 import tensorflow as tf
@@ -78,7 +79,7 @@ class TFLogistic:
                 Ybatch = Y[j*batch_sz:(j*batch_sz + batch_sz),]
 
                 session.run(train_op, feed_dict={self.inputs: Xbatch, self.targets: Ybatch})
-                if j % 100 == 0:
+                if j % 200 == 0:
                     test_cost = session.run(cost, feed_dict={self.inputs: Xtest, self.targets: Ytest})
                     Ptest = session.run(self.predict_op, feed_dict={self.inputs: Xtest})
                     err = error_rate(Ptest, Ytest)
@@ -124,14 +125,9 @@ class TFLogistic:
 
 
 def main():
-    X, Y = get_normalized_data()
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
-    Xtrain = X[:-1000,]
-    Ytrain = Y[:-1000]
-    Xtest  = X[-1000:,]
-    Ytest  = Y[-1000:]
-
-    model = TFLogistic("tf.model")
+    model = TFLogistic("./tf.model")
     model.fit(Xtrain, Ytrain, Xtest, Ytest)
 
     # test out restoring the model via the predict function

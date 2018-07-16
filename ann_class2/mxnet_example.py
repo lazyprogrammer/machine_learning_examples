@@ -27,18 +27,11 @@ from util import get_normalized_data, y2indicator
 
 # get the data, same as Theano + Tensorflow examples
 # no need to split now, the fit() function will do it
-X, Y = get_normalized_data()
+Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
 # get shapes
-N, D = X.shape
-K = len(set(Y))
-
-# split the data
-Xtrain = X[:-1000,]
-Ytrain = Y[:-1000]
-Xtest  = X[-1000:,]
-Ytest  = Y[-1000:]
-
+N, D = Xtrain.shape
+K = len(set(Ytrain))
 
 # training config
 batch_size = 32

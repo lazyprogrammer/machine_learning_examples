@@ -25,18 +25,14 @@ def error_rate(p, t):
 # copy this first part from theano2.py
 def main():
     # step 1: get the data and define all the usual variables
-    X, Y = get_normalized_data()
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
     max_iter = 15
-    print_period = 10
+    print_period = 50
 
     lr = 0.00004
     reg = 0.01
 
-    Xtrain = X[:-1000,]
-    Ytrain = Y[:-1000]
-    Xtest  = X[-1000:,]
-    Ytest  = Y[-1000:]
     Ytrain_ind = y2indicator(Ytrain)
     Ytest_ind = y2indicator(Ytest)
 
