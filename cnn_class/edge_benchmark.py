@@ -14,7 +14,7 @@ from scipy.signal import convolve2d
 from scipy.io import loadmat
 from sklearn.utils import shuffle
 
-from benchmark import y2indicator, error_rate
+from benchmark import error_rate
 
 
 Hx = np.array([
@@ -58,14 +58,12 @@ def main():
     Xtrain = convolve_flatten(train['X'].astype(np.float32))
     Ytrain = train['y'].flatten() - 1
     Xtrain, Ytrain = shuffle(Xtrain, Ytrain)
-    Ytrain_ind = y2indicator(Ytrain)
 
     Xtest  = convolve_flatten(test['X'].astype(np.float32))
     Ytest  = test['y'].flatten() - 1
-    Ytest_ind  = y2indicator(Ytest)
 
     # gradient descent params
-    max_iter = 20
+    max_iter = 6
     print_period = 10
     N, D = Xtrain.shape
     batch_sz = 500
@@ -97,7 +95,7 @@ def main():
     Yish = tf.matmul(Z2, W3) + b3
 
     cost = tf.reduce_sum(
-        tf.nn.softmax_cross_entropy_with_logits(
+        tf.nn.sparse_softmax_cross_entropy_with_logits(
             logits=Yish,
             labels=T
         )
@@ -116,11 +114,11 @@ def main():
         for i in range(max_iter):
             for j in range(n_batches):
                 Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
-                Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
+                Ybatch = Ytrain[j*batch_sz:(j*batch_sz + batch_sz),]
 
                 session.run(train_op, feed_dict={X: Xbatch, T: Ybatch})
                 if j % print_period == 0:
-                    test_cost = session.run(cost, feed_dict={X: Xtest, T: Ytest_ind})
+                    test_cost = session.run(cost, feed_dict={X: Xtest, T: Ytest})
                     prediction = session.run(predict_op, feed_dict={X: Xtest})
                     err = error_rate(prediction, Ytest)
                     print("Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err))

@@ -103,7 +103,7 @@ def main():
 
     # define the cost function and prediction
     params = (W1, b1, W2, b2, W3, b3, W4, b4)
-    reg_cost = reg*np.sum((param*param).sum() for param in params)
+    reg_cost = reg*sum((param*param).sum() for param in params)
     cost = -(Y * T.log(pY)).sum() + reg_cost
     prediction = T.argmax(pY, axis=1)
 

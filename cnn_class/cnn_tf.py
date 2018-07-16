@@ -20,7 +20,7 @@ from scipy.signal import convolve2d
 from scipy.io import loadmat
 from sklearn.utils import shuffle
 
-from benchmark import get_data, y2indicator, error_rate
+from benchmark import get_data, error_rate
 
 
 def convpool(X, W, b):
@@ -61,12 +61,10 @@ def main():
     # print len(Ytrain)
     del train
     Xtrain, Ytrain = shuffle(Xtrain, Ytrain)
-    Ytrain_ind = y2indicator(Ytrain)
 
     Xtest  = rearrange(test['X'])
     Ytest  = test['y'].flatten() - 1
     del test
-    Ytest_ind  = y2indicator(Ytest)
 
     # gradient descent params
     max_iter = 6
@@ -81,7 +79,6 @@ def main():
     Ytrain = Ytrain[:73000]
     Xtest = Xtest[:26000,]
     Ytest = Ytest[:26000]
-    Ytest_ind = Ytest_ind[:26000,]
     # print "Xtest.shape:", Xtest.shape
     # print "Ytest.shape:", Ytest.shape
 
@@ -108,7 +105,7 @@ def main():
     # define variables and expressions
     # using None as the first shape element takes up too much RAM unfortunately
     X = tf.placeholder(tf.float32, shape=(batch_sz, 32, 32, 3), name='X')
-    T = tf.placeholder(tf.float32, shape=(batch_sz, K), name='T')
+    T = tf.placeholder(tf.int32, shape=(batch_sz,), name='T')
     W1 = tf.Variable(W1_init.astype(np.float32))
     b1 = tf.Variable(b1_init.astype(np.float32))
     W2 = tf.Variable(W2_init.astype(np.float32))
@@ -126,7 +123,7 @@ def main():
     Yish = tf.matmul(Z3, W4) + b4
 
     cost = tf.reduce_sum(
-        tf.nn.softmax_cross_entropy_with_logits(
+        tf.nn.sparse_softmax_cross_entropy_with_logits(
             logits=Yish,
             labels=T
         )
@@ -139,6 +136,8 @@ def main():
 
     t0 = datetime.now()
     LL = []
+    W1_val = None
+    W2_val = None
     init = tf.global_variables_initializer()
     with tf.Session() as session:
         session.run(init)
@@ -146,7 +145,7 @@ def main():
         for i in range(max_iter):
             for j in range(n_batches):
                 Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
-                Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
+                Ybatch = Ytrain[j*batch_sz:(j*batch_sz + batch_sz),]
 
                 if len(Xbatch) == batch_sz:
                     session.run(train_op, feed_dict={X: Xbatch, T: Ybatch})
@@ -157,15 +156,57 @@ def main():
                         prediction = np.zeros(len(Xtest))
                         for k in range(len(Xtest) // batch_sz):
                             Xtestbatch = Xtest[k*batch_sz:(k*batch_sz + batch_sz),]
-                            Ytestbatch = Ytest_ind[k*batch_sz:(k*batch_sz + batch_sz),]
+                            Ytestbatch = Ytest[k*batch_sz:(k*batch_sz + batch_sz),]
                             test_cost += session.run(cost, feed_dict={X: Xtestbatch, T: Ytestbatch})
                             prediction[k*batch_sz:(k*batch_sz + batch_sz)] = session.run(
                                 predict_op, feed_dict={X: Xtestbatch})
                         err = error_rate(prediction, Ytest)
                         print("Cost / err at iteration i=%d, j=%d: %.3f / %.3f" % (i, j, test_cost, err))
                         LL.append(test_cost)
+
+        W1_val = W1.eval()
+        W2_val = W2.eval()
     print("Elapsed time:", (datetime.now() - t0))
     plt.plot(LL)
+    plt.show()
+
+
+    W1_val = W1_val.transpose(3, 2, 0, 1)
+    W2_val = W2_val.transpose(3, 2, 0, 1)
+
+
+    # visualize W1 (20, 3, 5, 5)
+    # W1_val = W1.get_value()
+    grid = np.zeros((8*5, 8*5))
+    m = 0
+    n = 0
+    for i in range(20):
+        for j in range(3):
+            filt = W1_val[i,j]
+            grid[m*5:(m+1)*5,n*5:(n+1)*5] = filt
+            m += 1
+            if m >= 8:
+                m = 0
+                n += 1
+    plt.imshow(grid, cmap='gray')
+    plt.title("W1")
+    plt.show()
+
+    # visualize W2 (50, 20, 5, 5)
+    # W2_val = W2.get_value()
+    grid = np.zeros((32*5, 32*5))
+    m = 0
+    n = 0
+    for i in range(50):
+        for j in range(20):
+            filt = W2_val[i,j]
+            grid[m*5:(m+1)*5,n*5:(n+1)*5] = filt
+            m += 1
+            if m >= 32:
+                m = 0
+                n += 1
+    plt.imshow(grid, cmap='gray')
+    plt.title("W2")
     plt.show()
 
 
