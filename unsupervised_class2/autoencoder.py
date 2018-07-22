@@ -60,7 +60,7 @@ class AutoEncoder(object):
         self.dparams = [self.dW, self.dbh, self.dbo]
         self.forward_dparams = [self.dW, self.dbh]
 
-        X_in = T.matrix('X_%s' % self.id)
+        X_in = T.matrix('X_%s' % self.id, dtype='float32')
         X_hat = self.forward_output(X_in)
 
         # attach it to the object so it can be used later
@@ -177,7 +177,7 @@ class DNN(object):
             for ae in self.hidden_layers:
                 self.params += ae.forward_params
 
-        X_in = T.matrix('X_in')
+        X_in = T.matrix('X_in', dtype='float32')
         targets = T.ivector('Targets')
         pY = self.forward(X_in)
 
