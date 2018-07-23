@@ -1,5 +1,6 @@
 # https://deeplearningcourses.com/c/deep-learning-prerequisites-the-numpy-stack-in-python
 # https://www.udemy.com/deep-learning-prerequisites-the-numpy-stack-in-python
+# YouTube direct link: http://bit.ly/2LENC50
 
 # Get the data from:
 # https://archive.ics.uci.edu/ml/datasets/Airfoil+Self-Noise
