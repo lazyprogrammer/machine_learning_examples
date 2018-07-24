@@ -11,6 +11,12 @@ import matplotlib.pyplot as plt
 from sklearn.mixture import BayesianGaussianMixture
 
 
+def clamp_sample(x):
+  x = np.minimum(x, 1)
+  x = np.maximum(x, 0)
+  return x
+
+
 class BayesClassifier:
   def fit(self, X, Y):
     # assume classes are numbered 0...K-1
@@ -39,11 +45,11 @@ class BayesClassifier:
     # we cheat by looking at "non-public" params in
     # the sklearn source code
     mean = gmm.means_[sample[1]]
-    return sample[0].reshape(28, 28), mean.reshape(28, 28)
+    return clamp_sample( sample[0].reshape(28, 28) ), mean.reshape(28, 28)
 
   def sample(self):
     y = np.random.choice(self.K, p=self.p_y)
-    return self.sample_given_y(y)
+    return clamp_sample( self.sample_given_y(y) )
 
 
 if __name__ == '__main__':
