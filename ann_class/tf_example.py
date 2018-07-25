@@ -58,7 +58,7 @@ b2 = init_weights([K])
 logits = forward(tfX, W1, b1, W2, b2)
 
 cost = tf.reduce_mean(
-  tf.nn.softmax_cross_entropy_with_logits(
+  tf.nn.softmax_cross_entropy_with_logits_v2(
     labels=tfY,
     logits=logits
   )

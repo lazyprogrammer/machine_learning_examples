@@ -14,6 +14,7 @@ import pandas as pd
 from scipy.misc import imread, imsave, imresize
 from glob import glob
 from tqdm import tqdm
+from sklearn.utils import shuffle
 
 
 def get_mnist(limit=None):
@@ -26,10 +27,11 @@ def get_mnist(limit=None):
 
   print("Reading in and transforming data...")
   df = pd.read_csv('../large_files/train.csv')
-  data = df.as_matrix()
-  np.random.shuffle(data)
+  data = df.values
+  # np.random.shuffle(data)
   X = data[:, 1:] / 255.0 # data is from 0..255
   Y = data[:, 0]
+  X, Y = shuffle(X, Y)
   if limit is not None:
     X, Y = X[:limit], Y[:limit]
   return X, Y

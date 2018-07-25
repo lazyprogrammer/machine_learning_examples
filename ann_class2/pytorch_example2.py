@@ -26,17 +26,11 @@ from torch import optim
 
 # get the data, same as Theano + Tensorflow examples
 # no need to split now, the fit() function will do it
-X, Y = get_normalized_data()
+Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
 # get shapes
-_, D = X.shape
-K = len(set(Y))
-
-# split the data
-Xtrain = X[:-1000,]
-Ytrain = Y[:-1000]
-Xtest  = X[-1000:,]
-Ytest  = Y[-1000:]
+_, D = Xtrain.shape
+K = len(set(Ytrain))
 
 # Note: no need to convert Y to indicator matrix
 

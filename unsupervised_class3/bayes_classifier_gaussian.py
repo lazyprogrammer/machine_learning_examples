@@ -11,6 +11,12 @@ import matplotlib.pyplot as plt
 from scipy.stats import multivariate_normal as mvn
 
 
+def clamp_sample(x):
+  x = np.minimum(x, 1)
+  x = np.maximum(x, 0)
+  return x
+
+
 class BayesClassifier:
   def fit(self, X, Y):
     # assume classes are numbered 0...K-1
@@ -30,11 +36,11 @@ class BayesClassifier:
 
   def sample_given_y(self, y):
     g = self.gaussians[y]
-    return mvn.rvs(mean=g['m'], cov=g['c'])
+    return clamp_sample( mvn.rvs(mean=g['m'], cov=g['c']) )
 
   def sample(self):
     y = np.random.choice(self.K, p=self.p_y)
-    return self.sample_given_y(y)
+    return clamp_sample( self.sample_given_y(y) )
 
 
 if __name__ == '__main__':

@@ -33,16 +33,11 @@ class ANN(object):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.dropout_rates = p_keep
 
-    def fit(self, X, Y, lr=1e-4, mu=0.9, decay=0.9, epochs=15, batch_sz=100, split=True, print_every=20):
-        # make a validation set
-        X, Y = shuffle(X, Y)
+    def fit(self, X, Y, Xvalid, Yvalid, lr=1e-4, mu=0.9, decay=0.9, epochs=15, batch_sz=100, print_every=50):
         X = X.astype(np.float32)
         Y = Y.astype(np.int64)
-        if split:
-            Xvalid, Yvalid = X[-1000:], Y[-1000:]
-            X, Y = X[:-1000], Y[:-1000]
-        else:
-            Xvalid, Yvalid = X, Y
+        Xvalid = Xvalid.astype(np.float32)
+        Yvalid = Yvalid.astype(np.int64)
 
         # initialize hidden layers
         N, D = X.shape
@@ -143,10 +138,10 @@ def relu(a):
 
 def main():
     # step 1: get the data and define all the usual variables
-    X, Y = get_normalized_data()
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
     ann = ANN([500, 300], [0.8, 0.5, 0.5])
-    ann.fit(X, Y)
+    ann.fit(Xtrain, Ytrain, Xtest, Ytest)
 
 
 if __name__ == '__main__':

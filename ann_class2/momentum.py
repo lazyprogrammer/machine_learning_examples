@@ -26,16 +26,12 @@ def main():
     # 3. batch SGD with Nesterov momentum
 
     max_iter = 20 # make it 30 for sigmoid
-    print_period = 10
+    print_period = 50
 
-    X, Y = get_normalized_data()
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
     lr = 0.00004
     reg = 0.01
 
-    Xtrain = X[:-1000,]
-    Ytrain = Y[:-1000]
-    Xtest  = X[-1000:,]
-    Ytest  = Y[-1000:]
     Ytrain_ind = y2indicator(Ytrain)
     Ytest_ind = y2indicator(Ytest)
 

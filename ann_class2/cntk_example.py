@@ -37,22 +37,21 @@ from cntk.train.training_session import *
 
 
 # get the data, same as Theano + Tensorflow examples
-X, Y = get_normalized_data()
+Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
 # get shapes
-N, D = X.shape
-K = len(set(Y))
+N, D = Xtrain.shape
+K = len(set(Ytrain))
 
 # we want one-hot encoded labels
-Y = y2indicator(Y)
+Ytrain = y2indicator(Ytrain)
+Ytest = y2indicator(Ytest)
 
 # split the data
 X = X.astype(np.float32)
 Y = Y.astype(np.float32)
-Xtrain = X[:-1000,]
-Ytrain = Y[:-1000]
-Xtest  = X[-1000:,]
-Ytest  = Y[-1000:]
+Xtest = Xtest.astype(np.float32)
+Ytest = Ytest.astype(np.float32)
 
 
 # the model will be a sequence of layers

@@ -28,20 +28,18 @@ def relu(a):
 
 def main():
     # step 1: get the data and define all the usual variables
-    X, Y = get_normalized_data()
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
 
     max_iter = 20
     print_period = 10
 
-    lr = 0.00004
+    lr = 0.0004
     reg = 0.01
 
-    Xtrain = X[:-1000,]
-    Ytrain = Y[:-1000]
-    Xtest  = X[-1000:,]
-    Ytest  = Y[-1000:]
-    Ytrain_ind = y2indicator(Ytrain)
-    Ytest_ind = y2indicator(Ytest)
+    Xtrain = Xtest.astype(np.float32)
+    Ytrain = Ytest.astype(np.float32)
+    Ytrain_ind = y2indicator(Ytrain).astype(np.float32)
+    Ytest_ind = y2indicator(Ytest).astype(np.float32)
 
     N, D = Xtrain.shape
     batch_sz = 500
@@ -72,10 +70,6 @@ def main():
 
     # step 3: training expressions and functions
     # we can just include regularization as part of the cost because it is also automatically differentiated!
-    # update_W1 = W1 - lr*(T.grad(cost, W1) + reg*W1)
-    # update_b1 = b1 - lr*(T.grad(cost, b1) + reg*b1)
-    # update_W2 = W2 - lr*(T.grad(cost, W2) + reg*W2)
-    # update_b2 = b2 - lr*(T.grad(cost, b2) + reg*b2)
     update_W1 = W1 - lr*T.grad(cost, W1)
     update_b1 = b1 - lr*T.grad(cost, b1)
     update_W2 = W2 - lr*T.grad(cost, W2)
