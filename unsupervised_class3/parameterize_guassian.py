@@ -17,7 +17,7 @@ def softplus(x):
 
 # we're going to make a neural network
 # with the layer sizes (4, 3, 2)
-# like a toy version of a decoder
+# like a toy version of a encoder
 
 W1 = np.random.randn(4, 3)
 W2 = np.random.randn(3, 2*2)
