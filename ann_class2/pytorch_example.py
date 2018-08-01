@@ -87,7 +87,7 @@ def train(model, loss, optimizer, inputs, labels):
   optimizer.step()
 
   # what's the difference between backward() and step()?
-  return output.data[0]
+  return output.item()
 
 
 # define the prediction procedure

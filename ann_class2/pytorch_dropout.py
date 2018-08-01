@@ -40,10 +40,14 @@ model = torch.nn.Sequential()
 
 
 # ANN with layers [784] -> [500] -> [300] -> [10]
+# NOTE: the "p" is p_drop, not p_keep
+model.add_module("dropout1", torch.nn.Dropout(p=0.2))
 model.add_module("dense1", torch.nn.Linear(D, 500))
 model.add_module("relu1", torch.nn.ReLU())
+model.add_module("dropout2", torch.nn.Dropout(p=0.5))
 model.add_module("dense2", torch.nn.Linear(500, 300))
 model.add_module("relu2", torch.nn.ReLU())
+model.add_module("dropout3", torch.nn.Dropout(p=0.5))
 model.add_module("dense3", torch.nn.Linear(300, K))
 # Note: no final softmax!
 # just like Tensorflow, it's included in cross-entropy function
@@ -63,13 +67,16 @@ loss = torch.nn.CrossEntropyLoss(size_average=True)
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
 
-
 # define the training procedure
 # i.e. one step of gradient descent
 # there are lots of steps
 # so we encapsulate it in a function
 # Note: inputs and labels are torch tensors
 def train(model, loss, optimizer, inputs, labels):
+  # set the model to training mode
+  # because dropout has 2 different modes!
+  model.train()
+
   inputs = Variable(inputs, requires_grad=False)
   labels = Variable(labels, requires_grad=False)
 
@@ -93,6 +100,10 @@ def train(model, loss, optimizer, inputs, labels):
 
 # similar to train() but not doing the backprop step
 def get_cost(model, loss, inputs, labels):
+  # set the model to testing mode
+  # because dropout has 2 different modes!
+  model.eval()
+
   inputs = Variable(inputs, requires_grad=False)
   labels = Variable(labels, requires_grad=False)
 
@@ -107,6 +118,10 @@ def get_cost(model, loss, inputs, labels):
 # also encapsulate these steps
 # Note: inputs is a torch tensor
 def predict(model, inputs):
+  # set the model to testing mode
+  # because dropout has 2 different modes!
+  model.eval()
+
   inputs = Variable(inputs, requires_grad=False)
   logits = model.forward(inputs)
   return logits.data.numpy().argmax(axis=1)

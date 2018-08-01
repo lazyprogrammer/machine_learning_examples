@@ -41,8 +41,10 @@ model = torch.nn.Sequential()
 
 # ANN with layers [784] -> [500] -> [300] -> [10]
 model.add_module("dense1", torch.nn.Linear(D, 500))
+model.add_module("bn1", torch.nn.BatchNorm1d(500))
 model.add_module("relu1", torch.nn.ReLU())
 model.add_module("dense2", torch.nn.Linear(500, 300))
+model.add_module("bn2", torch.nn.BatchNorm1d(300))
 model.add_module("relu2", torch.nn.ReLU())
 model.add_module("dense3", torch.nn.Linear(300, K))
 # Note: no final softmax!
@@ -70,6 +72,10 @@ optimizer = optim.Adam(model.parameters(), lr=1e-4)
 # so we encapsulate it in a function
 # Note: inputs and labels are torch tensors
 def train(model, loss, optimizer, inputs, labels):
+  # set the model to training mode
+  # because batch norm has 2 different modes!
+  model.train()
+
   inputs = Variable(inputs, requires_grad=False)
   labels = Variable(labels, requires_grad=False)
 
@@ -93,6 +99,10 @@ def train(model, loss, optimizer, inputs, labels):
 
 # similar to train() but not doing the backprop step
 def get_cost(model, loss, inputs, labels):
+  # set the model to testing mode
+  # because batch norm has 2 different modes!
+  model.eval()
+
   inputs = Variable(inputs, requires_grad=False)
   labels = Variable(labels, requires_grad=False)
 
@@ -107,6 +117,10 @@ def get_cost(model, loss, inputs, labels):
 # also encapsulate these steps
 # Note: inputs is a torch tensor
 def predict(model, inputs):
+  # set the model to testing mode
+  # because batch norm has 2 different modes!
+  model.eval()
+
   inputs = Variable(inputs, requires_grad=False)
   logits = model.forward(inputs)
   return logits.data.numpy().argmax(axis=1)
