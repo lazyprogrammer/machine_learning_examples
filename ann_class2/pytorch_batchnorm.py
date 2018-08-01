@@ -5,12 +5,6 @@ from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-# Linux and Mac instructions:
-# http://pytorch.org/#pip-install-pytorch
-
-# Windows instructions (just one line):
-# conda install -c peterjc123 pytorch
-
 # Note: is helpful to look at keras_example.py first
 
 
