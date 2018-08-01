@@ -64,10 +64,12 @@ optimizer = optim.Adam(model.parameters())
 # so we encapsulate it in a function
 # Note: inputs and labels are torch tensors
 def train(model, loss, optimizer, inputs, labels):
+  # https://discuss.pytorch.org/t/why-is-it-recommended-to-wrap-your-data-with-variable-each-step-of-the-iterations-rather-than-before-training-starts/12683
   inputs = Variable(inputs, requires_grad=False)
   labels = Variable(labels, requires_grad=False)
 
   # Reset gradient
+  # https://discuss.pytorch.org/t/why-do-we-need-to-set-the-gradients-manually-to-zero-in-pytorch/4903/7
   optimizer.zero_grad()
 
   # Forward
@@ -81,6 +83,7 @@ def train(model, loss, optimizer, inputs, labels):
   optimizer.step()
 
   # what's the difference between backward() and step()?
+  # https://discuss.pytorch.org/t/what-does-the-backward-function-do/9944
   return output.item()
 
 
