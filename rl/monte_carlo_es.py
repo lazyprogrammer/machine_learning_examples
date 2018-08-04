@@ -36,15 +36,22 @@ def play_game(grid, policy):
   # but r(t) results from taking action a(t-1) from s(t-1) and landing in s(t)
   states_actions_rewards = [(s, a, 0)]
   seen_states = set()
+  seen_states.add(grid.current_state())
+  num_steps = 0
   while True:
-    old_s = grid.current_state()
     r = grid.move(a)
+    num_steps += 1
     s = grid.current_state()
 
     if s in seen_states:
       # hack so that we don't end up in an infinitely long episode
       # bumping into the wall repeatedly
-      states_actions_rewards.append((s, None, -100))
+      # if num_steps == 1 -> bumped into a wall and haven't moved anywhere
+      #   reward = -10
+      # else:
+      #   reward = falls off by 1 / num_steps
+      reward = -10. / num_steps
+      states_actions_rewards.append((s, None, reward))
       break
     elif grid.game_over():
       states_actions_rewards.append((s, None, r))
