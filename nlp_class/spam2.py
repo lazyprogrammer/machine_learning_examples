@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC
 from wordcloud import WordCloud
 
 
@@ -32,7 +33,7 @@ df.columns = ['labels', 'data']
 
 # create binary labels
 df['b_labels'] = df['labels'].map({'ham': 0, 'spam': 1})
-Y = df['b_labels'].as_matrix()
+Y = df['b_labels'].values
 
 # try multiple ways of calculating features
 # tfidf = TfidfVectorizer(decode_error='ignore')
@@ -49,7 +50,7 @@ model = MultinomialNB()
 model.fit(Xtrain, Ytrain)
 print("train score:", model.score(Xtrain, Ytrain))
 print("test score:", model.score(Xtest, Ytest))
-
+exit()
 
 
 # visualize the data

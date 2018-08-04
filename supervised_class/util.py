@@ -12,7 +12,7 @@ import pandas as pd
 def get_data(limit=None):
     print("Reading in and transforming data...")
     df = pd.read_csv('../large_files/train.csv')
-    data = df.as_matrix()
+    data = df.values
     np.random.shuffle(data)
     X = data[:, 1:] / 255.0 # data is from 0..255
     Y = data[:, 0]

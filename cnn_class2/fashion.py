@@ -26,7 +26,7 @@ def y2indicator(Y):
 # get the data
 # https://www.kaggle.com/zalando-research/fashionmnist
 data = pd.read_csv('../large_files/fashionmnist/fashion-mnist_train.csv')
-data = data.as_matrix()
+data = data.values
 np.random.shuffle(data)
 
 X = data[:, 1:].reshape(-1, 28, 28, 1) / 255.0

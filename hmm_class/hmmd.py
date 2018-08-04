@@ -10,6 +10,7 @@ from builtins import range
 
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 
 def random_normalized(d1, d2):
@@ -22,6 +23,7 @@ class HMM:
         self.M = M # number of hidden states
     
     def fit(self, X, max_iter=30):
+        t0 = datetime.now()
         np.random.seed(123)
         # train the HMM model using the Baum-Welch algorithm
         # a specific instance of the expectation-maximization algorithm
@@ -135,6 +137,8 @@ class HMM:
         print("A:", self.A)
         print("B:", self.B)
         print("pi:", self.pi)
+
+        print("Fit duration:", (datetime.now() - t0))
 
         plt.plot(costs)
         plt.show()

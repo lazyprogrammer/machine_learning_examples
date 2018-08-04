@@ -23,7 +23,7 @@ def getKaggleMNIST():
     # column 0 is labels
     # column 1-785 is data, with values 0 .. 255
     # total size of CSV: (42000, 1, 28, 28)
-    train = pd.read_csv('../large_files/train.csv').as_matrix().astype(np.float32)
+    train = pd.read_csv('../large_files/train.csv').values.astype(np.float32)
     train = shuffle(train)
 
     Xtrain = train[:-1000,1:] / 255

@@ -55,7 +55,7 @@ class DataTransformer:
     X = np.zeros((N, self.D))
     i = 0
     for col, scaler in iteritems(self.scalers):
-      X[:,i] = scaler.transform(df[col].as_matrix().reshape(-1, 1)).flatten()
+      X[:,i] = scaler.transform(df[col].values.reshape(-1, 1)).flatten()
       i += 1
 
     for col, encoder in iteritems(self.labelEncoders):
@@ -98,7 +98,7 @@ def get_data():
   transformer = DataTransformer()
 
   X = transformer.fit_transform(df)
-  Y = df[0].as_matrix()
+  Y = df[0].values
   return X, Y
 
 

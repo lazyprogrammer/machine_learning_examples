@@ -18,7 +18,7 @@ import numpy as np
 #       it will work for other types of "counts", like tf-idf, so it should
 #       also work for our "word proportions"
 
-data = pd.read_csv('spambase.data').as_matrix() # use pandas for convenience
+data = pd.read_csv('spambase.data').values # use pandas for convenience
 np.random.shuffle(data) # shuffle each row in-place, but preserve the row
 
 X = data[:,:48]

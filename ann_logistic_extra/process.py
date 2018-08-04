@@ -21,7 +21,7 @@ def get_data():
   # df.head()
 
   # easier to work with numpy array
-  data = df.as_matrix()
+  data = df.values
 
   # shuffle it
   np.random.shuffle(data)

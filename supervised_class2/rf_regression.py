@@ -44,7 +44,7 @@ class DataTransformer:
     self.scalers = {}
     for col in NUMERICAL_COLS:
       scaler = StandardScaler()
-      scaler.fit(df[col].as_matrix().reshape(-1, 1))
+      scaler.fit(df[col].values.reshape(-1, 1))
       self.scalers[col] = scaler
 
   def transform(self, df):
@@ -53,7 +53,7 @@ class DataTransformer:
     X = np.zeros((N, D))
     i = 0
     for col, scaler in iteritems(self.scalers):
-      X[:,i] = scaler.transform(df[col].as_matrix().reshape(-1, 1)).flatten()
+      X[:,i] = scaler.transform(df[col].values.reshape(-1, 1)).flatten()
       i += 1
     for col in NO_TRANSFORM:
       X[:,i] = df[col]
@@ -96,9 +96,9 @@ def get_data():
   df_test = df.loc[test_idx]
 
   Xtrain = transformer.fit_transform(df_train)
-  Ytrain = np.log(df_train['medv'].as_matrix())
+  Ytrain = np.log(df_train['medv'].values)
   Xtest = transformer.transform(df_test)
-  Ytest = np.log(df_test['medv'].as_matrix())
+  Ytest = np.log(df_test['medv'].values)
   return Xtrain, Ytrain, Xtest, Ytest
 
 

@@ -9,6 +9,7 @@ from builtins import range, input
 
 
 import numpy as np
+import matplotlib.pyplot as plt
 from util import get_data
 from datetime import datetime
 from scipy.stats import norm
@@ -60,3 +61,9 @@ if __name__ == '__main__':
     t0 = datetime.now()
     print("Test accuracy:", model.score(Xtest, Ytest))
     print("Time to compute test accuracy:", (datetime.now() - t0), "Test size:", len(Ytest))
+
+    # plot the mean of each class
+    for c, g in iteritems(model.gaussians):
+        plt.imshow(g['mean'].reshape(28, 28))
+        plt.title(c)
+        plt.show()

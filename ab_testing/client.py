@@ -16,8 +16,8 @@ from scipy import stats
 df = pd.read_csv('advertisement_clicks.csv')
 a = df[df['advertisement_id'] == 'A']
 b = df[df['advertisement_id'] == 'B']
-a = a['action'].as_matrix()
-b = b['action'].as_matrix()
+a = a['action'].values
+b = b['action'].values
 
 print("a.mean:", a.mean())
 print("b.mean:", b.mean())

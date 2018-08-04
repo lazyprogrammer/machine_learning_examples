@@ -6,14 +6,10 @@ from builtins import range, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-from keras.layers import Input, Lambda, Dense, Flatten
 from keras.models import Model
 from keras.applications.resnet50 import ResNet50, preprocess_input, decode_predictions
-# from keras.applications.inception_v3 import InceptionV3, preprocess_input
 from keras.preprocessing import image
-from keras.preprocessing.image import ImageDataGenerator
 
-from sklearn.metrics import confusion_matrix
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
@@ -24,7 +20,7 @@ from skimage.transform import rescale, resize
 
 
 
-# useful for getting number of files
+# get the image files
 image_files = glob('../large_files/256_ObjectCategories/*/*.jp*g')
 image_files += glob('../large_files/101_ObjectCategories/*/*.jp*g')
 
@@ -72,6 +68,7 @@ while True:
   cam = fmaps.dot(w)
 
   # upsample to 224 x 224
+  # 7 x 32 = 224
   cam = sp.ndimage.zoom(cam, (32, 32), order=1)
 
   plt.subplot(1,2,1)
