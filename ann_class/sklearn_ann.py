@@ -17,13 +17,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.utils import shuffle
 
 # get the data
-X, Y = get_data()
-
-# split into train and test
-X, Y = shuffle(X, Y)
-Ntrain = int(0.7*len(X))
-Xtrain, Ytrain = X[:Ntrain], Y[:Ntrain]
-Xtest, Ytest = X[Ntrain:], Y[Ntrain:]
+Xtrain, Ytrain, Xtest, Ytest = get_data()
 
 # create the neural network
 model = MLPClassifier(hidden_layer_sizes=(20, 20), max_iter=2000)
