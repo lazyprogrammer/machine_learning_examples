@@ -18,7 +18,7 @@ from sklearn.utils import shuffle
 
 from datetime import datetime
 
-from benchmark import get_data, y2indicator, error_rate
+from benchmark import get_data, error_rate
 
 
 def relu(a):
