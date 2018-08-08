@@ -16,11 +16,11 @@ import matplotlib.pyplot as plt
 
 from glob import glob
 
-from skimage.transform import rescale, resize
-
 
 
 # get the image files
+# http://www.vision.caltech.edu/Image_Datasets/Caltech101/
+# http://www.vision.caltech.edu/Image_Datasets/Caltech256/
 image_files = glob('../large_files/256_ObjectCategories/*/*.jp*g')
 image_files += glob('../large_files/101_ObjectCategories/*/*.jp*g')
 
