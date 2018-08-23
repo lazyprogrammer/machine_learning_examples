@@ -56,12 +56,6 @@ sentences = train["comment_text"].fillna("DUMMY_VALUE").values
 possible_labels = ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
 targets = train[possible_labels].values
 
-print("max sequence length:", max(len(s) for s in sentences))
-print("min sequence length:", min(len(s) for s in sentences))
-s = sorted(len(s) for s in sentences)
-print("median sequence length:", s[len(s) // 2])
-
-
 
 
 # convert the sentences (strings) into integers
@@ -69,6 +63,12 @@ tokenizer = Tokenizer(num_words=MAX_VOCAB_SIZE)
 tokenizer.fit_on_texts(sentences)
 sequences = tokenizer.texts_to_sequences(sentences)
 # print("sequences:", sequences); exit()
+
+
+print("max sequence length:", max(len(s) for s in sequences))
+print("min sequence length:", min(len(s) for s in sequences))
+s = sorted(len(s) for s in sequences)
+print("median sequence length:", s[len(s) // 2])
 
 
 # get word -> integer mapping
