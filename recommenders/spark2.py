@@ -1,8 +1,6 @@
 # https://udemy.com/recommender-systems
 # https://deeplearningcourses.com/recommender-systems
 
-### meant to be pasted into console ###
-
 # notes:
 # you may have trouble with full dataset on just your local machine
 # if you want to know what's in an RDD, use .take(n), ex:
@@ -10,9 +8,18 @@
 # print(tmp)
 
 from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
+from pyspark import SparkContext
+
+# increase memory
+# SparkContext.setSystemProperty('spark.driver.memory', '10g')
+# SparkContext.setSystemProperty('spark.executor.memory', '10g')
+
+sc = SparkContext("local", "Your App Name Here")
+
 
 # load in the data
-data = sc.textFile("../large_files/movielens-20m-dataset/small_rating.csv")
+# data = sc.textFile("../large_files/movielens-20m-dataset/small_rating.csv")
+data = sc.textFile("../large_files/movielens-20m-dataset/rating.csv.gz")
 
 # filter out header
 header = data.first() #extract header
@@ -42,7 +49,7 @@ ratesAndPreds = train.map(lambda r: ((r[0], r[1]), r[2])).join(p)
 # joins on first item: (user_id, movie_id)
 # each row of result is: ((user_id, movie_id), (rating, prediction))
 mse = ratesAndPreds.map(lambda r: (r[1][0] - r[1][1])**2).mean()
-print("train mse:", mse)
+print("***** train mse: %s *****" % mse)
 
 
 # test
@@ -50,4 +57,4 @@ x = test.map(lambda p: (p[0], p[1]))
 p = model.predictAll(x).map(lambda r: ((r[0], r[1]), r[2]))
 ratesAndPreds = test.map(lambda r: ((r[0], r[1]), r[2])).join(p)
 mse = ratesAndPreds.map(lambda r: (r[1][0] - r[1][1])**2).mean()
-print("test mse:", mse)
+print("***** test mse: %s *****" % mse)
