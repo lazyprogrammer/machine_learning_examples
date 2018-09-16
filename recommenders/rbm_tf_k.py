@@ -46,7 +46,7 @@ def one_hot_mask(X, K):
         Y[n,d,:] = 1
     return Y
 
-one_to_ten = np.arange(K) + 1 # [1, 2, 3, ..., 10]
+one_to_ten = np.arange(10) + 1 # [1, 2, 3, ..., 10]
 def convert_probs_to_ratings(probs):
     # probs is N x D x K
     # output is N x D matrix of predicted ratings
