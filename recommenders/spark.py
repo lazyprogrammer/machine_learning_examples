@@ -13,11 +13,7 @@ from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 import os
 
 # load in the data
-<<<<<<< HEAD
 data = sc.textFile("../large_files/movielens-20m-dataset/small_rating.csv")
-=======
-data = sc.textFile(os.path.expanduser('~') + "/Code/machine_learning_examples/large_files/movielens-20m-dataset/small_rating.csv")
->>>>>>> f6f97af5e368bb1343243049d44f0a12635cfa38
 
 # filter out header
 header = data.first() #extract header
