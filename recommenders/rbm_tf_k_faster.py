@@ -65,7 +65,7 @@ class RBM(object):
         logits = dot2(H, self.W) + self.b
         cdist = tf.distributions.Categorical(logits=logits)
         X_sample = cdist.sample() # shape is (N, D)
-        X_sample = tf.one_hot(X_sample, depth=self.K) # turn it into (N, D, K)
+        X_sample = tf.one_hot(X_sample, depth=K) # turn it into (N, D, K)
 
         # mask X_sample to remove missing ratings
         mask2d = tf.cast(self.X_in > 0, tf.float32)
@@ -94,7 +94,7 @@ class RBM(object):
 
 
         # for calculating SSE
-        self.one_to_ten = tf.constant(one_to_ten.astype(np.float32) / 2)
+        self.one_to_ten = tf.constant((np.arange(10) + 1).astype(np.float32) / 2)
         self.pred = tf.tensordot(self.output_visible, self.one_to_ten, axes=[[2], [0]])
         mask = tf.cast(self.X_in > 0, tf.float32)
         se = mask * (self.X_in - self.pred) * (self.X_in - self.pred)

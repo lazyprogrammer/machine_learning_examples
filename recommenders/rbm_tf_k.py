@@ -107,7 +107,7 @@ class RBM(object):
         logits = dot2(H, self.W) + self.b
         cdist = tf.distributions.Categorical(logits=logits)
         X_sample = cdist.sample() # shape is (N, D)
-        X_sample = tf.one_hot(X_sample, depth=self.K) # turn it into (N, D, K)
+        X_sample = tf.one_hot(X_sample, depth=K) # turn it into (N, D, K)
         X_sample = X_sample * self.mask # missing ratings shouldn't contribute to objective
 
 
