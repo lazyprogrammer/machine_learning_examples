@@ -24,13 +24,14 @@ class HMMClassifier:
 
     def fit(self, X, Y, V):
         K = len(set(Y)) # number of classes - assume 0..K-1
+        N = len(Y)
         self.models = []
         self.priors = []
         for k in range(K):
             # gather all the training data for this class
             thisX = [x for x, y in zip(X, Y) if y == k]
             C = len(thisX)
-            self.priors.append(np.log(C))
+            self.priors.append(np.log(C) - np.log(N))
 
             hmm = HMM(5)
             hmm.fit(thisX, V=V, print_period=1, learning_rate=1e-2, max_iter=80)
