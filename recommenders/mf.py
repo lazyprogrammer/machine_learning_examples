@@ -65,7 +65,7 @@ def get_loss(d):
 
 # train the parameters
 epochs = 25
-reg = 0.01 # regularization penalty
+reg =20. # regularization penalty
 train_losses = []
 test_losses = []
 for epoch in range(epochs):
@@ -90,7 +90,7 @@ for epoch in range(epochs):
 
     # set the updates
     W[i] = np.linalg.solve(matrix, vector)
-    b[i] = bi / ((1 + reg)*len(user2movie[i]))
+    b[i] = bi / (len(user2movie[i]) + reg)
 
     if i % (N//10) == 0:
       print("i:", i, "N:", N)
@@ -114,7 +114,7 @@ for epoch in range(epochs):
 
       # set the updates
       U[j] = np.linalg.solve(matrix, vector)
-      c[j] = cj / ((1 + reg)*len(movie2user[j]))
+      c[j] = cj / (len(movie2user[j]) + reg)
 
       if j % (M//10) == 0:
         print("j:", j, "M:", M)
