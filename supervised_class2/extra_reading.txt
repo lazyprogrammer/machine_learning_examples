@@ -1,0 +1,11 @@
+RANDOM FORESTS
+https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf
+
+A Short Introduction to Boosting
+https://cseweb.ucsd.edu/~yfreund/papers/IntroToBoosting.pdf
+
+Explaining AdaBoost
+http://rob.schapire.net/papers/explaining-adaboost.pdf
+
+Improved Boosting Algorithms Using Confidence-rated Predictions
+https://sci2s.ugr.es/keel/pdf/algorithm/articulo/1999-ML-Improved%20boosting%20algorithms%20using%20confidence-rated%20predictions%20(Schapire%20y%20Singer).pdf
