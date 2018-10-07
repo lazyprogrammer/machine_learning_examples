@@ -10,6 +10,9 @@ https://github.com/reddit-archive/reddit/blob/master/r2/r2/lib/db/_sorts.pyx
 Revealed: US spy operation that manipulates social media
 https://www.theguardian.com/technology/2011/mar/17/us-spy-operation-social-networks
 
+5G Got me Fired
+https://medium.com/@dvorak/5g-got-me-fired-ce407e584c4a
+
 Learning to rank
 https://en.wikipedia.org/wiki/Learning_to_rank#Evaluation_measures
 
