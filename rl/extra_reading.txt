@@ -4,8 +4,35 @@ http://web.mst.edu/~gosavia/joc.pdf
 Algorithms for Reinforcement Learning - Csaba Szepesv´ari
 http://old.sztaki.hu/~szcsaba/papers/RLAlgsInMDPs-lecture.pdf
 
+Markov Decision Processes in Artificial Intelligence
+https://zodml.org/sites/default/files/Markov_Decision_Processes_and_Artificial_Intelligence.pdf
+
+MDP Preliminaries
+http://nanjiang.cs.illinois.edu/files/cs598/note1.pdf
+
+Concentration Inequalities and Multi-Armed Bandits
+http://nanjiang.cs.illinois.edu/files/cs598/note_bandit.pdf
+
+Notes on Tabular Methods
+http://nanjiang.cs.illinois.edu/files/cs598/note3.pdf
+
+Notes on State Abstractions
+http://nanjiang.cs.illinois.edu/files/cs598/note4.pdf
+
+Notes on Fitted Q-iteration
+http://nanjiang.cs.illinois.edu/files/cs598/note5.pdf
+
+Convergence of Stochastic Iterative Dynamic Programming Algorithms
+https://papers.nips.cc/paper/764-convergence-of-stochastic-iterative-dynamic-programming-algorithms.pdf
+
 Sutton & Barto
 http://incompleteideas.net/sutton/book/the-book-2nd.html
+
+Finite-Sample Analysis of Proximal Gradient TD Algorithms
+https://marek.petrik.us/pub/Liu2015.pdf
+
+Finite Sample Analyses for TD(0) with Function Approximation
+https://arxiv.org/pdf/1704.01161.pdf
 
 Mastering the game of Go with deep neural networks and tree search - Silver, D. et al.
 https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf
