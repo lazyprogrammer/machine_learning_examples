@@ -1,3 +1,6 @@
+Jeffrey Pennington, Richard Socher, and Christopher D. Manning. 2014. GloVe: Global Vectors for Word Representation
+https://nlp.stanford.edu/pubs/glove.pdf
+
 Neural Word Embedding as Implicit Matrix Factorization
 http://papers.nips.cc/paper/5477-neural-word-embedding-as-implicit-matrix-factorization.pdf
 
