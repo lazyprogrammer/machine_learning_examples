@@ -105,12 +105,13 @@ class Glove:
 
         model = TruncatedSVD(n_components=D)
         Z = model.fit_transform(logX - mu)
-        Sinv = np.linalg.inv(np.diag(model.explained_variance_))
+        S = np.diag(model.explained_variance_)
+        Sinv = np.linalg.inv(S)
         self.W = Z.dot(Sinv)
         self.U = model.components_.T
 
         # calculate cost once
-        delta = self.W.dot(self.U.T) + mu - logX
+        delta = self.W.dot(S).dot(self.U.T) + mu - logX
         cost = (delta * delta).sum()
         print("svd cost:", cost)
 
