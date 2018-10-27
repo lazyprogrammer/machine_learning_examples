@@ -70,3 +70,6 @@ https://deeplearningcourses.com/c/advanced-computer-vision
 
 Deep Learning: Advanced NLP and RNNs
 https://deeplearningcourses.com/c/deep-learning-advanced-nlp
+
+Coursera's Stanford Machine Learning Course:
+https://www.coursera.org/learn/machine-learning
