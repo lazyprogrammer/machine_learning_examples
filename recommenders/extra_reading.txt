@@ -54,3 +54,6 @@ https://www.cs.toronto.edu/~rsalakhu/papers/rbmcf.pdf
 
 AutoRec: Autoencoders Meet Collaborative Filtering
 http://users.cecs.anu.edu.au/~u5098633/papers/www15.pdf
+
+Collaborative Filtering for Implicit Feedback Datasets
+http://yifanhu.net/PUB/cf.pdf
