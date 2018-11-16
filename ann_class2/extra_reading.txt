@@ -23,3 +23,6 @@ http://arxiv.org/abs/1502.01852
 For understanding Nesterov Momentum:
 Advances in optimizing Recurrent Networks by Yoshua Bengio, Section 3.5
 http://arxiv.org/pdf/1212.0901v2.pdf
+
+Dropout: A Simple Way to Prevent Neural Networks from Overfitting
+https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf
