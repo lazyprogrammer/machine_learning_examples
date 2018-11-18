@@ -1,2 +1,14 @@
 Sutton & Barto
 http://incompleteideas.net/sutton/book/the-book-2nd.html
+
+Implementation Details of the TD(λ) Procedure for the Case of Vector Predictions and Backpropagation
+http://incompleteideas.net/papers/sutton-89.pdf
+
+Policy Gradient Methods for Reinforcement Learning with Function Approximation
+https://homes.cs.washington.edu/~todorov/courses/amath579/reading/PolicyGradient.pdf
+
+Playing Atari with Deep Reinforcement Learning
+https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
+
+Asynchronous Methods for Deep Reinforcement Learning
+https://arxiv.org/pdf/1602.01783.pdf
