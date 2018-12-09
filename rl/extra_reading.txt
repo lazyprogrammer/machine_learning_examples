@@ -36,3 +36,6 @@ https://arxiv.org/pdf/1704.01161.pdf
 
 Mastering the game of Go with deep neural networks and tree search - Silver, D. et al.
 https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf
+
+Learning Rates for Q-learning
+http://www.jmlr.org/papers/volume5/evendar03a/evendar03a.pdf
