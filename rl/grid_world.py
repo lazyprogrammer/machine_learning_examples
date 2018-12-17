@@ -10,9 +10,9 @@ import numpy as np
 
 
 class Grid: # Environment
-  def __init__(self, width, height, start):
-    self.width = width
-    self.height = height
+  def __init__(self, rows, cols, start):
+    self.rows = rows
+    self.cols = cols
     self.i = start[0]
     self.j = start[1]
 

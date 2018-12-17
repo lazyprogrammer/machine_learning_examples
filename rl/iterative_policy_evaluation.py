@@ -12,9 +12,9 @@ from grid_world import standard_grid
 SMALL_ENOUGH = 1e-3 # threshold for convergence
 
 def print_values(V, g):
-  for i in range(g.width):
+  for i in range(g.rows):
     print("---------------------------")
-    for j in range(g.height):
+    for j in range(g.cols):
       v = V.get((i,j), 0)
       if v >= 0:
         print(" %.2f|" % v, end="")
@@ -24,9 +24,9 @@ def print_values(V, g):
 
 
 def print_policy(P, g):
-  for i in range(g.width):
+  for i in range(g.rows):
     print("---------------------------")
-    for j in range(g.height):
+    for j in range(g.cols):
       a = P.get((i,j), ' ')
       print("  %s  |" % a, end="")
     print("")
