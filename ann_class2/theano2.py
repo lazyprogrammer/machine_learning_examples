@@ -47,7 +47,7 @@ def main():
 
     M = 300
     K = 10
-    W1_init = np.random.randn(D, M) / 28
+    W1_init = np.random.randn(D, M) / np.sqrt(D)
     b1_init = np.zeros(M)
     W2_init = np.random.randn(M, K) / np.sqrt(M)
     b2_init = np.zeros(K)

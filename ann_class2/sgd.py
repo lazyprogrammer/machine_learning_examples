@@ -36,7 +36,7 @@ def main():
     Ytest_ind = y2indicator(Ytest)
 
     # 1. full
-    W = np.random.randn(D, 10) / 28
+    W = np.random.randn(D, 10) / np.sqrt(D)
     b = np.zeros(10)
     LL = []
     lr = 0.0001
@@ -63,7 +63,7 @@ def main():
 
 
     # 2. stochastic
-    W = np.random.randn(D, 10) / 28
+    W = np.random.randn(D, 10) / np.sqrt(D)
     b = np.zeros(10)
     LL_stochastic = []
     lr = 0.0001
@@ -95,7 +95,7 @@ def main():
 
 
     # 3. batch
-    W = np.random.randn(D, 10) / 28
+    W = np.random.randn(D, 10) / np.sqrt(D)
     b = np.zeros(10)
     LL_batch = []
     lr = 0.0001
