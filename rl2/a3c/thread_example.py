@@ -39,7 +39,7 @@ for worker in workers:
 
 
 # join the threads
-# for t in worker_threads:
-#   t.join()
+for t in worker_threads:
+  t.join()
 
 print("DONE!")
