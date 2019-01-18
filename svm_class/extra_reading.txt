@@ -1,0 +1,47 @@
+Pattern Recognition and Machine Learning
+https://amzn.to/2DeexU0
+
+Learning with Kernels: Support Vector Machines, Regularization, Optimization, and Beyond
+https://amzn.to/2FdyP2s
+
+Convex Optimization
+http://stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf
+
+A Tutorial on Support Vector Machines for Pattern Recognition
+https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/svmtutorial.pdf
+
+Sequential Minimal Optimization: A Fast Algorithm for Training Support Vector Machines
+https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-98-14.pdf
+
+Fast Training of Support Vector Machines using Sequential Minimal Optimization
+https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/smo-book.pdf
+
+Convex Analysis
+https://press.princeton.edu/titles/1815.html
+
+Generalized Lagrange multiplier method for solving problems of optimum allocation of resources
+https://web.archive.org/web/20110724151508/http://or.journal.informs.org/cgi/reprint/11/3/399
+
+Duality in Linear Programming
+http://www.civilized.com/files/duality.pdf
+
+Linear programming
+https://en.wikipedia.org/wiki/Linear_programming#Duality
+
+Karush–Kuhn–Tucker conditions
+https://en.wikipedia.org/wiki/Karush–Kuhn–Tucker_conditions
+
+A Study on Sigmoid Kernels for SVM and the Training of non-PSD Kernels by SMO-type Methods
+https://www.researchgate.net/publication/2478380_A_Study_on_Sigmoid_Kernels_for_SVM_and_the_Training_of_non-PSD_Kernels_by_SMO-type_Methods
+
+Text Classification using String Kernels
+http://www.jmlr.org/papers/volume2/lodhi02a/lodhi02a.pdf
+
+A Comparison of Methods for Multi-class Support Vector Machines
+https://www.csie.ntu.edu.tw/~cjlin/papers/multisvm.pdf
+
+A Tutorial on Support Vector Regression
+https://alex.smola.org/papers/2003/SmoSch03b.pdf
+
+LIBSVM -- A Library for Support Vector Machines
+https://www.csie.ntu.edu.tw/~cjlin/libsvm/
