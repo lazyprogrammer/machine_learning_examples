@@ -78,7 +78,7 @@ vgg = VGG16_AvgPool(shape)
 # we only want 1 output
 # remember you can call vgg.summary() to see a list of layers
 # 1,2,4,5,7-9,11-13,15-17
-content_model = Model(vgg.input, vgg.layers[13].get_output_at(1))
+content_model = Model(vgg.input, vgg.layers[13].get_output_at(0))
 content_target = K.variable(content_model.predict(content_img))
 
 
