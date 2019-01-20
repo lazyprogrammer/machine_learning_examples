@@ -70,3 +70,9 @@ https://deeplearningcourses.com/c/advanced-computer-vision
 
 Deep Learning: Advanced NLP and RNNs
 https://deeplearningcourses.com/c/deep-learning-advanced-nlp
+
+Recommender Systems and Deep Learning in Python
+https://deeplearningcourses.com/c/recommender-systems
+
+Machine Learning and AI: Support Vector Machines in Python
+https://deeplearningcourses.com/c/support-vector-machines-in-python
