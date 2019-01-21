@@ -45,3 +45,18 @@ https://alex.smola.org/papers/2003/SmoSch03b.pdf
 
 LIBSVM -- A Library for Support Vector Machines
 https://www.csie.ntu.edu.tw/~cjlin/libsvm/
+
+Random Features for Large-Scale Kernel Machines
+http://www.robots.ox.ac.uk/~vgg/rg/papers/randomfeatures.pdf
+
+Reflections on Random Kitchen Sinks
+http://www.argmin.net/2017/12/05/kitchen-sinks/
+
+Weighted Sums of Random Kitchen Sinks: Replacing minimization with randomization in learning
+https://papers.nips.cc/paper/3495-weighted-sums-of-random-kitchen-sinks-replacing-minimization-with-randomization-in-learning
+
+Using the Nyström Method to Speed Up Kernel Machines
+https://papers.nips.cc/paper/1866-using-the-nystrom-method-to-speed-up-kernel-machines
+
+Nyström Method vs Random Fourier Features: A Theoretical and Empirical Comparison
+https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison
