@@ -95,11 +95,14 @@ if __name__ == '__main__':
       # # for reference:
       # # original: W1 = W1 - lr * inputs.T.dot(dhidden) # VxN NxD --> VxD
 
+      # fastest way
+      np.subtract.at(W1, inputs, lr * dhidden)
+
       # test this
-      i = 0
-      for w in inputs: # don't include end token
-        W1[w] = W1[w] - lr * dhidden[i]
-        i += 1
+      # i = 0
+      # for w in inputs: # don't include end token
+      #   W1[w] = W1[w] - lr * dhidden[i]
+      #   i += 1
 
       # vs this
       # oh_inputs = np.zeros((n - 1, V))
