@@ -20,7 +20,7 @@ X = (np.random.random((N, D)) - 0.5)*10
 # true weights - only the first 3 dimensions of X affect Y
 true_w = np.array([1, 0.5, -0.5] + [0]*(D - 3))
 
-# generate Y - add noise with variance 0.5
+# generate Y - add noise
 Y = X.dot(true_w) + np.random.randn(N)*0.5
 
 # perform gradient descent to find w
