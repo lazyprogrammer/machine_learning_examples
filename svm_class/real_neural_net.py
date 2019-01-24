@@ -1,3 +1,5 @@
+# https://deeplearningcourses.com/c/support-vector-machines-in-python
+# https://www.udemy.com/support-vector-machines-in-python
 from __future__ import print_function, division
 from builtins import range
 # Note: you may need to update your version of future
@@ -10,6 +12,7 @@ from datetime import datetime
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import LogisticRegression
 
 # get the data: https://www.kaggle.com/c/digit-recognizer
 Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()
@@ -18,6 +21,7 @@ Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()
 pipeline = Pipeline([
   # ('scaler', StandardScaler()),
   ('mlp', MLPClassifier(hidden_layer_sizes=(500,), activation='tanh')),
+  # ('lr', LogisticRegression()),
 ])
 
 

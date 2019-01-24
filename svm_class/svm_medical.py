@@ -1,3 +1,5 @@
+# https://deeplearningcourses.com/c/support-vector-machines-in-python
+# https://www.udemy.com/support-vector-machines-in-python
 from __future__ import print_function, division
 from future.utils import iteritems
 from builtins import range, input

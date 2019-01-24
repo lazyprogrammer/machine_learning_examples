@@ -1,3 +1,5 @@
+# https://deeplearningcourses.com/c/support-vector-machines-in-python
+# https://www.udemy.com/support-vector-machines-in-python
 from __future__ import print_function, division
 from builtins import range
 # Note: you may need to update your version of future
@@ -17,13 +19,14 @@ from sklearn.mixture import GaussianMixture
 from sklearn.model_selection import cross_val_score
 from sklearn.utils import shuffle
 from scipy import stats
+from sklearn.linear_model import LogisticRegression
 
 
 class SigmoidFeaturizer:
   def __init__(self, gamma=1.0, n_components=100, method='random'):
     self.M = n_components
     self.gamma = gamma
-    assert(method in ('random', 'kmeans', 'gmm'))
+    assert(method in ('normal', 'random', 'kmeans', 'gmm'))
     self.method = method
 
   def _subsample_data(self, X, Y, n=10000):
@@ -39,6 +42,10 @@ class SigmoidFeaturizer:
       N = len(X)
       idx = np.random.randint(N, size=self.M)
       self.samples = X[idx]
+    elif self.method == 'normal':
+      # just sample from N(0,1)
+      D = X.shape[1]
+      self.samples = np.random.randn(self.M, D) / np.sqrt(D)
     elif self.method == 'kmeans':
       X, Y = self._subsample_data(X, Y)
 
@@ -62,7 +69,10 @@ class SigmoidFeaturizer:
 
       print("Fitting GMM")
       t0 = datetime.now()
-      gmm = GaussianMixture(n_components=len(set(Y)))
+      gmm = GaussianMixture(
+        n_components=len(set(Y)),
+        covariance_type='spherical',
+        reg_covar=1e-6)
       gmm.fit(X)
       print("Finished fitting GMM, duration:", datetime.now() - t0)
 
@@ -89,8 +99,9 @@ Xtrain, Ytrain, Xtest, Ytest = getKaggleMNIST()
 # with SGD
 pipeline = Pipeline([
   ('scaler', StandardScaler()),
-  ('sigmoid', SigmoidFeaturizer(gamma=0.05, n_components=2000, method='gmm')),
-  ('linear', SGDClassifier(max_iter=1e6, tol=1e-5))
+  ('sigmoid', SigmoidFeaturizer(gamma=0.05, n_components=2000, method='normal')),
+  # ('linear', SGDClassifier(max_iter=1e6, tol=1e-5))
+  ('linear', LogisticRegression()) # takes longer
 ])
 
 # with Linear SVC
@@ -101,7 +112,7 @@ pipeline = Pipeline([
 #   ('linear', LinearSVC())
 # ])
 
-
+# let's do some cross-validation instead, why not
 X = np.vstack((Xtrain, Xtest))
 Y = np.concatenate((Ytrain, Ytest))
 scores = cross_val_score(pipeline, X, Y, cv=5)
