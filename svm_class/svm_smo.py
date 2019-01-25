@@ -36,10 +36,9 @@ def sigmoid(X1, X2, gamma=0.05, c=1):
 
 
 class SVM:
-  def __init__(self, kernel, C=1.0, right=True):
+  def __init__(self, kernel, C=1.0):
     self.kernel = kernel
     self.C = C
-    self.right = right
 
   def _loss(self, X, Y):
     # return -np.sum(self.alphas) + \
@@ -247,10 +246,7 @@ class SVM:
     plt.show()
 
   def _decision_function(self, X):
-    if self.right:
-      return (self.alphas * self.Ytrain).dot(self.kernel(self.Xtrain, X)) - self.b
-    else:
-      return (self.alphas * self.Ytrain).dot(self.kernel(self.Xtrain, X) - self.b)
+    return (self.alphas * self.Ytrain).dot(self.kernel(self.Xtrain, X)) - self.b
     
 
   def predict(self, X):
@@ -293,17 +289,15 @@ if __name__ == '__main__':
   Xtest = scaler.transform(Xtest)
 
   # now we'll use our custom implementation
-  for right in (True,):
-    print("Right:", right)
-    model = SVM(kernel=linear, right=right)
+  model = SVM(kernel=linear)
 
-    t0 = datetime.now()
-    model.fit(Xtrain, Ytrain)
-    print("train duration:", datetime.now() - t0)
-    t0 = datetime.now()
-    print("train score:", model.score(Xtrain, Ytrain), "duration:", datetime.now() - t0)
-    t0 = datetime.now()
-    print("test score:", model.score(Xtest, Ytest), "duration:", datetime.now() - t0)
+  t0 = datetime.now()
+  model.fit(Xtrain, Ytrain)
+  print("train duration:", datetime.now() - t0)
+  t0 = datetime.now()
+  print("train score:", model.score(Xtrain, Ytrain), "duration:", datetime.now() - t0)
+  t0 = datetime.now()
+  print("test score:", model.score(Xtest, Ytest), "duration:", datetime.now() - t0)
 
   if Xtrain.shape[1] == 2:
     plot_decision_boundary(model)
