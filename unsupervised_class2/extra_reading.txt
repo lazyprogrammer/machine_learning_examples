@@ -1,0 +1,32 @@
+Visualizing Data using t-SNE
+http://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf
+
+Reducing the Dimensionality of Data with Neural Networks
+https://www.cs.toronto.edu/~hinton/science.pdf
+
+A fast learning algorithm for deep belief nets
+https://www.cs.toronto.edu/~hinton/absps/fastnc.pdf
+
+Why Does Unsupervised Pre-training Help Deep Learning?
+http://www.jmlr.org/papers/volume11/erhan10a/erhan10a.pdf
+
+A Better Way to Pretrain Deep Boltzmann Machines
+http://www.cs.toronto.edu/~hinton/absps/DBM_pretrain.pdf
+
+On Deep Generative Models with Applications to Recognition
+http://www.cs.toronto.edu/~hinton/absps/ranzato_cvpr2011.pdf
+
+LEARNING A BETTER REPRESENTATION OF SPEECH SOUND WAVES USING RESTRICTED BOLTZMANN MACHINES
+http://www.cs.toronto.edu/~hinton/absps/jaitly_ICASSP2011.pdf
+
+Rectified Linear Units Improve Restricted Boltzmann Machines
+http://www.cs.toronto.edu/~hinton/absps/reluICML.pdf
+
+Generative versus discriminative training of RBMs for classification of fMRI images
+http://www.cs.toronto.edu/~hinton/absps/fmrinips.pdf
+
+Restricted Boltzmann Machines for Collaborative Filtering
+http://www.cs.toronto.edu/~hinton/absps/netflix.pdf
+
+On Contrastive Divergence Learning
+http://www.cs.toronto.edu/~hinton/absps/cdmiguel.pdf
