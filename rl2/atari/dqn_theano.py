@@ -59,7 +59,7 @@ def update_state(state, obs):
 
 
 class ReplayMemory:
-  def __init__(self, size=500000, frame_height=IM_SIZE, frame_width=IM_SIZE, 
+  def __init__(self, size=MAX_EXPERIENCES, frame_height=IM_SIZE, frame_width=IM_SIZE, 
                agent_history_length=4, batch_size=32):
     """
     Args:
