@@ -29,27 +29,119 @@ from scipy.misc import imresize
 MAX_EXPERIENCES = 500000
 MIN_EXPERIENCES = 50000
 TARGET_UPDATE_PERIOD = 10000
-IM_SIZE = 80
+IM_SIZE = 84
 K = 4 #env.action_space.n
 
 
+# Transform raw images for input into neural network
+# 1) Convert to grayscale
+# 2) Resize
+# 3) Crop
+class ImageTransformer:
+  def __init__(self):
+    with tf.variable_scope("image_transformer"):
+      self.input_state = tf.placeholder(shape=[210, 160, 3], dtype=tf.uint8)
+      self.output = tf.image.rgb_to_grayscale(self.input_state)
+      self.output = tf.image.crop_to_bounding_box(self.output, 34, 0, 160, 160)
+      self.output = tf.image.resize_images(
+        self.output,
+        [IM_SIZE, IM_SIZE],
+        method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+      self.output = tf.squeeze(self.output)
+
+  def transform(self, state, sess=None):
+    sess = sess or tf.get_default_session()
+    return sess.run(self.output, { self.input_state: state })
 
 
-def downsample_image(A):
-  B = A[31:195] # select the important parts of the image
-  B = B.mean(axis=2) # convert to grayscale
-
-  # downsample image
-  # changing aspect ratio doesn't significantly distort the image
-  # nearest neighbor interpolation produces a much sharper image
-  # than default bilinear
-  B = imresize(B, size=(IM_SIZE, IM_SIZE), interp='nearest')
-  return B
+def update_state(state, obs_small):
+  return np.append(state[:,:,1:], np.expand_dims(obs_small, 2), axis=2)
 
 
-def update_state(state, obs):
-  obs_small = downsample_image(obs)
-  return np.append(state[1:], np.expand_dims(obs_small, 0), axis=0)
+
+class ReplayMemory:
+  def __init__(self, size=500000, frame_height=IM_SIZE, frame_width=IM_SIZE, 
+               agent_history_length=4, batch_size=32):
+    """
+    Args:
+        size: Integer, Number of stored transitions
+        frame_height: Integer, Height of a frame of an Atari game
+        frame_width: Integer, Width of a frame of an Atari game
+        agent_history_length: Integer, Number of frames stacked together to create a state
+        batch_size: Integer, Number of transitions returned in a minibatch
+    """
+    self.size = size
+    self.frame_height = frame_height
+    self.frame_width = frame_width
+    self.agent_history_length = agent_history_length
+    self.batch_size = batch_size
+    self.count = 0
+    self.current = 0
+    
+    # Pre-allocate memory
+    self.actions = np.empty(self.size, dtype=np.int32)
+    self.rewards = np.empty(self.size, dtype=np.float32)
+    self.frames = np.empty((self.size, self.frame_height, self.frame_width), dtype=np.uint8)
+    self.terminal_flags = np.empty(self.size, dtype=np.bool)
+    
+    # Pre-allocate memory for the states and new_states in a minibatch
+    self.states = np.empty((self.batch_size, self.agent_history_length, 
+                            self.frame_height, self.frame_width), dtype=np.uint8)
+    self.new_states = np.empty((self.batch_size, self.agent_history_length, 
+                                self.frame_height, self.frame_width), dtype=np.uint8)
+    self.indices = np.empty(self.batch_size, dtype=np.int32)
+      
+  def add_experience(self, action, frame, reward, terminal):
+    """
+    Args:
+        action: An integer-encoded action
+        frame: One grayscale frame of the game
+        reward: reward the agend received for performing an action
+        terminal: A bool stating whether the episode terminated
+    """
+    if frame.shape != (self.frame_height, self.frame_width):
+      raise ValueError('Dimension of frame is wrong!')
+    self.actions[self.current] = action
+    self.frames[self.current, ...] = frame
+    self.rewards[self.current] = reward
+    self.terminal_flags[self.current] = terminal
+    self.count = max(self.count, self.current+1)
+    self.current = (self.current + 1) % self.size
+           
+  def _get_state(self, index):
+    if self.count is 0:
+      raise ValueError("The replay memory is empty!")
+    if index < self.agent_history_length - 1:
+      raise ValueError("Index must be min 3")
+    return self.frames[index-self.agent_history_length+1:index+1, ...]
+      
+  def _get_valid_indices(self):
+    for i in range(self.batch_size):
+      while True:
+        index = random.randint(self.agent_history_length, self.count - 1)
+        if index < self.agent_history_length:
+          continue
+        if index >= self.current and index - self.agent_history_length <= self.current:
+          continue
+        if self.terminal_flags[index - self.agent_history_length:index].any():
+          continue
+        break
+      self.indices[i] = index
+          
+  def get_minibatch(self):
+    """
+    Returns a minibatch of self.batch_size transitions
+    """
+    if self.count < self.agent_history_length:
+      raise ValueError('Not enough memories to get a minibatch')
+    
+    self._get_valid_indices()
+        
+    for i, idx in enumerate(self.indices):
+      self.states[i] = self._get_state(idx - 1)
+      self.new_states[i] = self._get_state(idx)
+    
+    return np.transpose(self.states, axes=(0, 2, 3, 1)), self.actions[self.indices], self.rewards[self.indices], np.transpose(self.new_states, axes=(0, 2, 3, 1)), self.terminal_flags[self.indices]
 
 
 class DQN:
@@ -61,11 +153,11 @@ class DQN:
     with tf.variable_scope(scope):
 
       # inputs and targets
-      self.X = tf.placeholder(tf.float32, shape=(None, 4, IM_SIZE, IM_SIZE), name='X')
+      self.X = tf.placeholder(tf.float32, shape=(None, IM_SIZE, IM_SIZE, 4), name='X')
 
       # tensorflow convolution needs the order to be:
       # (num_samples, height, width, "color")
-      # so we need to tranpose later
+
       self.G = tf.placeholder(tf.float32, shape=(None,), name='G')
       self.actions = tf.placeholder(tf.int32, shape=(None,), name='actions')
 
@@ -74,7 +166,6 @@ class DQN:
       # these built-in layers are faster and don't require us to
       # calculate the size of the output of the final conv layer!
       Z = self.X / 255.0
-      Z = tf.transpose(Z, [0, 2, 3, 1])
       for num_output_filters, filtersz, poolsz in conv_layer_sizes:
         Z = tf.contrib.layers.conv2d(
           Z,
@@ -97,15 +188,17 @@ class DQN:
         reduction_indices=[1]
       )
 
-      cost = tf.reduce_mean(tf.square(self.G - selected_action_values))
-      # self.train_op = tf.train.AdamOptimizer(1e-2).minimize(cost)
+      # cost = tf.reduce_mean(tf.square(self.G - selected_action_values))
+      cost = tf.reduce_mean(tf.losses.huber_loss(self.G, selected_action_values))
+      self.train_op = tf.train.AdamOptimizer(1e-5).minimize(cost)
       # self.train_op = tf.train.AdagradOptimizer(1e-2).minimize(cost)
       # self.train_op = tf.train.RMSPropOptimizer(2.5e-4, decay=0.99, epsilon=1e-3).minimize(cost)
-      self.train_op = tf.train.RMSPropOptimizer(0.00025, 0.99, 0.0, 1e-6).minimize(cost)
+      # self.train_op = tf.train.RMSPropOptimizer(0.00025, 0.99, 0.0, 1e-6).minimize(cost)
       # self.train_op = tf.train.MomentumOptimizer(1e-3, momentum=0.9).minimize(cost)
       # self.train_op = tf.train.GradientDescentOptimizer(1e-4).minimize(cost)
 
       self.cost = cost
+
 
   def copy_from(self, other):
     mine = [t for t in tf.trainable_variables() if t.name.startswith(self.scope)]
@@ -115,11 +208,25 @@ class DQN:
 
     ops = []
     for p, q in zip(mine, theirs):
-      actual = self.session.run(q)
-      op = p.assign(actual)
+      op = p.assign(q)
       ops.append(op)
-
     self.session.run(ops)
+
+
+  def save(self):
+    params = [t for t in tf.trainable_variables() if t.name.startswith(self.scope)]
+    params = self.session.run(params)
+    np.savez('tf_dqn_weights.npz', *params)
+
+
+  def load(self):
+    params = [t for t in tf.trainable_variables() if t.name.startswith(self.scope)]
+    npz = np.load('tf_dqn_weights.npz')
+    ops = []
+    for p, (_, v) in zip(params, npz.iteritems()):
+      ops.append(p.assign(v))
+    self.session.run(ops)
+
 
   def set_session(self, session):
     self.session = session
@@ -147,8 +254,7 @@ class DQN:
 
 def learn(model, target_model, experience_replay_buffer, gamma, batch_size):
   # Sample experiences
-  samples = random.sample(experience_replay_buffer, batch_size)
-  states, actions, rewards, next_states, dones = map(np.array, zip(*samples))
+  states, actions, rewards, next_states, dones = experience_replay_buffer.get_minibatch()
 
   # Calculate targets
   next_Qs = target_model.predict(next_states)
@@ -162,10 +268,12 @@ def learn(model, target_model, experience_replay_buffer, gamma, batch_size):
 
 def play_one(
   env,
+  sess,
   total_t,
   experience_replay_buffer,
   model,
   target_model,
+  image_transformer,
   gamma,
   batch_size,
   epsilon,
@@ -176,9 +284,8 @@ def play_one(
 
   # Reset the environment
   obs = env.reset()
-  obs_small = downsample_image(obs)
-  state = np.stack([obs_small] * 4, axis=0)
-  assert(state.shape == (4, 80, 80))
+  obs_small = image_transformer.transform(obs, sess)
+  state = np.stack([obs_small] * 4, axis=2)
   loss = None
 
 
@@ -198,26 +305,21 @@ def play_one(
     # Take action
     action = model.sample_action(state, epsilon)
     obs, reward, done, _ = env.step(action)
-    obs_small = downsample_image(obs)
-    next_state = np.append(state[1:], np.expand_dims(obs_small, 0), axis=0)
-    # assert(state.shape == (4, 80, 80))
+    obs_small = image_transformer.transform(obs, sess)
+    next_state = update_state(state, obs_small)
 
-
-
+    # Compute total reward
     episode_reward += reward
 
-    # Remove oldest experience if replay buffer is full
-    if len(experience_replay_buffer) == MAX_EXPERIENCES:
-      experience_replay_buffer.pop(0)
-
     # Save the latest experience
-    experience_replay_buffer.append((state, action, reward, next_state, done))
+    experience_replay_buffer.add_experience(action, obs_small, reward, done)    
 
     # Train the model, keep track of time
     t0_2 = datetime.now()
     loss = learn(model, target_model, experience_replay_buffer, gamma, batch_size)
     dt = datetime.now() - t0_2
 
+    # More debugging info
     total_time_training += dt.total_seconds()
     num_steps_in_episode += 1
 
@@ -230,6 +332,15 @@ def play_one(
   return total_t, episode_reward, (datetime.now() - t0), num_steps_in_episode, total_time_training/num_steps_in_episode, epsilon
 
 
+def smooth(x):
+  # last 100
+  n = len(x)
+  y = np.zeros(n)
+  for i in range(n):
+    start = max(0, i - 99)
+    y[i] = float(x[start:(i+1)].sum()) / (i - start + 1)
+  return y
+
 
 if __name__ == '__main__':
 
@@ -238,9 +349,9 @@ if __name__ == '__main__':
   hidden_layer_sizes = [512]
   gamma = 0.99
   batch_sz = 32
-  num_episodes = 10000
+  num_episodes = 3500
   total_t = 0
-  experience_replay_buffer = []
+  experience_replay_buffer = ReplayMemory()
   episode_rewards = np.zeros(num_episodes)
 
 
@@ -272,6 +383,7 @@ if __name__ == '__main__':
     gamma=gamma,
     scope="target_model"
   )
+  image_transformer = ImageTransformer()
 
 
 
@@ -283,35 +395,30 @@ if __name__ == '__main__':
 
     print("Populating experience replay buffer...")
     obs = env.reset()
-    obs_small = downsample_image(obs)
-    state = np.stack([obs_small] * 4, axis=0)
-    # assert(state.shape == (4, 80, 80))
+
     for i in range(MIN_EXPERIENCES):
 
         action = np.random.choice(K)
         obs, reward, done, _ = env.step(action)
-        next_state = update_state(state, obs)
-        # assert(state.shape == (4, 80, 80))
-        experience_replay_buffer.append((state, action, reward, next_state, done))
+        obs_small = image_transformer.transform(obs, sess) # not used anymore
+        experience_replay_buffer.add_experience(action, obs_small, reward, done)
 
         if done:
             obs = env.reset()
-            obs_small = downsample_image(obs)
-            state = np.stack([obs_small] * 4, axis=0)
-            # assert(state.shape == (4, 80, 80))
-        else:
-            state = next_state
 
 
     # Play a number of episodes and learn!
+    t0 = datetime.now()
     for i in range(num_episodes):
 
       total_t, episode_reward, duration, num_steps_in_episode, time_per_step, epsilon = play_one(
         env,
+        sess,
         total_t,
         experience_replay_buffer,
         model,
         target_model,
+        image_transformer,
         gamma,
         batch_sz,
         epsilon,
@@ -330,5 +437,15 @@ if __name__ == '__main__':
         "Epsilon:", "%.3f" % epsilon
       )
       sys.stdout.flush()
+    print("Total duration:", datetime.now() - t0)
+
+    model.save()
+
+    # Plot the smoothed returns
+    y = smooth(episode_rewards)
+    plt.plot(episode_rewards, label='orig')
+    plt.plot(y, label='smoothed')
+    plt.legend()
+    plt.show()
 
 
