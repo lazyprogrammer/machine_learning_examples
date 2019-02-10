@@ -217,7 +217,7 @@ class HiddenLayer:
     return self.f(a)
 
 class DQN:
-  def __init__(self, K, conv_layer_sizes, hidden_layer_sizes, gamma):
+  def __init__(self, K, conv_layer_sizes, hidden_layer_sizes):
     self.K = K
 
     # inputs and targets
@@ -253,7 +253,7 @@ class DQN:
     # build fully connected layers
     self.layers = []
     M1 = flattened_ouput_size
-    # print("flattened_ouput_size:", flattened_ouput_size)
+    print("flattened_ouput_size:", flattened_ouput_size)
     for M2 in hidden_layer_sizes:
       layer = HiddenLayer(M1, M2)
       self.layers.append(layer)
@@ -284,6 +284,7 @@ class DQN:
     # compile functions
     self.train_op = theano.function(
       inputs=[X, G, actions],
+      outputs=cost,
       updates=updates,
       allow_input_downcast=True
     )
@@ -305,7 +306,7 @@ class DQN:
     return self.predict_op(X)
 
   def update(self, states, actions, targets):
-    self.train_op(states, targets, actions)
+    return self.train_op(states, targets, actions)
 
   def sample_action(self, x, eps):
     if np.random.random() < eps:
@@ -434,13 +435,11 @@ if __name__ == '__main__':
     K=K,
     conv_layer_sizes=conv_layer_sizes,
     hidden_layer_sizes=hidden_layer_sizes,
-    gamma=gamma,
   )
   target_model = DQN(
     K=K,
     conv_layer_sizes=conv_layer_sizes,
     hidden_layer_sizes=hidden_layer_sizes,
-    gamma=gamma,
   )
 
 
@@ -451,6 +450,7 @@ if __name__ == '__main__':
 
     action = np.random.choice(K)
     obs, reward, done, _ = env.step(action)
+    obs_small = downsample_image(obs)
     experience_replay_buffer.add_experience(action, obs_small, reward, done)
 
     if done:

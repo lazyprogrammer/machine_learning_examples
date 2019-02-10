@@ -145,7 +145,7 @@ class ReplayMemory:
 
 
 class DQN:
-  def __init__(self, K, conv_layer_sizes, hidden_layer_sizes, gamma, scope):
+  def __init__(self, K, conv_layer_sizes, hidden_layer_sizes, scope):
 
     self.K = K
     self.scope = scope
@@ -374,13 +374,11 @@ if __name__ == '__main__':
     K=K,
     conv_layer_sizes=conv_layer_sizes,
     hidden_layer_sizes=hidden_layer_sizes,
-    gamma=gamma,
     scope="model")
   target_model = DQN(
     K=K,
     conv_layer_sizes=conv_layer_sizes,
     hidden_layer_sizes=hidden_layer_sizes,
-    gamma=gamma,
     scope="target_model"
   )
   image_transformer = ImageTransformer()
