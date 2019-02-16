@@ -36,8 +36,10 @@ def main():
     lr = 0.0004
     reg = 0.01
 
-    Xtrain = Xtest.astype(np.float32)
-    Ytrain = Ytest.astype(np.float32)
+    Xtrain = Xtrain.astype(np.float32)
+    Ytrain = Ytrain.astype(np.float32)
+    Xtest = Xtest.astype(np.float32)
+    Ytest = Ytest.astype(np.float32)
     Ytrain_ind = y2indicator(Ytrain).astype(np.float32)
     Ytest_ind = y2indicator(Ytest).astype(np.float32)
 
