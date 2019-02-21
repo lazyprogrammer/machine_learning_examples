@@ -63,7 +63,7 @@ def main():
     Ytest  = test['y'].flatten() - 1
 
     # gradient descent params
-    max_iter = 6
+    max_iter = 15
     print_period = 10
     N, D = Xtrain.shape
     batch_sz = 500
