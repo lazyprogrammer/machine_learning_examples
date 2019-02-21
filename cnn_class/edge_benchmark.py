@@ -82,7 +82,7 @@ def main():
 
     # define variables and expressions
     X = tf.placeholder(tf.float32, shape=(None, D), name='X')
-    T = tf.placeholder(tf.float32, shape=(None, K), name='T')
+    T = tf.placeholder(tf.int32, shape=(None,), name='T')
     W1 = tf.Variable(W1_init.astype(np.float32))
     b1 = tf.Variable(b1_init.astype(np.float32))
     W2 = tf.Variable(W2_init.astype(np.float32))
