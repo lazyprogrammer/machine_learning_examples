@@ -9,6 +9,7 @@ from builtins import range, input
 
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics.pairwise import pairwise_distances
 
 
 def d(u, v):
@@ -30,7 +31,7 @@ def cost(X, R, M):
     return cost
 
 
-def plot_k_means(X, K, max_iter=20, beta=1.0, show_plots=True):
+def plot_k_means(X, K, max_iter=20, beta=3.0, show_plots=False):
     N, D = X.shape
     M = np.zeros((K, D))
     # R = np.zeros((N, K))
@@ -40,26 +41,40 @@ def plot_k_means(X, K, max_iter=20, beta=1.0, show_plots=True):
     for k in range(K):
         M[k] = X[np.random.choice(N)]
 
-    costs = np.zeros(max_iter)
+    costs = []
+    k = 0
     for i in range(max_iter):
+        k += 1
         # step 1: determine assignments / resposibilities
         # is this inefficient?
         for k in range(K):
             for n in range(N):
-                # R[n,k] = np.exp(-beta*d(M[k], X[n])) / np.sum( np.exp(-beta*d(M[j], X[n])) for j in range(K) )
                 exponents[n,k] = np.exp(-beta*d(M[k], X[n]))
-
         R = exponents / exponents.sum(axis=1, keepdims=True)
-        # assert(np.abs(R - R2).sum() < 1e-10)
+
 
         # step 2: recalculate means
-        for k in range(K):
-            M[k] = R[:,k].dot(X) / R[:,k].sum()
+        # decent vectorization
+        # for k in range(K):
+        #     M[k] = R[:,k].dot(X) / R[:,k].sum()
+        # oldM = M
 
-        costs[i] = cost(X, R, M)
+        # full vectorization
+        M = R.T.dot(X) / R.sum(axis=0, keepdims=True).T
+        # print("diff M:", np.abs(M - oldM).sum())
+
+        c = cost(X, R, M)
+        costs.append(c)
         if i > 0:
-            if np.abs(costs[i] - costs[i-1]) < 1e-5:
+            if np.abs(costs[-1] - costs[-2]) < 1e-5:
                 break
+
+        if len(costs) > 1:
+            if costs[-1] > costs[-2]:
+                pass
+                # print("cost increased!")
+                # print("M:", M)
+                # print("R.min:", R.min(), "R.max:", R.max())
 
     if show_plots:
         plt.plot(costs)
@@ -71,6 +86,7 @@ def plot_k_means(X, K, max_iter=20, beta=1.0, show_plots=True):
         plt.scatter(X[:,0], X[:,1], c=colors)
         plt.show()
 
+    print("Final cost", costs[-1])
     return M, R
 
 
@@ -98,13 +114,19 @@ def main():
     plt.show()
 
     K = 3 # luckily, we already know this
-    plot_k_means(X, K)
+    plot_k_means(X, K, beta=1.0, show_plots=True)
+
+    K = 3 # luckily, we already know this
+    plot_k_means(X, K, beta=3.0, show_plots=True)
+
+    K = 3 # luckily, we already know this
+    plot_k_means(X, K, beta=10.0, show_plots=True)
 
     K = 5 # what happens if we choose a "bad" K?
-    plot_k_means(X, K, max_iter=30)
+    plot_k_means(X, K, max_iter=30, show_plots=True)
 
     K = 5 # what happens if we change beta?
-    plot_k_means(X, K, max_iter=30, beta=0.3)
+    plot_k_means(X, K, max_iter=30, beta=0.3, show_plots=True)
 
 
 if __name__ == '__main__':

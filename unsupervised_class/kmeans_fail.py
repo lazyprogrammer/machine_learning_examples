@@ -35,19 +35,19 @@ def donut():
 def main():
     # donut
     X = donut()
-    plot_k_means(X, 2)
+    plot_k_means(X, 2, beta=0.1, show_plots=True)
 
     # elongated clusters
     X = np.zeros((1000, 2))
     X[:500,:] = np.random.multivariate_normal([0, 0], [[1, 0], [0, 20]], 500)
     X[500:,:] = np.random.multivariate_normal([5, 0], [[1, 0], [0, 20]], 500)
-    plot_k_means(X, 2)
+    plot_k_means(X, 2, beta=0.1, show_plots=True)
 
     # different density
     X = np.zeros((1000, 2))
     X[:950,:] = np.array([0,0]) + np.random.randn(950, 2)
     X[950:,:] = np.array([3,0]) + np.random.randn(50, 2)
-    plot_k_means(X, 2)
+    plot_k_means(X, 2, show_plots=True)
 
 
 
