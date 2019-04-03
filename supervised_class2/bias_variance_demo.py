@@ -114,7 +114,7 @@ variances = np.zeros((Ntrain, MAX_POLY))
 for d in range(MAX_POLY):
   for i in range(Ntrain):
     delta = train_predictions[i,:,d] - avg_train_prediction[i,d]
-    variances[i,d] = delta.dot(delta) / N
+    variances[i,d] = delta.dot(delta) / len(delta)
 variance = variances.mean(axis=0)
 
 # make bias-variance plots
