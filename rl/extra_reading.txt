@@ -1,3 +1,6 @@
+Hacking Google reCAPTCHA v3 using Reinforcement Learning
+https://arxiv.org/pdf/1903.01003.pdf
+
 Reinforcement Learning: A Tutorial Survey and Recent Advances - Abhijit Gosavi
 http://web.mst.edu/~gosavia/joc.pdf
 
