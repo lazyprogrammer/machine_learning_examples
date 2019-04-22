@@ -7,6 +7,9 @@ http://www.argmin.net/2017/12/05/kitchen-sinks/
 Weighted Sums of Random Kitchen Sinks: Replacing minimization with randomization in learning
 https://papers.nips.cc/paper/3495-weighted-sums-of-random-kitchen-sinks-replacing-minimization-with-randomization-in-learning
 
+This guy generated some nice plots and code to demonstrate that RBFSampler works like a real RBF Kernel
+https://www.kaggle.com/sy2002/rbfsampler-actually-is-not-using-any-rbfs
+
 Sutton & Barto
 http://incompleteideas.net/sutton/book/the-book-2nd.html
 

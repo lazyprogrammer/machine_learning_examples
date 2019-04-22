@@ -60,3 +60,6 @@ https://papers.nips.cc/paper/1866-using-the-nystrom-method-to-speed-up-kernel-ma
 
 Nyström Method vs Random Fourier Features: A Theoretical and Empirical Comparison
 https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison
+
+This guy generated some nice plots and code to demonstrate that RBFSampler works like a real RBF Kernel
+https://www.kaggle.com/sy2002/rbfsampler-actually-is-not-using-any-rbfs
