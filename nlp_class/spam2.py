@@ -35,6 +35,9 @@ df.columns = ['labels', 'data']
 df['b_labels'] = df['labels'].map({'ham': 0, 'spam': 1})
 Y = df['b_labels'].values
 
+# clean imported data
+df['data'].fillna('')
+
 # try multiple ways of calculating features
 # tfidf = TfidfVectorizer(decode_error='ignore')
 # X = tfidf.fit_transform(df['data'])
