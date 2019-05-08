@@ -1,0 +1,22 @@
+How do I sample from a discrete (categorical) distribution in log space?
+https://stats.stackexchange.com/questions/64081/how-do-i-sample-from-a-discrete-categorical-distribution-in-log-space
+
+A2C (Advantage Actor-Critic)
+https://openai.com/blog/baselines-acktr-a2c/
+
+DDPG (Deep Deterministic Policy Gradient)
+"Continuous control with deep reinforcement learning"
+https://arxiv.org/abs/1509.02971
+
+Deterministic Policy Gradient Algorithms
+http://proceedings.mlr.press/v32/silver14.pdf
+
+ES (Evolution Strategies)
+"Evolution Strategies as a Scalable Alternative to Reinforcement Learning"
+https://arxiv.org/abs/1703.03864
+
+Trust Region Evolution Strategies
+https://www.microsoft.com/en-us/research/uploads/prod/2018/11/trust-region-evolution-strategies.pdf
+
+Addressing Function Approximation Error in Actor-Critic Methods
+https://arxiv.org/abs/1802.09477
