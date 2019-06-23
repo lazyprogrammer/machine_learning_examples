@@ -9,6 +9,7 @@ from builtins import range
 
 
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 
 def sigmoid(z):
@@ -19,12 +20,22 @@ D = 50
 
 # uniformly distributed numbers between -5, +5
 X = (np.random.random((N, D)) - 0.5)*10
+# X = (np.random.randn(N, D) - 0.5)*10
 
 # true weights - only the first 3 dimensions of X affect Y
 true_w = np.array([1, 0.5, -0.5] + [0]*(D - 3))
 
 # generate Y - add noise with variance 0.5
 Y = np.round(sigmoid(X.dot(true_w) + np.random.randn(N)*0.5))
+
+
+
+
+# let's plot the data to see what it looks like
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(X[:,0], X[:,1], X[:,2], c=Y)
+plt.show()
 
 # perform gradient descent to find w
 costs = [] # keep track of squared error cost

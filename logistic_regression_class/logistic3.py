@@ -65,7 +65,6 @@ for i in range(100):
         print(cross_entropy(T, Y))
 
     # gradient descent weight udpate
-    # w += learning_rate * np.dot((T - Y).T, Xb) # old
     w += learning_rate * Xb.T.dot(T - Y)
 
     # recalculate Y
