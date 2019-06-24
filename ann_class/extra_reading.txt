@@ -1,0 +1,8 @@
+The Chain Rule of Calculus
+http://tutorial.math.lamar.edu/Classes/CalcI/ChainRule.aspx
+
+Yes you should understand backprop by Andrej Karpathy
+https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b
+
+The Matrix Cookbook
+https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf

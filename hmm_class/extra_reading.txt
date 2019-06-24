@@ -1,0 +1,8 @@
+A Tutorial on Hidden Markov Models and Selected Applications in Speech Recognition
+https://www.ece.ucsb.edu/Faculty/Rabiner/ece259/Reprints/tutorial%20on%20hmm%20and%20applications.pdf
+
+Some Mathematics for HMM by Dawei Shen
+https://pdfs.semanticscholar.org/4ce1/9ab0e07da9aa10be1c336400c8e4d8fc36c5.pdf
+
+A Revealing Introduction to Hidden Markov Models
+https://www.cs.sjsu.edu/~stamp/RUA/HMM.pdf
