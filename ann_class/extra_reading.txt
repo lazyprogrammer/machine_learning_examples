@@ -6,3 +6,6 @@ https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b
 
 The Matrix Cookbook
 https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf
+
+Rumelhart, D. E., Hinton, G. E., and Williams, R. J. (1986) Learning representations by back-propagating errors.
+https://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf
