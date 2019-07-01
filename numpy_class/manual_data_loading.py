@@ -1,3 +1,4 @@
+from __future__ import print_function
 # https://deeplearningcourses.com/c/deep-learning-prerequisites-the-numpy-stack-in-python
 # https://www.udemy.com/deep-learning-prerequisites-the-numpy-stack-in-python
 
@@ -16,4 +17,4 @@ for line in open('../linear_regression_class/data_2d.csv'):
   X.append(sample)
 
 X = np.array(X)
-print X
+print(X)

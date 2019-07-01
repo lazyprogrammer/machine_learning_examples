@@ -1,3 +1,4 @@
+from __future__ import print_function
 # GMM using Variational Inference
 
 import numpy as np
@@ -199,7 +200,7 @@ def gmm(X, K, max_iter=100):
   plt.title("Costs")
   plt.show()
 
-  print "cluster assignments:\n", cluster_assignments
+  print("cluster assignments:\n", cluster_assignments)
   plt.scatter(X[:,0], X[:,1], c=cluster_assignments, s=100, alpha=0.7)
   plt.show()
 

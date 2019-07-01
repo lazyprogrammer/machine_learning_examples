@@ -1,3 +1,4 @@
+from __future__ import print_function
 # https://deeplearningcourses.com/c/deep-learning-prerequisites-the-numpy-stack-in-python
 # https://www.udemy.com/deep-learning-prerequisites-the-numpy-stack-in-python
 import numpy as np
@@ -23,4 +24,4 @@ for t in xrange(T):
 	a.dot(b)
 dt2 = datetime.now() - t0
 
-print "dt1 / dt2:", dt1.total_seconds() / dt2.total_seconds()
+print("dt1 / dt2:", dt1.total_seconds() / dt2.total_seconds())

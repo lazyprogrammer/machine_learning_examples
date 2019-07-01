@@ -1,3 +1,4 @@
+from __future__ import print_function
 # The corresponding tutorial for this code was released EXCLUSIVELY as a bonus
 # If you want to learn about future bonuses, please sign up for my newsletter at:
 # https://lazyprogrammer.me
@@ -109,7 +110,7 @@ class ANN(object):
                 c, p = train_op(Xbatch, Ybatch)
                 costs.append(c)
                 if (j+1) % print_period == 0:
-                    print "i:", i, "j:", j, "nb:", n_batches, "cost:", c
+                    print("i:", i, "j:", j, "nb:", n_batches, "cost:", c)
         
         if show_fig:
             plt.plot(costs)
@@ -156,7 +157,7 @@ for D in (2,3,4,5,6,7):
         X[:,d] = series[d:d+n]
     Y = series[D:D+n]
 
-    print "series length:", n
+    print("series length:", n)
     Xtrain = X[:n/2]
     Ytrain = Y[:n/2]
     Xtest = X[n/2:]
@@ -164,8 +165,8 @@ for D in (2,3,4,5,6,7):
 
     model = ANN([200])
     model.fit(Xtrain, Ytrain, activation=T.tanh)
-    print "train score:", model.score(Xtrain, Ytrain)
-    print "test score:", model.score(Xtest, Ytest)
+    print("train score:", model.score(Xtrain, Ytrain))
+    print("test score:", model.score(Xtest, Ytest))
 
     # plot the prediction with true values
     plt.plot(series)

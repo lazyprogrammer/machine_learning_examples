@@ -1,3 +1,4 @@
+from __future__ import print_function
 # GMM using Expectation-Maximization
 
 import numpy as np
@@ -54,9 +55,9 @@ def gmm(X, K, max_iter=20, smoothing=1e-2):
   plt.scatter(X[:,0], X[:,1], c=R.argmax(axis=1))
   plt.show()
 
-  print "pi:", pi
-  print "means:", M
-  print "covariances:", C
+  print("pi:", pi)
+  print("means:", M)
+  print("covariances:", C)
   return R
 
 

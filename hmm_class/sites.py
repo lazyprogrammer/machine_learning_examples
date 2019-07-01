@@ -1,3 +1,4 @@
+from __future__ import print_function
 # https://deeplearningcourses.com/c/unsupervised-machine-learning-hidden-markov-models-in-python
 # https://udemy.com/unsupervised-machine-learning-hidden-markov-models-in-python
 # http://lazyprogrammer.me
@@ -19,14 +20,14 @@ for k, v in transitions.iteritems():
     transitions[k] = v / row_sums[s]
 
 # initial state distribution
-print "initial state distribution:"
+print("initial state distribution:")
 for k, v in transitions.iteritems():
     s, e = k
     if s == '-1':
-        print e, v
+        print(e, v)
 
 # which page has the highest bounce?
 for k, v in transitions.iteritems():
     s, e = k
     if e == 'B':
-        print "bounce rate for %s: %s" % (s, v)
+        print("bounce rate for %s: %s" % (s, v))

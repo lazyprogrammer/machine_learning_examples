@@ -1,3 +1,4 @@
+from __future__ import print_function
 # expectation-maximization for the model:
 # x(n) ~ N(Wz(n), sigma**2 I) (observed variables)
 # z(n) ~ N(0, I) (latent variables)
@@ -61,9 +62,9 @@ for t in xrange(50):
 plt.plot(costs)
 plt.show()
 
-print "actual W:", W0
-print "predicted W:", W
+print("actual W:", W0)
+print("predicted W:", W)
 
-print "log-likelihood given real W:", loglikelihood(X, Z, W0)
+print("log-likelihood given real W:", loglikelihood(X, Z, W0))
 
-print "log-likelihood found:", costs[-1]
+print("log-likelihood found:", costs[-1])

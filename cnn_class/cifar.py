@@ -1,3 +1,4 @@
+from __future__ import print_function
 # https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-theano-tensorflow
 import os
 import numpy as np
@@ -43,7 +44,7 @@ def getImageData():
             im = Image.open("../large_files/cifar10/train/%s.png" % (i + 1))
             X[i] = image2array(im)
             if i % 1000 == 0:
-                print i
+                print(i)
         np.save(savedXpath, X.astype(np.uint8))
     else:
         X = np.load(savedXpath)
@@ -62,7 +63,7 @@ def getImageData():
             idx += 1
         Y[i] = label2idx[s]
         i += 1
-    print "done loading data"
+    print("done loading data")
     X, Y = shuffle(X, Y)
     return X[:30000], Y[:30000]
 
@@ -202,7 +203,7 @@ class CNN(object):
                     c, p = cost_predict_op(Xvalid, Yvalid)
                     costs.append(c)
                     e = error_rate(Yvalid, p)
-                    print "i:", i, "j:", j, "nb:", n_batches, "cost:", c, "error rate:", e
+                    print("i:", i, "j:", j, "nb:", n_batches, "cost:", c, "error rate:", e)
 
         if show_fig:
             plt.plot(costs)

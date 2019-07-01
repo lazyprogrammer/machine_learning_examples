@@ -1,3 +1,4 @@
+from __future__ import print_function
 # The corresponding tutorial for this code was released EXCLUSIVELY as a bonus
 # If you want to learn about future bonuses, please sign up for my newsletter at:
 # https://lazyprogrammer.me
@@ -87,7 +88,7 @@ class RNN(object):
                 c = self.train_op(learning_rate, X[j], Y[j])
                 cost += c
             if i % 10 == 0:
-                print "i:", i, "cost:", cost, "time for epoch:", (datetime.now() - t0)
+                print("i:", i, "cost:", cost, "time for epoch:", (datetime.now() - t0))
             if (i+1) % 500 == 0:
                 learning_rate /= 10
             costs.append(cost)
@@ -141,7 +142,7 @@ for D in (2,3,4,5):
         X[:,d] = series[d:d+n]
     Y = series[D:D+n]
 
-    print "series length:", n
+    print("series length:", n)
     Xtrain = X[:n/2]
     Ytrain = Y[:n/2]
     Xtest = X[n/2:]
@@ -154,8 +155,8 @@ for D in (2,3,4,5):
 
     model = RNN([50])
     model.fit(Xtrain, Ytrain, activation=T.tanh)
-    print "train score:", model.score(Xtrain, Ytrain)
-    print "test score:", model.score(Xtest, Ytest)
+    print("train score:", model.score(Xtrain, Ytrain))
+    print("test score:", model.score(Xtest, Ytest))
 
     # plot the prediction with true values
     plt.plot(series)

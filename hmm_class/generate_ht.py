@@ -35,7 +35,7 @@ def main():
         for n in range(50):
             sequence = generate_sequence(30)
             sequence = ''.join(symbol_map[s] for s in sequence)
-            print sequence
+            print(sequence)
             f.write("%s\n" % sequence)
 
 

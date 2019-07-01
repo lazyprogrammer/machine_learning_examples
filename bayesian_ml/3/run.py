@@ -1,3 +1,4 @@
+from __future__ import print_function
 # variational-inference for linear regression
 # y(i) ~ N( x(i).dot(w), 1/lambda )
 # w ~ N( 0, diag(alpha_1, alpha_2, ..., alpha_D)^-1 )
@@ -81,7 +82,7 @@ def run(num=1, T=500):
   Y = pd.read_csv('y_set%s.csv' % num, header=None).as_matrix().flatten()
   Z = pd.read_csv('z_set%s.csv' % num, header=None).as_matrix().flatten()
   N, D = X.shape
-  print X.shape, Y.shape, Z.shape
+  print(X.shape, Y.shape, Z.shape)
 
   a0 = 1e-16
   b0 = 1e-16
@@ -129,16 +130,16 @@ def run(num=1, T=500):
     # update L
     L[t] = objective(X, Y, C, mu, a, b, e, f, a0, b0, e0, f0)
     if t % 20 == 0:
-      print "t:", t
+      print("t:", t)
       if num == 3:
-        print "L:", L[t]
+        print("L:", L[t])
 
   # plot 1/E[alpha]
   plt.plot(b/a)
   plt.show()
 
   # 1/E[lambda]
-  print "1/E[lambda]:", f/e
+  print("1/E[lambda]:", f/e)
 
   # plot L
   plt.plot(L)

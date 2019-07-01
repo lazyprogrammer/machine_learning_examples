@@ -31,5 +31,5 @@ if __name__ == '__main__':
     conv_block.session = session
     session.run(init)
 
-    output = conv_block.predict(X):
+    output = conv_block.predict(X)
     print("output.shape:", output.shape)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 # probit regression
 
 import numpy as np
@@ -103,15 +104,15 @@ if __name__ == '__main__':
   Ytest = pd.read_csv('ytest.csv', header=None).as_matrix().flatten()
   model = ProbitRegression()
   model.fit(Xtrain, Ytrain)
-  print "train accuracy:", model.score(Xtrain, Ytrain)
-  print "test accuracy:", model.score(Xtest, Ytest)
+  print("train accuracy:", model.score(Xtrain, Ytrain))
+  print("test accuracy:", model.score(Xtest, Ytest))
 
   # confusion matrix
   M = model.confusion_matrix(Xtest, Ytest)
-  print "confusion matrix:"
-  print M
-  print "N:", len(Ytest)
-  print "sum(M):", M.sum()
+  print("confusion matrix:")
+  print(M)
+  print("N:", len(Ytest))
+  print("sum(M):", M.sum())
 
   # plot 3 misclassified
   Q = pd.read_csv('Q.csv', header=None).as_matrix()

@@ -1,3 +1,4 @@
+from __future__ import print_function
 # GMM using Bayesian Nonparametric Clustering
 # Gaussian Mixture Model
 # Dirichlet Process
@@ -96,7 +97,7 @@ def gmm(X, T=500):
   observations_per_cluster = np.zeros((T, 6))
   for t in xrange(T):
     if t % 20 == 0:
-      print t
+      print(t)
     # 1) calculate phi[i,j]
     # Notes:
     # MANY new clusters can be made each iteration
