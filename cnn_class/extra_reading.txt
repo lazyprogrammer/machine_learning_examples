@@ -3,3 +3,6 @@ http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf
 
 ImageNet Classification with Deep Convolutional Neural Networks
 https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
+
+Convolution arithmetic tutorial
+http://deeplearning.net/software/theano_versions/dev/tutorial/conv_arithmetic.html
