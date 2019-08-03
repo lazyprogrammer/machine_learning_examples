@@ -169,8 +169,8 @@ def play_one_td(env, pmodel, vmodel, gamma):
     #   reward = -200
 
     # update the models
-    V_next = vmodel.predict(observation)
-    G = reward + gamma*np.max(V_next)
+    V_next = vmodel.predict(observation)[0]
+    G = reward + gamma*V_next
     advantage = G - vmodel.predict(prev_observation)
     pmodel.partial_fit(prev_observation, action, advantage)
     vmodel.partial_fit(prev_observation, G)
