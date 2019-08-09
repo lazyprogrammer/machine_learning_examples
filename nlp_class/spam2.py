@@ -54,7 +54,7 @@ model = MultinomialNB()
 model.fit(Xtrain, Ytrain)
 print("train score:", model.score(Xtrain, Ytrain))
 print("test score:", model.score(Xtest, Ytest))
-exit()
+# exit()
 
 
 # visualize the data
@@ -73,6 +73,7 @@ visualize('ham')
 
 
 # see what we're getting wrong
+X = tfidf.transform(df['data'])
 df['predictions'] = model.predict(X)
 
 # things that should be spam
