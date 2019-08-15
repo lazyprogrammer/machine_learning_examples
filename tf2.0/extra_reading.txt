@@ -1,3 +1,6 @@
+Gradient Descent: Convergence Analysis
+http://www.stat.cmu.edu/~ryantibs/convexopt-F13/scribes/lec6.pdf
+
 Deep learning improved by biological activation functions
 https://arxiv.org/pdf/1804.11237.pdf
 
