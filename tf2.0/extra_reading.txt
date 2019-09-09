@@ -19,3 +19,6 @@ https://arxiv.org/abs/1805.04908
 
 Massive Exploration of Neural Machine Translation Architectures
 https://arxiv.org/abs/1703.03906
+
+Practical Deep Reinforcement Learning Approach for Stock Trading
+https://arxiv.org/abs/1811.07522
