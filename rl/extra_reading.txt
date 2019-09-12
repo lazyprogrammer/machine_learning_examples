@@ -1,6 +1,9 @@
 Hacking Google reCAPTCHA v3 using Reinforcement Learning
 https://arxiv.org/pdf/1903.01003.pdf
 
+Practical Deep Reinforcement Learning Approach for Stock Trading
+https://arxiv.org/abs/1811.07522
+
 Reinforcement Learning: A Tutorial Survey and Recent Advances - Abhijit Gosavi
 http://web.mst.edu/~gosavia/joc.pdf
 
