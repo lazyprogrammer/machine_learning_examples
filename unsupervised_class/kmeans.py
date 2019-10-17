@@ -33,13 +33,12 @@ def cost(X, R, M):
 
 def plot_k_means(X, K, max_iter=20, beta=3.0, show_plots=False):
     N, D = X.shape
-    M = np.zeros((K, D))
     # R = np.zeros((N, K))
     exponents = np.empty((N, K))
 
     # initialize M to random
-    for k in range(K):
-        M[k] = X[np.random.choice(N)]
+    initial_centers = np.random.choice(N, K, replace=False)
+    M = X[initial_centers]
 
     costs = []
     k = 0
