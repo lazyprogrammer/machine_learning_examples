@@ -13,7 +13,6 @@ from util import get_spiral, get_xor, get_donut, get_clouds
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 # kernels
 def linear(X1, X2, c=0):
   return X1.dot(X2.T) + c
@@ -33,7 +32,6 @@ def rbf(X1, X2, gamma=None):
 
 def sigmoid(X1, X2, gamma=0.05, c=1):
   return np.tanh(gamma * X1.dot(X2.T) + c)
-
 
 class KernelSVM:
   def __init__(self, kernel=linear, C=1.0):
@@ -135,7 +133,6 @@ def plot_decision_boundary(model, X, Y, resolution=100, colors=('b', 'k', 'r')):
 
   plt.show()
 
-
 def clouds():
   X, Y = get_clouds()
   Xtrain, Xtest, Ytrain, Ytest = train_test_split(X, Y, test_size=0.33)
@@ -164,8 +161,7 @@ def spiral():
   X, Y = get_spiral()
   Xtrain, Xtest, Ytrain, Ytest = train_test_split(X, Y, test_size=0.33)
   kernel = lambda X1, X2: rbf(X1, X2, gamma=5.)
-  return Xtrain, Xtest, Ytrain, Ytest, kernel, 1e-3, 500
-
+  return Xtrain, Xtest, Ytrain, Ytest, kernel, 1e-3, 50
 
 if __name__ == '__main__':
   Xtrain, Xtest, Ytrain, Ytest, kernel, lr, n_iters = donut()
