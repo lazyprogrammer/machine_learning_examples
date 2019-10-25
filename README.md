@@ -76,3 +76,7 @@ https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-th
 
 Unsupervised Deep Learning in Python
 https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
+
+======================================================================================================================
+
+A project on predicting the PGA value from Earthquake data in Iran and Middle East areas is added by subham-py
