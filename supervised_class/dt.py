@@ -25,10 +25,12 @@ def entropy(y):
 
 
 class TreeNode:
-    def __init__(self, depth=0, max_depth=None):
-        # print 'depth:', depth
+    def __init__(self, depth=1, max_depth=None):
+        print('depth:', depth)
         self.depth = depth
         self.max_depth = max_depth
+        if self.max_depth is not None and self.max_depth < self.depth:
+            raise Exception("depth > max_depth")
 
     def fit(self, X, Y):
         if len(Y) == 1 or len(set(Y)) == 1:
