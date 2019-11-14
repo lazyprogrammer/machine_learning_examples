@@ -1,3 +1,5 @@
+name: flake8_tests
+on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
