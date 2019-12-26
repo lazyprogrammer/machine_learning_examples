@@ -23,10 +23,9 @@ if len(K.tensorflow_backend._get_available_gpus()) > 0:
 
 # some config
 BATCH_SIZE = 64  # Batch size for training.
-EPOCHS = 100  # Number of epochs to train for.
+EPOCHS = 40  # Number of epochs to train for.
 LATENT_DIM = 256  # Latent dimensionality of the encoding space.
 NUM_SAMPLES = 10000  # Number of samples to train on.
-MAX_SEQUENCE_LENGTH = 100
 MAX_NUM_WORDS = 20000
 EMBEDDING_DIM = 100
 
@@ -219,12 +218,37 @@ decoder_outputs = decoder_dense(decoder_outputs)
 # Create the model object
 model = Model([encoder_inputs_placeholder, decoder_inputs_placeholder], decoder_outputs)
 
+
+def custom_loss(y_true, y_pred):
+  # both are of shape N x T x K
+  mask = K.cast(y_true > 0, dtype='float32')
+  out = mask * y_true * K.log(y_pred)
+  return -K.sum(out) / K.sum(mask)
+
+
+def acc(y_true, y_pred):
+  # both are of shape N x T x K
+  targ = K.argmax(y_true, axis=-1)
+  pred = K.argmax(y_pred, axis=-1)
+  correct = K.cast(K.equal(targ, pred), dtype='float32')
+
+  # 0 is padding, don't include those
+  mask = K.cast(K.greater(targ, 0), dtype='float32')
+  n_correct = K.sum(mask * correct)
+  n_total = K.sum(mask)
+  return n_correct / n_total
+
+model.compile(optimizer='adam', loss=custom_loss, metrics=[acc])
+
 # Compile the model and train it
-model.compile(
-  optimizer='rmsprop',
-  loss='categorical_crossentropy',
-  metrics=['accuracy']
-)
+# model.compile(
+#   optimizer='rmsprop',
+#   loss='categorical_crossentropy',
+#   metrics=['accuracy']
+# )
+
+
+
 r = model.fit(
   [encoder_inputs, decoder_inputs], decoder_targets_one_hot,
   batch_size=BATCH_SIZE,
