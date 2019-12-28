@@ -76,3 +76,5 @@ https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-th
 
 Unsupervised Deep Learning in Python
 https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
+
+P.S: This are paid courses though, link via Udemy!!
