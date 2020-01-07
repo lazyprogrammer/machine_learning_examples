@@ -66,8 +66,7 @@ class DataTransformer:
 
 
 def get_data():
-  # regex allows arbitrary number of spaces in separator
-  df = pd.read_csv('../large_files/housing.data', header=None, sep=r"\s*", engine='python')
+  df = pd.read_csv('housing.data', header=None, delim_whitespace=True)
   df.columns = [
     'crim', # numerical
     'zn', # numerical
@@ -128,9 +127,9 @@ if __name__ == '__main__':
   # do a quick baseline test
   baseline = LinearRegression()
   single_tree = DecisionTreeRegressor()
-  print("CV single tree:", cross_val_score(single_tree, Xtrain, Ytrain).mean())
-  print("CV baseline:", cross_val_score(baseline, Xtrain, Ytrain).mean())
-  print("CV forest:", cross_val_score(model, Xtrain, Ytrain).mean())
+  print("CV single tree:", cross_val_score(single_tree, Xtrain, Ytrain, cv=5).mean())
+  print("CV baseline:", cross_val_score(baseline, Xtrain, Ytrain, cv=5).mean())
+  print("CV forest:", cross_val_score(model, Xtrain, Ytrain, cv=5).mean())
 
   # test score
   single_tree.fit(Xtrain, Ytrain)
