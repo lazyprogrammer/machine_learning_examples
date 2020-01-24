@@ -7,6 +7,8 @@ Find associated tutorials at https://lazyprogrammer.me
 
 Find associated courses at https://deeplearningcourses.com
 
+Please note that not all code from all courses will be found in this repository. Some newer code examples (e.g. everything from Tensorflow 2.0) were done in Google Colab. Therefore, you should check the instructions given in the lectures for the course you are taking.
+
 
 Direct Course Links
 ===================
