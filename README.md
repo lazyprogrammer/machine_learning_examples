@@ -13,6 +13,13 @@ Please note that not all code from all courses will be found in this repository.
 Direct Course Links
 ===================
 
+Tensorflow 2.0: Deep Learning and Artificial Intelligence
+(Main Course - special discount link) https://www.udemy.com/course/deep-learning-tensorflow-2/?referralCode=E10B72D3848AB70FE1B8
+(VIP Content) https://deeplearningcourses.com/c/deep-learning-tensorflow-2
+
+Cutting-Edge AI: Deep Reinforcement Learning in Python
+https://deeplearningcourses.com/c/cutting-edge-artificial-intelligence
+
 Recommender Systems and Deep Learning in Python
 https://deeplearningcourses.com/c/recommender-systems
 
