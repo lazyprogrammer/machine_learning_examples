@@ -288,11 +288,7 @@ class DQNAgent(object):
     done = minibatch['d']
 
     # Calculate the tentative target: Q(s',a)
-    target = rewards + self.gamma * np.amax(self.model.predict(next_states), axis=1)
-
-    # The value of terminal states is zero
-    # so set the target to be the reward only
-    target[done] = rewards[done]
+    target = rewards + (1 - done) * self.gamma * np.amax(self.model.predict(next_states), axis=1)
 
     # With the Keras API, the target (usually) must have the same
     # shape as the predictions.
