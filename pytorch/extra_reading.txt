@@ -1,0 +1,27 @@
+Gradient Descent: Convergence Analysis
+http://www.stat.cmu.edu/~ryantibs/convexopt-F13/scribes/lec6.pdf
+
+Deep learning improved by biological activation functions
+https://arxiv.org/pdf/1804.11237.pdf
+
+Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
+Sergey Ioffe, Christian Szegedy
+https://arxiv.org/abs/1502.03167
+
+Dropout: A Simple Way to Prevent Neural Networks from Overfitting
+https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf
+
+Convolution arithmetic tutorial
+http://deeplearning.net/software/theano_versions/dev/tutorial/conv_arithmetic.html
+
+On the Practical Computational Power of Finite Precision RNNs for Language Recognition
+https://arxiv.org/abs/1805.04908
+
+Massive Exploration of Neural Machine Translation Architectures
+https://arxiv.org/abs/1703.03906
+
+Practical Deep Reinforcement Learning Approach for Stock Trading
+https://arxiv.org/abs/1811.07522
+
+Inceptionism: Going Deeper into Neural Networks
+https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html
