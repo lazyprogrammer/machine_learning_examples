@@ -31,10 +31,10 @@ batch_size = 32
 # valid_path = '../large_files/blood_cell_images/TEST'
 
 # https://www.kaggle.com/moltean/fruits
-# train_path = '../large_files/fruits-360/Training'
-# valid_path = '../large_files/fruits-360/Validation'
-train_path = '../large_files/fruits-360-small/Training'
-valid_path = '../large_files/fruits-360-small/Validation'
+train_path = '../large_files/fruits-360/Training'
+valid_path = '../large_files/fruits-360/Validation'
+# train_path = '../large_files/fruits-360-small/Training'
+# valid_path = '../large_files/fruits-360-small/Validation'
 
 # useful for getting number of files
 image_files = glob(train_path + '/*/*.jp*g')
@@ -45,7 +45,7 @@ folders = glob(train_path + '/*')
 
 
 # look at an image for fun
-plt.imshow(image.load_img(np.random.choice(image_files)))
+plt.imshow(image.img_to_array(image.load_img(np.random.choice(image_files))).astype('uint8'))
 plt.show()
 
 
@@ -74,7 +74,6 @@ model.compile(
   optimizer='rmsprop',
   metrics=['accuracy']
 )
-
 
 
 # create an instance of ImageDataGenerator
@@ -172,8 +171,8 @@ plt.legend()
 plt.show()
 
 # accuracies
-plt.plot(r.history['acc'], label='train acc')
-plt.plot(r.history['val_acc'], label='val acc')
+plt.plot(r.history['accuracy'], label='train acc')
+plt.plot(r.history['val_accuracy'], label='val acc')
 plt.legend()
 plt.show()
 

@@ -165,7 +165,8 @@ decoder_targets_one_hot = np.zeros(
 # assign the values
 for i, d in enumerate(decoder_targets):
   for t, word in enumerate(d):
-    decoder_targets_one_hot[i, t, word] = 1
+    if word != 0:
+      decoder_targets_one_hot[i, t, word] = 1
 
 
 
@@ -190,7 +191,7 @@ decoder_inputs_placeholder = Input(shape=(max_len_target,))
 
 # this word embedding will not use pre-trained vectors
 # although you could
-decoder_embedding = Embedding(num_words_output, LATENT_DIM)
+decoder_embedding = Embedding(num_words_output, EMBEDDING_DIM)
 decoder_inputs_x = decoder_embedding(decoder_inputs_placeholder)
 
 # since the decoder is a "to-many" model we want to have
@@ -263,8 +264,8 @@ plt.legend()
 plt.show()
 
 # accuracies
-plt.plot(r.history['acc'], label='acc')
-plt.plot(r.history['val_acc'], label='val_acc')
+plt.plot(r.history['accuracy'], label='acc')
+plt.plot(r.history['val_accuracy'], label='val_acc')
 plt.legend()
 plt.show()
 

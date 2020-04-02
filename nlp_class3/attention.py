@@ -34,10 +34,10 @@ def softmax_over_time(x):
 
 # config
 BATCH_SIZE = 64
-EPOCHS = 100
-LATENT_DIM = 256
-LATENT_DIM_DECODER = 256 # idea: make it different to ensure things all fit together properly!
-NUM_SAMPLES = 10000
+EPOCHS = 30
+LATENT_DIM = 400
+LATENT_DIM_DECODER = 400 # idea: make it different to ensure things all fit together properly!
+NUM_SAMPLES = 20000
 MAX_SEQUENCE_LENGTH = 100
 MAX_NUM_WORDS = 20000
 EMBEDDING_DIM = 100
@@ -190,7 +190,8 @@ decoder_targets_one_hot = np.zeros(
 # assign the values
 for i, d in enumerate(decoder_targets):
   for t, word in enumerate(d):
-    decoder_targets_one_hot[i, t, word] = 1
+    if word > 0:
+      decoder_targets_one_hot[i, t, word] = 1
 
 
 
@@ -367,8 +368,8 @@ plt.legend()
 plt.show()
 
 # accuracies
-plt.plot(r.history['acc'], label='acc')
-plt.plot(r.history['val_acc'], label='val_acc')
+plt.plot(r.history['accuracy'], label='acc')
+plt.plot(r.history['val_accuracy'], label='val_acc')
 plt.legend()
 plt.show()
 
