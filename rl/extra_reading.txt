@@ -1,3 +1,6 @@
+Finite-time Analysis of the Multiarmed Bandit Problem
+https://homes.di.unimi.it/cesa-bianchi/Pubblicazioni/ml-02.pdf
+
 Hacking Google reCAPTCHA v3 using Reinforcement Learning
 https://arxiv.org/pdf/1903.01003.pdf
 
