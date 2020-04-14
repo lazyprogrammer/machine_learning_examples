@@ -65,7 +65,7 @@ for line in open('../large_files/translation/spa.txt'):
     continue
 
   # split up the input and translation
-  input_text, translation = line.rstrip().split('\t')
+  input_text, translation, *rest = line.rstrip().split('\t')
 
   # make the target input and output
   # recall we'll be using teacher forcing
