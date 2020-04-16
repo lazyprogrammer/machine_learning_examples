@@ -10,6 +10,12 @@ Find associated courses at https://deeplearningcourses.com
 Please note that not all code from all courses will be found in this repository. Some newer code examples (e.g. everything from Tensorflow 2.0) were done in Google Colab. Therefore, you should check the instructions given in the lectures for the course you are taking.
 
 
+Why you should not fork this repo
+=================================
+
+I've noticed that many people have out-of-date forks. Thus, I recommend not forking this repository if you take one of my courses. I am constantly updating my courses, and your fork will soon become out-of-date. You should clone the repository instead to make it easy to get updates (i.e. just "git pull" randomly and frequently).
+
+
 Direct Course Links
 ===================
 
