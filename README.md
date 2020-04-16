@@ -19,9 +19,16 @@ I've noticed that many people have out-of-date forks. Thus, I recommend not fork
 Direct Course Links
 ===================
 
+PyTorch: Deep Learning and Artificial Intelligence (special discount link for full VIP course as of Apr 2020)
+https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP
+
+
 Tensorflow 2.0: Deep Learning and Artificial Intelligence
-(Main Course - special discount link) https://www.udemy.com/course/deep-learning-tensorflow-2/?referralCode=E10B72D3848AB70FE1B8
-(VIP Content) https://deeplearningcourses.com/c/deep-learning-tensorflow-2
+(Main Course - special discount link)
+https://www.udemy.com/course/deep-learning-tensorflow-2/?referralCode=E10B72D3848AB70FE1B8
+
+Tensorflow 2.0: Deep Learning and Artificial Intelligence (VIP Content)
+https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 
 Cutting-Edge AI: Deep Reinforcement Learning in Python
 https://deeplearningcourses.com/c/cutting-edge-artificial-intelligence
