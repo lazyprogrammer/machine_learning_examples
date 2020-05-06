@@ -91,10 +91,8 @@ if __name__ == '__main__':
       a2 = random_action(a2, eps=0.5/t) # epsilon-greedy
 
       # we will update Q(s,a) AS we experience the episode
-      alpha = ALPHA / update_counts_sa[s][a]
-      update_counts_sa[s][a] += 0.005
       old_qsa = Q[s][a]
-      Q[s][a] = Q[s][a] + alpha*(r + GAMMA*Q[s2][a2] - Q[s][a])
+      Q[s][a] = Q[s][a] + ALPHA*(r + GAMMA*Q[s2][a2] - Q[s][a])
       biggest_change = max(biggest_change, np.abs(old_qsa - Q[s][a]))
 
       # we would like to know how often Q(s) has been updated too

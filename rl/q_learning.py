@@ -87,17 +87,13 @@ if __name__ == '__main__':
       r = grid.move(a)
       s2 = grid.current_state()
 
-      # adaptive learning rate
-      alpha = ALPHA / update_counts_sa[s][a]
-      update_counts_sa[s][a] += 0.005
-
       # we will update Q(s,a) AS we experience the episode
       old_qsa = Q[s][a]
       # the difference between SARSA and Q-Learning is with Q-Learning
       # we will use this max[a']{ Q(s',a')} in our update
       # even if we do not end up taking this action in the next step
       a2, max_q_s2a2 = max_dict(Q[s2])
-      Q[s][a] = Q[s][a] + alpha*(r + GAMMA*max_q_s2a2 - Q[s][a])
+      Q[s][a] = Q[s][a] + ALPHA*(r + GAMMA*max_q_s2a2 - Q[s][a])
       biggest_change = max(biggest_change, np.abs(old_qsa - Q[s][a]))
 
       # we would like to know how often Q(s) has been updated too
