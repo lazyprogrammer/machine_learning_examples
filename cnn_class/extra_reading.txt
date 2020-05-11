@@ -6,3 +6,12 @@ https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutiona
 
 Convolution arithmetic tutorial
 http://deeplearning.net/software/theano_versions/dev/tutorial/conv_arithmetic.html
+
+Very Deep Convolutional Networks for Large-Scale Visual Recognition
+http://www.robots.ox.ac.uk/~vgg/research/very_deep/
+
+ImageNet Classification with Deep Convolutional Neural Networks
+http://image-net.org/challenges/LSVRC/2012/supervision.pdf
+
+Going deeper with convolutions
+https://arxiv.org/pdf/1409.4842.pdf
