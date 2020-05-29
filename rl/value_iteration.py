@@ -7,20 +7,36 @@ from builtins import range
 
 
 import numpy as np
-from grid_world import standard_grid, negative_grid
+from grid_world import windy_grid, ACTION_SPACE
 from iterative_policy_evaluation import print_values, print_policy
 
 SMALL_ENOUGH = 1e-3
 GAMMA = 0.9
-ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
 
-# this is deterministic
-# all p(s',r|s,a) = 1 or 0
+# copied from iterative_policy_evaluation
+def get_transition_probs_and_rewards(grid):
+  ### define transition probabilities and grid ###
+  # the key is (s, a, s'), the value is the probability
+  # that is, transition_probs[(s, a, s')] = p(s' | s, a)
+  # any key NOT present will considered to be impossible (i.e. probability 0)
+  transition_probs = {}
+
+  # to reduce the dimensionality of the dictionary, we'll use deterministic
+  # rewards, r(s, a, s')
+  # note: you could make it simpler by using r(s') since the reward doesn't
+  # actually depend on (s, a)
+  rewards = {}
+
+  for (s, a), v in grid.probs.items():
+    for s2, p in v.items():
+      transition_probs[(s, a, s2)] = p
+      rewards[(s, a, s2)] = grid.rewards.get(s2, 0)
+
+  return transition_probs, rewards
 
 if __name__ == '__main__':
-  # this grid gives you a reward of -0.1 for every non-terminal state
-  # we want to see if this will encourage finding a shorter path to the goal
-  grid = negative_grid()
+  grid = windy_grid()
+  transition_probs, rewards = get_transition_probs_and_rewards(grid)
 
   # print rewards
   print("rewards:")
@@ -30,7 +46,7 @@ if __name__ == '__main__':
   # we'll randomly choose an action and update as we learn
   policy = {}
   for s in grid.actions.keys():
-    policy[s] = np.random.choice(ALL_POSSIBLE_ACTIONS)
+    policy[s] = np.random.choice(ACTION_SPACE)
 
   # initial policy
   print("initial policy:")
@@ -40,32 +56,33 @@ if __name__ == '__main__':
   V = {}
   states = grid.all_states()
   for s in states:
-    # V[s] = 0
-    if s in grid.actions:
-      V[s] = np.random.random()
-    else:
-      # terminal state
-      V[s] = 0
+    V[s] = 0
 
   # repeat until convergence
   # V[s] = max[a]{ sum[s',r] { p(s',r|s,a)[r + gamma*V[s']] } }
+  it = 0
   while True:
     biggest_change = 0
-    for s in states:
-      old_v = V[s]
-
-      # V(s) only has value if it's not a terminal state
-      if s in policy:
+    for s in grid.all_states():
+      if not grid.is_terminal(s):
+        old_v = V[s]
         new_v = float('-inf')
-        for a in ALL_POSSIBLE_ACTIONS:
-          grid.set_state(s)
-          r = grid.move(a)
-          v = r + GAMMA * V[grid.current_state()]
+
+        for a in ACTION_SPACE:
+          v = 0
+          for s2 in grid.all_states():
+            # reward is a function of (s, a, s'), 0 if not specified
+            r = rewards.get((s, a, s2), 0)
+            v += transition_probs.get((s, a, s2), 0) * (r + GAMMA * V[s2])
+
+          # keep v if it's better
           if v > new_v:
             new_v = v
+
         V[s] = new_v
         biggest_change = max(biggest_change, np.abs(old_v - V[s]))
 
+    it += 1
     if biggest_change < SMALL_ENOUGH:
       break
 
@@ -74,10 +91,14 @@ if __name__ == '__main__':
     best_a = None
     best_value = float('-inf')
     # loop through all possible actions to find the best current action
-    for a in ALL_POSSIBLE_ACTIONS:
-      grid.set_state(s)
-      r = grid.move(a)
-      v = r + GAMMA * V[grid.current_state()]
+    for a in ACTION_SPACE:
+      v = 0
+      for s2 in grid.all_states():
+        # reward is a function of (s, a, s'), 0 if not specified
+        r = rewards.get((s, a, s2), 0)
+        v += transition_probs.get((s, a, s2), 0) * (r + GAMMA * V[s2])
+
+      # best_a is the action associated with best_value
       if v > best_value:
         best_value = v
         best_a = a
