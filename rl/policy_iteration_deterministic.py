@@ -8,7 +8,7 @@ from builtins import range
 
 import numpy as np
 from grid_world import standard_grid, ACTION_SPACE
-from iterative_policy_evaluation import print_values, print_policy
+from iterative_policy_evaluation_deterministic import print_values, print_policy
 
 SMALL_ENOUGH = 1e-3
 GAMMA = 0.9

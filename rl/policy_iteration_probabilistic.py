@@ -7,7 +7,7 @@ from builtins import range
 
 
 import numpy as np
-from grid_world import windy_grid, ACTION_SPACE
+from grid_world import windy_grid, windy_grid_penalized, ACTION_SPACE
 from iterative_policy_evaluation import print_values, print_policy
 
 SMALL_ENOUGH = 1e-3
@@ -72,7 +72,8 @@ def evaluate_deterministic_policy(grid, policy):
 
 if __name__ == '__main__':
 
-  grid = windy_grid()
+  grid = windy_grid_penalized(-2)
+  # grid = windy_grid()
   transition_probs, rewards = get_transition_probs_and_rewards(grid)
 
   # print rewards

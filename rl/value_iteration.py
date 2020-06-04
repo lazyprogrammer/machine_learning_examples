@@ -42,16 +42,6 @@ if __name__ == '__main__':
   print("rewards:")
   print_values(grid.rewards, grid)
 
-  # state -> action
-  # we'll randomly choose an action and update as we learn
-  policy = {}
-  for s in grid.actions.keys():
-    policy[s] = np.random.choice(ACTION_SPACE)
-
-  # initial policy
-  print("initial policy:")
-  print_policy(policy, grid)
-
   # initialize V(s)
   V = {}
   states = grid.all_states()
@@ -87,7 +77,8 @@ if __name__ == '__main__':
       break
 
   # find a policy that leads to optimal value function
-  for s in policy.keys():
+  policy = {}
+  for s in grid.actions.keys():
     best_a = None
     best_value = float('-inf')
     # loop through all possible actions to find the best current action
