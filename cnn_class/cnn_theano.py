@@ -44,7 +44,6 @@ def convpool(X, W, b, poolsize=(2, 2)):
 
 
 def init_filter(shape, poolsz):
-    # w = np.random.randn(*shape) / np.sqrt(np.prod(shape[1:]) + shape[0]*np.prod(shape[2:]) / np.prod(poolsz))
     w = np.random.randn(*shape) * np.sqrt(2.0 / np.prod(shape[1:]))
     return w.astype(np.float32)
 
@@ -82,8 +81,8 @@ def main():
     max_iter = 6
     print_period = 10
 
-    lr = np.float32(1e-2)
-    mu = np.float32(0.99)
+    lr = np.float32(1e-3)
+    mu = np.float32(0.9)
 
     N = Xtrain.shape[0]
     batch_sz = 500
