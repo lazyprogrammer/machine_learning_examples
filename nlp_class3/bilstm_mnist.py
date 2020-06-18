@@ -13,9 +13,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-if len(K.tensorflow_backend._get_available_gpus()) > 0:
-  from keras.layers import CuDNNLSTM as LSTM
-  from keras.layers import CuDNNGRU as GRU
+try:
+  import keras.backend as K
+  if len(K.tensorflow_backend._get_available_gpus()) > 0:
+    from keras.layers import CuDNNLSTM as LSTM
+    from keras.layers import CuDNNGRU as GRU
+except:
+  pass
 
 
 def get_mnist(limit=None):
