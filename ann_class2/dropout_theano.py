@@ -19,6 +19,19 @@ from util import get_normalized_data
 from sklearn.utils import shuffle
 
 
+def momentum_updates(cost, params, lr, mu):
+  grads = T.grad(cost, params)
+  updates = []
+
+  for p, g in zip(params, grads):
+    dp = theano.shared(p.get_value() * 0)
+    new_dp = mu*dp - lr*g
+    new_p = p + new_dp
+    updates.append((dp, new_dp))
+    updates.append((p, new_p))
+  return updates
+
+
 class HiddenLayer(object):
     def __init__(self, M1, M2, an_id):
         self.id = an_id
@@ -39,7 +52,7 @@ class ANN(object):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.dropout_rates = p_keep
 
-    def fit(self, X, Y, Xvalid, Yvalid, learning_rate=1e-4, mu=0.9, decay=0.9, epochs=8, batch_sz=100, show_fig=False):
+    def fit(self, X, Y, Xvalid, Yvalid, learning_rate=1e-2, mu=0.9, decay=0.9, epochs=10, batch_sz=100, show_fig=False):
         X = X.astype(np.float32)
         Y = Y.astype(np.int32)
         Xvalid = Xvalid.astype(np.float32)
@@ -75,32 +88,7 @@ class ANN(object):
 
         # this cost is for training
         cost = -T.mean(T.log(pY_train[T.arange(thY.shape[0]), thY]))
-
-        # gradients wrt each param
-        grads = T.grad(cost, self.params)
-
-        # for momentum
-        dparams = [theano.shared(np.zeros_like(p.get_value())) for p in self.params]
-
-        # for rmsprop
-        cache = [theano.shared(np.ones_like(p.get_value())) for p in self.params]
-
-        new_cache = [decay*c + (1-decay)*g*g for p, c, g in zip(self.params, cache, grads)]
-        new_dparams = [mu*dp - learning_rate*g/T.sqrt(new_c + 1e-10) for p, new_c, dp, g in zip(self.params, new_cache, dparams, grads)]
-        updates = [
-            (c, new_c) for c, new_c in zip(cache, new_cache)
-        ] + [
-            (dp, new_dp) for dp, new_dp in zip(dparams, new_dparams)
-        ] + [
-            (p, p + new_dp) for p, new_dp in zip(self.params, new_dparams)
-        ]
-
-        # momentum only
-        # updates = [
-        #     (p, p + mu*dp - learning_rate*T.grad(cost, p)) for p, dp in zip(self.params, dparams)
-        # ] + [
-        #     (dp, mu*dp - learning_rate*T.grad(cost, p)) for p, dp in zip(self.params, dparams)
-        # ]
+        updates = momentum_updates(cost, self.params, learning_rate, mu)
 
         train_op = theano.function(
             inputs=[thX, thY],

@@ -95,6 +95,19 @@ class HiddenLayer(object):
     return self.f(X.dot(self.W) + self.b)
 
 
+def momentum_updates(cost, params, lr, mu):
+  grads = T.grad(cost, params)
+  updates = []
+
+  for p, g in zip(params, grads):
+    dp = theano.shared(p.get_value() * 0)
+    new_dp = mu*dp - lr*g
+    new_p = p + new_dp
+    updates.append((dp, new_dp))
+    updates.append((p, new_p))
+  return updates
+
+
 class ANN(object):
   def __init__(self, hidden_layer_sizes):
     self.hidden_layer_sizes = hidden_layer_sizes
@@ -125,9 +138,6 @@ class ANN(object):
     for h in self.layers:
       self.params += h.params
 
-    # for momentum
-    dparams = [theano.shared(np.zeros_like(p.get_value())) for p in self.params]
-
     # note! we will need to build the output differently
     # for train and test (prediction)
 
@@ -143,11 +153,7 @@ class ANN(object):
     grads = T.grad(cost, self.params)
 
     # momentum only
-    updates = [
-      (p, p + mu*dp - learning_rate*g) for p, dp, g in zip(self.params, dparams, grads)
-    ] + [
-      (dp, mu*dp - learning_rate*g) for dp, g in zip(dparams, grads)
-    ]
+    updates = momentum_updates(cost, self.params, learning_rate, mu)
     for layer in self.layers[:-1]:
       updates += layer.running_update
 
