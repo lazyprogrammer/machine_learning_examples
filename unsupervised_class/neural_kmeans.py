@@ -4,21 +4,24 @@ from kmeans import get_simple_data
 from sklearn.preprocessing import StandardScaler
 
 
+# get the data and standardize it
 X = get_simple_data()
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
+# get shapes
 N, D = X.shape
 K = 3
 
+# initialize parameters
 W = np.random.randn(D, K)
 
-
+# set hyperparameters
 n_epochs = 100
 learning_rate = 0.001
 losses = []
 
-
+# training loop
 for i in range(n_epochs):
   loss = 0
   for j in range(N):
