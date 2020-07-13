@@ -24,6 +24,10 @@ import matplotlib.pyplot as plt
 from scipy.optimize import fmin_l_bfgs_b
 
 
+import tensorflow as tf
+if tf.__version__.startswith('2'):
+  tf.compat.v1.disable_eager_execution()
+
 
 def VGG16_AvgPool(shape):
   # we want to account for features across the entire image
