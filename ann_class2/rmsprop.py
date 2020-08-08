@@ -97,21 +97,22 @@ def main():
             pYbatch, Z = forward(Xbatch, W1, b1, W2, b2)
             # print "first batch cost:", cost(pYbatch, Ybatch)
 
-            # updates
+            # gradients
             gW2 = derivative_w2(Z, Ybatch, pYbatch) + reg*W2
-            cache_W2 = decay_rate*cache_W2 + (1 - decay_rate)*gW2*gW2
-            W2 -= lr0 * gW2 / (np.sqrt(cache_W2) + eps)
-
             gb2 = derivative_b2(Ybatch, pYbatch) + reg*b2
-            cache_b2 = decay_rate*cache_b2 + (1 - decay_rate)*gb2*gb2
-            b2 -= lr0 * gb2 / (np.sqrt(cache_b2) + eps)
-
             gW1 = derivative_w1(Xbatch, Z, Ybatch, pYbatch, W2) + reg*W1
-            cache_W1 = decay_rate*cache_W1 + (1 - decay_rate)*gW1*gW1
-            W1 -= lr0 * gW1 / (np.sqrt(cache_W1) + eps)
-
             gb1 = derivative_b1(Z, Ybatch, pYbatch, W2) + reg*b1
+
+            # caches
+            cache_W2 = decay_rate*cache_W2 + (1 - decay_rate)*gW2*gW2
+            cache_b2 = decay_rate*cache_b2 + (1 - decay_rate)*gb2*gb2
+            cache_W1 = decay_rate*cache_W1 + (1 - decay_rate)*gW1*gW1
             cache_b1 = decay_rate*cache_b1 + (1 - decay_rate)*gb1*gb1
+
+            # updates
+            W2 -= lr0 * gW2 / (np.sqrt(cache_W2) + eps)
+            b2 -= lr0 * gb2 / (np.sqrt(cache_b2) + eps)
+            W1 -= lr0 * gW1 / (np.sqrt(cache_W1) + eps)
             b1 -= lr0 * gb1 / (np.sqrt(cache_b1) + eps)
 
             if j % print_period == 0:
