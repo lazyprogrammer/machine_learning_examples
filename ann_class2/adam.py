@@ -105,10 +105,10 @@ def main():
             t += 1
 
             # apply updates to the params
-            W1 = W1 - lr0 * hat_mW1 / np.sqrt(hat_vW1 + eps)
-            b1 = b1 - lr0 * hat_mb1 / np.sqrt(hat_vb1 + eps)
-            W2 = W2 - lr0 * hat_mW2 / np.sqrt(hat_vW2 + eps)
-            b2 = b2 - lr0 * hat_mb2 / np.sqrt(hat_vb2 + eps)
+            W1 = W1 - lr0 * hat_mW1 / (np.sqrt(hat_vW1) + eps)
+            b1 = b1 - lr0 * hat_mb1 / (np.sqrt(hat_vb1) + eps)
+            W2 = W2 - lr0 * hat_mW2 / (np.sqrt(hat_vW2) + eps)
+            b2 = b2 - lr0 * hat_mb2 / (np.sqrt(hat_vb2) + eps)
 
 
             if j % print_period == 0:
@@ -157,25 +157,28 @@ def main():
             Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
             pYbatch, Z = forward(Xbatch, W1, b1, W2, b2)
 
-            # updates
+            # derivatives
             gW2 = derivative_w2(Z, Ybatch, pYbatch) + reg*W2
-            cache_W2 = decay_rate*cache_W2 + (1 - decay_rate)*gW2*gW2
-            dW2 = mu * dW2 + (1 - mu) * lr0 * gW2 / (np.sqrt(cache_W2) + eps)
-            W2 -= dW2
-
             gb2 = derivative_b2(Ybatch, pYbatch) + reg*b2
-            cache_b2 = decay_rate*cache_b2 + (1 - decay_rate)*gb2*gb2
-            db2 = mu * db2 + (1 - mu) * lr0 * gb2 / (np.sqrt(cache_b2) + eps)
-            b2 -= db2
-
             gW1 = derivative_w1(Xbatch, Z, Ybatch, pYbatch, W2) + reg*W1
-            cache_W1 = decay_rate*cache_W1 + (1 - decay_rate)*gW1*gW1
-            dW1 = mu * dW1 + (1 - mu) * lr0 * gW1 / (np.sqrt(cache_W1) + eps)
-            W1 -= dW1
-
             gb1 = derivative_b1(Z, Ybatch, pYbatch, W2) + reg*b1
+
+            # caches
+            cache_W2 = decay_rate*cache_W2 + (1 - decay_rate)*gW2*gW2
+            cache_b2 = decay_rate*cache_b2 + (1 - decay_rate)*gb2*gb2
+            cache_W1 = decay_rate*cache_W1 + (1 - decay_rate)*gW1*gW1
             cache_b1 = decay_rate*cache_b1 + (1 - decay_rate)*gb1*gb1
+
+            # momentum
+            dW2 = mu * dW2 + (1 - mu) * lr0 * gW2 / (np.sqrt(cache_W2) + eps)
+            db2 = mu * db2 + (1 - mu) * lr0 * gb2 / (np.sqrt(cache_b2) + eps)
+            dW1 = mu * dW1 + (1 - mu) * lr0 * gW1 / (np.sqrt(cache_W1) + eps)
             db1 = mu * db1 + (1 - mu) * lr0 * gb1 / (np.sqrt(cache_b1) + eps)
+
+            # updates
+            W2 -= dW2
+            b2 -= db2
+            W1 -= dW1
             b1 -= db1
 
             if j % print_period == 0:
