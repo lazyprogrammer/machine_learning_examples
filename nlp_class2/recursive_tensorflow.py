@@ -17,6 +17,9 @@ from sklearn.utils import shuffle
 from datetime import datetime
 from util import init_weight, get_ptb_data, display_tree
 
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
+
 
 def get_labels(tree):
     # must be returned in the same order as tree logits are returned
@@ -73,22 +76,22 @@ class TNN:
             cost = self.get_cost(logits, labels, reg)
             costs.append(cost)
 
-            prediction = tf.argmax(logits, 1)
+            prediction = tf.argmax(input=logits, axis=1)
             predictions.append(prediction)
 
-            train_op = tf.train.MomentumOptimizer(lr, mu).minimize(cost)
+            train_op = tf.compat.v1.train.MomentumOptimizer(lr, mu).minimize(cost)
             train_ops.append(train_op)
 
         # save for later so we don't have to recompile
         self.predictions = predictions
         self.all_labels = all_labels
-        self.saver = tf.train.Saver()
+        self.saver = tf.compat.v1.train.Saver()
 
-        init = tf.initialize_all_variables()
+        init = tf.compat.v1.initialize_all_variables()
         actual_costs = []
         per_epoch_costs = []
         correct_rates = []
-        with tf.Session() as session:
+        with tf.compat.v1.Session() as session:
             session.run(init)
 
             for i in range(epochs):
@@ -136,7 +139,7 @@ class TNN:
 
     def get_cost(self, logits, labels, reg):
         cost = tf.reduce_mean(
-            tf.nn.sparse_softmax_cross_entropy_with_logits(
+            input_tensor=tf.nn.sparse_softmax_cross_entropy_with_logits(
                 logits=logits,
                 labels=labels
             )
@@ -150,7 +153,7 @@ class TNN:
     def get_output_recursive(self, tree, list_of_logits, is_root=True):
         if tree.word is not None:
             # this is a leaf node
-            x = tf.nn.embedding_lookup(self.We, [tree.word])
+            x = tf.nn.embedding_lookup(params=self.We, ids=[tree.word])
         else:
             # this node has children
             x1 = self.get_output_recursive(tree.left, list_of_logits, is_root=False)
@@ -197,12 +200,12 @@ class TNN:
                 labels = get_labels(t)
                 all_labels.append(labels)
 
-                prediction = tf.argmax(logits, 1)
+                prediction = tf.argmax(input=logits, axis=1)
                 predictions.append(prediction)
 
         n_correct = 0
         n_total = 0
-        with tf.Session() as session:
+        with tf.compat.v1.Session() as session:
             self.saver.restore(session, "recursive.ckpt")
             for prediction, y in zip(predictions, all_labels):
                 p = session.run(prediction)

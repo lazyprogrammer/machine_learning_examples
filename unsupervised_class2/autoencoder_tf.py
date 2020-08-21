@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from util import error_rate, getKaggleMNIST
 
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
+
 
 class AutoEncoder(object):
     def __init__(self, D, M, an_id):
@@ -23,11 +26,11 @@ class AutoEncoder(object):
         self.session = session
 
     def build(self, D, M):
-        self.W = tf.Variable(tf.random_normal(shape=(D, M)))
+        self.W = tf.Variable(tf.random.normal(shape=(D, M)))
         self.bh = tf.Variable(np.zeros(M).astype(np.float32))
         self.bo = tf.Variable(np.zeros(D).astype(np.float32))
 
-        self.X_in = tf.placeholder(tf.float32, shape=(None, D))
+        self.X_in = tf.compat.v1.placeholder(tf.float32, shape=(None, D))
         self.Z = self.forward_hidden(self.X_in) # for transform() later
         self.X_hat = self.forward_output(self.X_in)
 
@@ -36,13 +39,13 @@ class AutoEncoder(object):
         # will have numerical stability issues if X_hat = 0 or 1
         logits = self.forward_logits(self.X_in)
         self.cost = tf.reduce_mean(
-            tf.nn.sigmoid_cross_entropy_with_logits(
+            input_tensor=tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=self.X_in,
                 logits=logits,
             )
         )
 
-        self.train_op = tf.train.AdamOptimizer(1e-1).minimize(self.cost)
+        self.train_op = tf.compat.v1.train.AdamOptimizer(1e-1).minimize(self.cost)
         # self.train_op = tf.train.MomentumOptimizer(1e-3, momentum=0.9).minimize(self.cost)
 
     def fit(self, X, epochs=1, batch_sz=100, show_fig=False):
@@ -82,7 +85,7 @@ class AutoEncoder(object):
 
     def forward_logits(self, X):
         Z = self.forward_hidden(X)
-        return tf.matmul(Z, tf.transpose(self.W)) + self.bo
+        return tf.matmul(Z, tf.transpose(a=self.W)) + self.bo
 
     def forward_output(self, X):
         return tf.nn.sigmoid(self.forward_logits(X))
@@ -107,22 +110,22 @@ class DNN(object):
 
     def build_final_layer(self, D, M, K):
         # initialize logistic regression layer
-        self.W = tf.Variable(tf.random_normal(shape=(M, K)))
+        self.W = tf.Variable(tf.random.normal(shape=(M, K)))
         self.b = tf.Variable(np.zeros(K).astype(np.float32))
 
-        self.X = tf.placeholder(tf.float32, shape=(None, D))
-        labels = tf.placeholder(tf.int32, shape=(None,))
+        self.X = tf.compat.v1.placeholder(tf.float32, shape=(None, D))
+        labels = tf.compat.v1.placeholder(tf.int32, shape=(None,))
         self.Y = labels
         logits = self.forward(self.X)
 
         self.cost = tf.reduce_mean(
-            tf.nn.sparse_softmax_cross_entropy_with_logits(
+            input_tensor=tf.nn.sparse_softmax_cross_entropy_with_logits(
                 logits=logits,
                 labels=labels
             )
         )
-        self.train_op = tf.train.AdamOptimizer(1e-2).minimize(self.cost)
-        self.prediction = tf.argmax(logits, 1)
+        self.train_op = tf.compat.v1.train.AdamOptimizer(1e-2).minimize(self.cost)
+        self.prediction = tf.argmax(input=logits, axis=1)
 
     def fit(self, X, Y, Xtest, Ytest, pretrain=True, epochs=1, batch_sz=100):
         N = len(X)
@@ -184,8 +187,8 @@ def test_pretraining_dnn():
     _, D = Xtrain.shape
     K = len(set(Ytrain))
     dnn = DNN(D, [1000, 750, 500], K)
-    init_op = tf.global_variables_initializer()
-    with tf.Session() as session:
+    init_op = tf.compat.v1.global_variables_initializer()
+    with tf.compat.v1.Session() as session:
         session.run(init_op)
         dnn.set_session(session)
         dnn.fit(Xtrain, Ytrain, Xtest, Ytest, pretrain=True, epochs=10)
@@ -198,8 +201,8 @@ def test_single_autoencoder():
 
     _, D = Xtrain.shape
     autoencoder = AutoEncoder(D, 300, 0)
-    init_op = tf.global_variables_initializer()
-    with tf.Session() as session:
+    init_op = tf.compat.v1.global_variables_initializer()
+    with tf.compat.v1.Session() as session:
         session.run(init_op)
         autoencoder.set_session(session)
         autoencoder.fit(Xtrain, show_fig=True)

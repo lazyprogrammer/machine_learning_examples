@@ -14,6 +14,9 @@ import pandas as pd
 from scipy.sparse import lil_matrix, csr_matrix, save_npz, load_npz
 from datetime import datetime
 
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
+
 
 def dot1(V, W):
     # V is N x D x K (batch of visible units)
@@ -38,12 +41,12 @@ class RBM(object):
 
     def build(self, D, M, K):
         # params
-        self.W = tf.Variable(tf.random_normal(shape=(D, K, M)) * np.sqrt(2.0 / M))
+        self.W = tf.Variable(tf.random.normal(shape=(D, K, M)) * np.sqrt(2.0 / M))
         self.c = tf.Variable(np.zeros(M).astype(np.float32))
         self.b = tf.Variable(np.zeros((D, K)).astype(np.float32))
 
         # data
-        self.X_in = tf.placeholder(tf.float32, shape=(None, D))
+        self.X_in = tf.compat.v1.placeholder(tf.float32, shape=(None, D))
 
         # one hot encode X
         # first, make each rating an int
@@ -57,13 +60,13 @@ class RBM(object):
         self.p_h_given_v = p_h_given_v # save for later
 
         # draw a sample from p(h | v)
-        r = tf.random_uniform(shape=tf.shape(p_h_given_v))
-        H = tf.to_float(r < p_h_given_v)
+        r = tf.random.uniform(shape=tf.shape(input=p_h_given_v))
+        H = tf.cast(r < p_h_given_v, dtype=tf.float32)
 
         # draw a sample from p(v | h)
         # note: we don't have to actually do the softmax
         logits = dot2(H, self.W) + self.b
-        cdist = tf.distributions.Categorical(logits=logits)
+        cdist = tf.compat.v1.distributions.Categorical(logits=logits)
         X_sample = cdist.sample() # shape is (N, D)
         X_sample = tf.one_hot(X_sample, depth=K) # turn it into (N, D, K)
 
@@ -74,8 +77,8 @@ class RBM(object):
 
 
         # build the objective
-        objective = tf.reduce_mean(self.free_energy(X)) - tf.reduce_mean(self.free_energy(X_sample))
-        self.train_op = tf.train.AdamOptimizer(1e-2).minimize(objective)
+        objective = tf.reduce_mean(input_tensor=self.free_energy(X)) - tf.reduce_mean(input_tensor=self.free_energy(X_sample))
+        self.train_op = tf.compat.v1.train.AdamOptimizer(1e-2).minimize(objective)
         # self.train_op = tf.train.GradientDescentOptimizer(1e-3).minimize(objective)
 
         # build the cost
@@ -83,8 +86,8 @@ class RBM(object):
         # just to observe what happens during training
         logits = self.forward_logits(X)
         self.cost = tf.reduce_mean(
-            tf.nn.softmax_cross_entropy_with_logits(
-                labels=X,
+            input_tensor=tf.nn.softmax_cross_entropy_with_logits(
+                labels=tf.stop_gradient(X),
                 logits=logits,
             )
         )
@@ -98,17 +101,17 @@ class RBM(object):
         self.pred = tf.tensordot(self.output_visible, self.one_to_ten, axes=[[2], [0]])
         mask = tf.cast(self.X_in > 0, tf.float32)
         se = mask * (self.X_in - self.pred) * (self.X_in - self.pred)
-        self.sse = tf.reduce_sum(se)
+        self.sse = tf.reduce_sum(input_tensor=se)
 
         # test SSE
-        self.X_test = tf.placeholder(tf.float32, shape=(None, D))
+        self.X_test = tf.compat.v1.placeholder(tf.float32, shape=(None, D))
         mask = tf.cast(self.X_test > 0, tf.float32)
         tse = mask * (self.X_test - self.pred) * (self.X_test - self.pred)
-        self.tsse = tf.reduce_sum(tse)
+        self.tsse = tf.reduce_sum(input_tensor=tse)
 
 
-        initop = tf.global_variables_initializer()
-        self.session = tf.Session()
+        initop = tf.compat.v1.global_variables_initializer()
+        self.session = tf.compat.v1.Session()
         self.session.run(initop)
 
     def fit(self, X, X_test, epochs=10, batch_sz=256, show_fig=True):
@@ -168,10 +171,10 @@ class RBM(object):
             plt.show()
 
     def free_energy(self, V):
-        first_term = -tf.reduce_sum(dot1(V, self.b))
+        first_term = -tf.reduce_sum(input_tensor=dot1(V, self.b))
         second_term = -tf.reduce_sum(
             # tf.log(1 + tf.exp(tf.matmul(V, self.W) + self.c)),
-            tf.nn.softplus(dot1(V, self.W) + self.c),
+            input_tensor=tf.nn.softplus(dot1(V, self.W) + self.c),
             axis=1
         )
         return first_term + second_term

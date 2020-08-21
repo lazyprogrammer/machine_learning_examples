@@ -25,13 +25,13 @@ class RBM(object):
 
     def build(self, D, M):
         # params
-        self.W = tf.Variable(tf.random_normal(shape=(D, M)) * np.sqrt(2.0 / M))
+        self.W = tf.Variable(tf.random.normal(shape=(D, M)) * np.sqrt(2.0 / M))
         # note: without limiting variance, you get numerical stability issues
         self.c = tf.Variable(np.zeros(M).astype(np.float32))
         self.b = tf.Variable(np.zeros(D).astype(np.float32))
 
         # data
-        self.X_in = tf.placeholder(tf.float32, shape=(None, D))
+        self.X_in = tf.compat.v1.placeholder(tf.float32, shape=(None, D))
 
         # conditional probabilities
         # NOTE: tf.contrib.distributions.Bernoulli API has changed in Tensorflow v1.2
@@ -42,21 +42,21 @@ class RBM(object):
         #     probs=p_h_given_v,
         #     dtype=tf.float32
         # )
-        r = tf.random_uniform(shape=tf.shape(p_h_given_v))
-        H = tf.to_float(r < p_h_given_v)
+        r = tf.random.uniform(shape=tf.shape(input=p_h_given_v))
+        H = tf.cast(r < p_h_given_v, dtype=tf.float32)
 
-        p_v_given_h = tf.nn.sigmoid(tf.matmul(H, tf.transpose(self.W)) + self.b)
+        p_v_given_h = tf.nn.sigmoid(tf.matmul(H, tf.transpose(a=self.W)) + self.b)
         # self.rng_v_given_h = tf.contrib.distributions.Bernoulli(
         #     probs=p_v_given_h,
         #     dtype=tf.float32
         # )
-        r = tf.random_uniform(shape=tf.shape(p_v_given_h))
-        X_sample = tf.to_float(r < p_v_given_h)
+        r = tf.random.uniform(shape=tf.shape(input=p_v_given_h))
+        X_sample = tf.cast(r < p_v_given_h, dtype=tf.float32)
 
 
         # build the objective
-        objective = tf.reduce_mean(self.free_energy(self.X_in)) - tf.reduce_mean(self.free_energy(X_sample))
-        self.train_op = tf.train.AdamOptimizer(1e-2).minimize(objective)
+        objective = tf.reduce_mean(input_tensor=self.free_energy(self.X_in)) - tf.reduce_mean(input_tensor=self.free_energy(X_sample))
+        self.train_op = tf.compat.v1.train.AdamOptimizer(1e-2).minimize(objective)
         # self.train_op = tf.train.GradientDescentOptimizer(1e-3).minimize(objective)
 
         # build the cost
@@ -64,7 +64,7 @@ class RBM(object):
         # just to observe what happens during training
         logits = self.forward_logits(self.X_in)
         self.cost = tf.reduce_mean(
-            tf.nn.sigmoid_cross_entropy_with_logits(
+            input_tensor=tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=self.X_in,
                 logits=logits,
             )
@@ -96,7 +96,7 @@ class RBM(object):
 
         second_term = -tf.reduce_sum(
             # tf.log(1 + tf.exp(tf.matmul(V, self.W) + self.c)),
-            tf.nn.softplus(tf.matmul(V, self.W) + self.c),
+            input_tensor=tf.nn.softplus(tf.matmul(V, self.W) + self.c),
             axis=1
         )
 
@@ -107,7 +107,7 @@ class RBM(object):
 
     def forward_logits(self, X):
         Z = self.forward_hidden(X)
-        return tf.matmul(Z, tf.transpose(self.W)) + self.b
+        return tf.matmul(Z, tf.transpose(a=self.W)) + self.b
 
     def forward_output(self, X):
         return tf.nn.sigmoid(self.forward_logits(X))
@@ -128,8 +128,8 @@ def main():
     _, D = Xtrain.shape
     K = len(set(Ytrain))
     dnn = DNN(D, [1000, 750, 500], K, UnsupervisedModel=RBM)
-    init_op = tf.global_variables_initializer()
-    with tf.Session() as session:
+    init_op = tf.compat.v1.global_variables_initializer()
+    with tf.compat.v1.Session() as session:
         session.run(init_op)
         dnn.set_session(session)
         dnn.fit(Xtrain, Ytrain, Xtest, Ytest, pretrain=True, epochs=10)

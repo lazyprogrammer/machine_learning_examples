@@ -22,6 +22,9 @@ sys.path.append(os.path.abspath('..'))
 from rnn_class.util import get_wikipedia_data
 from rnn_class.brown import get_sentences_with_word2idx_limit_vocab, get_sentences_with_word2idx
 
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
+
 
 
 class Glove:
@@ -119,22 +122,22 @@ class Glove:
         tfb = tf.Variable(b.reshape(V, 1).astype(np.float32))
         tfU = tf.Variable(U.astype(np.float32))
         tfc = tf.Variable(c.reshape(1, V).astype(np.float32))
-        tfLogX = tf.placeholder(tf.float32, shape=(V, V))
-        tffX = tf.placeholder(tf.float32, shape=(V, V))
+        tfLogX = tf.compat.v1.placeholder(tf.float32, shape=(V, V))
+        tffX = tf.compat.v1.placeholder(tf.float32, shape=(V, V))
 
-        delta = tf.matmul(tfW, tf.transpose(tfU)) + tfb + tfc + mu - tfLogX
-        cost = tf.reduce_sum(tffX * delta * delta)
+        delta = tf.matmul(tfW, tf.transpose(a=tfU)) + tfb + tfc + mu - tfLogX
+        cost = tf.reduce_sum(input_tensor=tffX * delta * delta)
         regularized_cost = cost
         for param in (tfW, tfU):
-            regularized_cost += reg*tf.reduce_sum(param * param)
+            regularized_cost += reg*tf.reduce_sum(input_tensor=param * param)
 
-        train_op = tf.train.MomentumOptimizer(
+        train_op = tf.compat.v1.train.MomentumOptimizer(
           learning_rate,
           momentum=0.9
         ).minimize(regularized_cost)
         # train_op = tf.train.AdamOptimizer(1e-3).minimize(regularized_cost)
-        init = tf.global_variables_initializer()
-        session = tf.InteractiveSession()
+        init = tf.compat.v1.global_variables_initializer()
+        session = tf.compat.v1.InteractiveSession()
         session.run(init)
 
         costs = []

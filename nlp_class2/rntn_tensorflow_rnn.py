@@ -17,6 +17,9 @@ from util import init_weight, get_ptb_data, display_tree
 from datetime import datetime
 from sklearn.metrics import f1_score
 
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
+
 
 
 class RecursiveNN:
@@ -54,10 +57,10 @@ class RecursiveNN:
         self.weights = [self.We, self.W11, self.W22, self.W12, self.W1, self.W2, self.Wo]
 
 
-        words = tf.placeholder(tf.int32, shape=(None,), name='words')
-        left_children = tf.placeholder(tf.int32, shape=(None,), name='left_children')
-        right_children = tf.placeholder(tf.int32, shape=(None,), name='right_children')
-        labels = tf.placeholder(tf.int32, shape=(None,), name='labels')
+        words = tf.compat.v1.placeholder(tf.int32, shape=(None,), name='words')
+        left_children = tf.compat.v1.placeholder(tf.int32, shape=(None,), name='left_children')
+        right_children = tf.compat.v1.placeholder(tf.int32, shape=(None,), name='right_children')
+        labels = tf.compat.v1.placeholder(tf.int32, shape=(None,), name='labels')
 
         # save for later
         self.words = words
@@ -89,9 +92,9 @@ class RecursiveNN:
             # any non-word will have index -1
 
             h_n = tf.cond(
-                w >= 0,
-                lambda: tf.nn.embedding_lookup(self.We, w),
-                lambda: recursive_net_transform(hiddens, n)
+                pred=w >= 0,
+                true_fn=lambda: tf.nn.embedding_lookup(params=self.We, ids=w),
+                false_fn=lambda: recursive_net_transform(hiddens, n)
             )
             hiddens = hiddens.write(n, h_n)
             n = tf.add(n, 1)
@@ -100,7 +103,7 @@ class RecursiveNN:
 
         def condition(hiddens, n):
             # loop should continue while n < len(words)
-            return tf.less(n, tf.shape(words)[0])
+            return tf.less(n, tf.shape(input=words)[0])
 
 
         hiddens = tf.TensorArray(
@@ -112,44 +115,44 @@ class RecursiveNN:
         )
 
         hiddens, _ = tf.while_loop(
-            condition,
-            recurrence,
-            [hiddens, tf.constant(0)],
+            cond=condition,
+            body=recurrence,
+            loop_vars=[hiddens, tf.constant(0)],
             parallel_iterations=1
         )
         h = hiddens.stack()
         logits = tf.matmul(h, self.Wo) + self.bo
 
-        prediction_op = tf.argmax(logits, axis=1)
+        prediction_op = tf.argmax(input=logits, axis=1)
         self.prediction_op = prediction_op
         
         rcost = reg*sum(tf.nn.l2_loss(p) for p in self.weights)
         if train_inner_nodes:
             # filter out -1s
-            labeled_indices = tf.where(labels >= 0)
+            labeled_indices = tf.compat.v1.where(labels >= 0)
 
             cost_op = tf.reduce_mean(
-                tf.nn.sparse_softmax_cross_entropy_with_logits(
+                input_tensor=tf.nn.sparse_softmax_cross_entropy_with_logits(
                     logits=tf.gather(logits, labeled_indices),
                     labels=tf.gather(labels, labeled_indices),
                 )
             ) + rcost
         else:
             cost_op = tf.reduce_mean(
-                tf.nn.sparse_softmax_cross_entropy_with_logits(
+                input_tensor=tf.nn.sparse_softmax_cross_entropy_with_logits(
                     logits=logits[-1],
                     labels=labels[-1],
                 )
             ) + rcost
 
-        train_op = tf.train.AdagradOptimizer(learning_rate=8e-3).minimize(cost_op)
+        train_op = tf.compat.v1.train.AdagradOptimizer(learning_rate=8e-3).minimize(cost_op)
         # train_op = tf.train.MomentumOptimizer(learning_rate=8e-3, momentum=0.9).minimize(cost_op)
 
         # NOTE: If you're using GPU, InteractiveSession breaks
         # AdagradOptimizer and some other optimizers
         # change to tf.Session() if so.
-        self.session = tf.Session()
-        init_op = tf.global_variables_initializer()
+        self.session = tf.compat.v1.Session()
+        init_op = tf.compat.v1.global_variables_initializer()
         self.session.run(init_op)
 
 

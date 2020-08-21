@@ -25,6 +25,9 @@ import os
 import sys
 import string
 
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
+
 
 
 # unfortunately these work different ways
@@ -131,36 +134,36 @@ def train_model(savedir):
 
 
   # create the model
-  tf_input = tf.placeholder(tf.int32, shape=(None,))
-  tf_negword = tf.placeholder(tf.int32, shape=(None,))
-  tf_context = tf.placeholder(tf.int32, shape=(None,)) # targets (context)
+  tf_input = tf.compat.v1.placeholder(tf.int32, shape=(None,))
+  tf_negword = tf.compat.v1.placeholder(tf.int32, shape=(None,))
+  tf_context = tf.compat.v1.placeholder(tf.int32, shape=(None,)) # targets (context)
   tfW = tf.Variable(W)
   tfV = tf.Variable(V.T)
   # biases = tf.Variable(np.zeros(vocab_size, dtype=np.float32))
 
   def dot(A, B):
     C = A * B
-    return tf.reduce_sum(C, axis=1)
+    return tf.reduce_sum(input_tensor=C, axis=1)
 
   # correct middle word output
-  emb_input = tf.nn.embedding_lookup(tfW, tf_input) # 1 x D
-  emb_output = tf.nn.embedding_lookup(tfV, tf_context) # N x D
+  emb_input = tf.nn.embedding_lookup(params=tfW, ids=tf_input) # 1 x D
+  emb_output = tf.nn.embedding_lookup(params=tfV, ids=tf_context) # N x D
   correct_output = dot(emb_input, emb_output) # N
   # emb_input = tf.transpose(emb_input, (1, 0))
   # correct_output = tf.matmul(emb_output, emb_input)
   pos_loss = tf.nn.sigmoid_cross_entropy_with_logits(
-    labels=tf.ones(tf.shape(correct_output)), logits=correct_output)
+    labels=tf.ones(tf.shape(input=correct_output)), logits=correct_output)
 
   # incorrect middle word output
-  emb_input = tf.nn.embedding_lookup(tfW, tf_negword)
+  emb_input = tf.nn.embedding_lookup(params=tfW, ids=tf_negword)
   incorrect_output = dot(emb_input, emb_output)
   # emb_input = tf.transpose(emb_input, (1, 0))
   # incorrect_output = tf.matmul(emb_output, emb_input)
   neg_loss = tf.nn.sigmoid_cross_entropy_with_logits(
-    labels=tf.zeros(tf.shape(incorrect_output)), logits=incorrect_output)
+    labels=tf.zeros(tf.shape(input=incorrect_output)), logits=incorrect_output)
 
   # total loss
-  loss = tf.reduce_mean(pos_loss) + tf.reduce_mean(neg_loss)
+  loss = tf.reduce_mean(input_tensor=pos_loss) + tf.reduce_mean(input_tensor=neg_loss)
 
   # output = hidden.dot(tfV)
 
@@ -179,12 +182,12 @@ def train_model(savedir):
 
   # optimizer
   # train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
-  train_op = tf.train.MomentumOptimizer(0.1, momentum=0.9).minimize(loss)
+  train_op = tf.compat.v1.train.MomentumOptimizer(0.1, momentum=0.9).minimize(loss)
   # train_op = tf.train.AdamOptimizer(1e-2).minimize(loss)
 
   # make session
-  session = tf.Session()
-  init_op = tf.global_variables_initializer()
+  session = tf.compat.v1.Session()
+  init_op = tf.compat.v1.global_variables_initializer()
   session.run(init_op)
 
 
