@@ -21,7 +21,7 @@ Direct Course Links
 
 PyTorch: Deep Learning and Artificial Intelligence (special discount link for full VIP course as of Aug 2020)
 
-*** note: if this coupon becomes out of date, check my website for the latest version. I will probably just keep incrementing them numerically, e.g. PYTORCHVIP6, PYTORCHVIP7, etc.
+*** Note: if this coupon becomes out of date, check my website for the latest version. I will probably just keep incrementing them numerically, e.g. PYTORCHVIP6, PYTORCHVIP7, etc.
 
 https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP5
 
