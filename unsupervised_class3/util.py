@@ -11,7 +11,26 @@ import requests
 import zipfile
 import numpy as np
 import pandas as pd
-from scipy.misc import imread, imsave, imresize
+
+try:
+  # new version doesn't support
+  from scipy.misc import imread, imsave, imresize
+except:
+  from PIL import Image
+  def imread(fn):
+    im = Image.open(fn)
+    return np.array(im)
+
+  def imsave(fn, arr):
+    im = Image.fromarray(arr)
+    im.save(fn)
+
+  def imresize(arr, sz):
+    im = Image.fromarray(arr)
+    im.resize(sz)
+    return np.array(im)
+
+
 from glob import glob
 from tqdm import tqdm
 from sklearn.utils import shuffle
