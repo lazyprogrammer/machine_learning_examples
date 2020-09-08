@@ -25,6 +25,11 @@ PyTorch: Deep Learning and Artificial Intelligence (special discount link for fu
 
 https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP5
 
+
+Financial Engineering and Artificial Intelligence in Python
+https://www.udemy.com/course/ai-finance/?couponCode=FINANCEVIP
+
+
 Tensorflow 2.0: Deep Learning and Artificial Intelligence
 (Main Course - special discount link)
 https://www.udemy.com/course/deep-learning-tensorflow-2/?referralCode=E10B72D3848AB70FE1B8
