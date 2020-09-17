@@ -9,70 +9,63 @@ from builtins import range
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import beta
 
 
-# np.random.seed(2)
-NUM_TRIALS = 2000
+NUM_TRIALS = 10000
+EPS = 0.1
 BANDIT_PROBABILITIES = [0.2, 0.5, 0.75]
 
 
 class Bandit:
   def __init__(self, p):
+    # p: the win rate
     self.p = p
-    self.a = 1
-    self.b = 1
-    self.N = 0 # for information only
+    self.p_estimate = # TODO
+    self.N = # TODO
 
   def pull(self):
+    # draw a 1 with probability p
     return np.random.random() < self.p
 
-  def sample(self):
-    return np.random.beta(self.a, self.b)
-
   def update(self, x):
-    self.a += x
-    self.b += 1 - x
-    self.N += 1
-
-
-def plot(bandits, trial):
-  x = np.linspace(0, 1, 200)
-  for b in bandits:
-    y = beta.pdf(x, b.a, b.b)
-    plt.plot(x, y, label=f"real p: {b.p:.4f}, win rate = {b.a - 1}/{b.N}")
-  plt.title(f"Bandit distributions after {trial} trials")
-  plt.legend()
-  plt.show()
+    # TODO
+    self.p_estimate = # TODO
 
 
 def experiment():
   bandits = [Bandit(p) for p in BANDIT_PROBABILITIES]
 
-  sample_points = [5,10,20,50,100,200,500,1000,1500,1999]
   rewards = np.zeros(NUM_TRIALS)
   for i in range(NUM_TRIALS):
-    # Thompson sampling
-    j = np.argmax([b.sample() for b in bandits])
-
-    # plot the posteriors
-    if i in sample_points:
-      plot(bandits, i)
+    # use optimistic initial values to select the next bandit
+    j = # TODO
 
     # pull the arm for the bandit with the largest sample
     x = bandits[j].pull()
 
-    # update rewards
+    # update rewards log
     rewards[i] = x
 
     # update the distribution for the bandit whose arm we just pulled
     bandits[j].update(x)
+
+
+  # print mean estimates for each bandit
+  for b in bandits:
+    print("mean estimate:", b.p_estimate)
 
   # print total reward
   print("total reward earned:", rewards.sum())
   print("overall win rate:", rewards.sum() / NUM_TRIALS)
   print("num times selected each bandit:", [b.N for b in bandits])
 
+  # plot the results
+  cumulative_rewards = np.cumsum(rewards)
+  win_rates = cumulative_rewards / (np.arange(NUM_TRIALS) + 1)
+  plt.ylim([0, 1])
+  plt.plot(win_rates)
+  plt.plot(np.ones(NUM_TRIALS)*np.max(BANDIT_PROBABILITIES))
+  plt.show()
 
 if __name__ == "__main__":
   experiment()
