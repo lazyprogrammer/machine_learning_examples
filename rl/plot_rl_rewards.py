@@ -11,6 +11,12 @@ a = np.load(f'linear_rl_trader_rewards/{args.mode}.npy')
 
 print(f"average reward: {a.mean():.2f}, min: {a.min():.2f}, max: {a.max():.2f}")
 
-plt.hist(a, bins=20)
+if args.mode == 'train':
+  # show the training progress
+  plt.plot(a)
+else:
+  # test - show a histogram of rewards
+  plt.hist(a, bins=20)
+
 plt.title(args.mode)
 plt.show()
