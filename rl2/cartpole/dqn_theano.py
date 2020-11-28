@@ -17,6 +17,10 @@ from datetime import datetime
 from q_learning_bins import plot_running_avg
 
 
+# global counter
+global_iters = 0
+
+
 # helper for adam optimizer
 # use tensorflow defaults
 def adam(cost, params, lr0=1e-2, beta1=0.9, beta2=0.999, eps=1e-8):
@@ -170,6 +174,7 @@ class DQN:
 
 
 def play_one(env, model, tmodel, eps, gamma, copy_period):
+  global global_iters
   observation = env.reset()
   done = False
   totalreward = 0
@@ -190,8 +195,9 @@ def play_one(env, model, tmodel, eps, gamma, copy_period):
     model.train(tmodel)
 
     iters += 1
+    global_iters += 1
 
-    if iters % copy_period == 0:
+    if global_iters % copy_period == 0:
       tmodel.copy_from(model)
 
   return totalreward
