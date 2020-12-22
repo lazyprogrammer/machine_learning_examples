@@ -144,10 +144,16 @@ def main():
         # this is gradient ASCENT, not DESCENT
         # be comfortable with both!
         # oldW2 = W2.copy()
-        W2 += learning_rate * derivative_w2(hidden, T, output)
-        b2 += learning_rate * derivative_b2(T, output)
-        W1 += learning_rate * derivative_w1(X, hidden, T, output, W2)
-        b1 += learning_rate * derivative_b1(T, output, W2, hidden)
+
+        gW2 = derivative_w2(hidden, T, output)
+        gb2 = derivative_b2(T, output)
+        gW1 = derivative_w1(X, hidden, T, output, W2)
+        gb1 = derivative_b1(T, output, W2, hidden)
+
+        W2 += learning_rate * gW2
+        b2 += learning_rate * gb2
+        W1 += learning_rate * gW1
+        b1 += learning_rate * gb1
 
     plt.plot(costs)
     plt.show()
