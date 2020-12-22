@@ -82,10 +82,17 @@ def test_xor():
         er = np.mean(prediction != Y)
 
         LL.append(ll)
-        W2 += learning_rate * (derivative_w2(Z, Y, pY) - regularization * W2)
-        b2 += learning_rate * (derivative_b2(Y, pY) - regularization * b2)
-        W1 += learning_rate * (derivative_w1(X, Z, Y, pY, W2) - regularization * W1)
-        b1 += learning_rate * (derivative_b1(Z, Y, pY, W2) - regularization * b1)
+
+        # get gradients
+        gW2 = derivative_w2(Z, Y, pY)
+        gb2 = derivative_b2(Y, pY)
+        gW1 = derivative_w1(X, Z, Y, pY, W2)
+        gb1 = derivative_b1(Z, Y, pY, W2)
+
+        W2 += learning_rate * (gW2 - regularization * W2)
+        b2 += learning_rate * (gb2 - regularization * b2)
+        W1 += learning_rate * (gW1 - regularization * W1)
+        b1 += learning_rate * (gb1 - regularization * b1)
         if i % 1000 == 0:
             print(ll)
 
@@ -128,10 +135,17 @@ def test_donut():
         prediction = predict(X, W1, b1, W2, b2)
         er = np.abs(prediction - Y).mean()
         LL.append(ll)
-        W2 += learning_rate * (derivative_w2(Z, Y, pY) - regularization * W2)
-        b2 += learning_rate * (derivative_b2(Y, pY) - regularization * b2)
-        W1 += learning_rate * (derivative_w1(X, Z, Y, pY, W2) - regularization * W1)
-        b1 += learning_rate * (derivative_b1(Z, Y, pY, W2) - regularization * b1)
+
+        # get gradients
+        gW2 = derivative_w2(Z, Y, pY)
+        gb2 = derivative_b2(Y, pY)
+        gW1 = derivative_w1(X, Z, Y, pY, W2)
+        gb1 = derivative_b1(Z, Y, pY, W2)
+
+        W2 += learning_rate * (gW2 - regularization * W2)
+        b2 += learning_rate * (gb2 - regularization * b2)
+        W1 += learning_rate * (gW1 - regularization * W1)
+        b1 += learning_rate * (gb1 - regularization * b1)
         if i % 300 == 0:
             print("i:", i, "ll:", ll, "classification rate:", 1 - er)
     plt.plot(LL)
@@ -139,8 +153,8 @@ def test_donut():
 
 
 if __name__ == '__main__':
-    # test_xor()
-    test_donut()
+    test_xor()
+    # test_donut()
 
     
 
