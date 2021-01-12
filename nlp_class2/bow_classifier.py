@@ -17,6 +17,7 @@ from gensim.models import KeyedVectors
 
 
 # data from https://www.cs.umb.edu/~smimarog/textmining/datasets/
+# alternate source: https://lazyprogrammer.me/course_files/deepnlp_classification_data.zip
 train = pd.read_csv('../large_files/r8-train-all-terms.txt', header=None, sep='\t')
 test = pd.read_csv('../large_files/r8-test-all-terms.txt', header=None, sep='\t')
 train.columns = ['label', 'content']
