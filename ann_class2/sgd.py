@@ -1,14 +1,8 @@
 # In this file we compare the progression of the cost function vs. iteration
 # for 3 cases:
 # 1) full gradient descent
-# 2) batch gradient descent
+# 2) mini-batch gradient descent
 # 3) stochastic gradient descent
-#
-# We use the PCA-transformed data to keep the dimensionality down (D=300)
-# I've tailored this example so that the training time for each is feasible.
-# So what we are really comparing is how quickly each type of GD can converge,
-# (but not actually waiting for convergence) and what the cost looks like at
-# each iteration.
 #
 # For the class Data Science: Practical Deep Learning Concepts in Theano and TensorFlow
 # https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
@@ -24,11 +18,11 @@ import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from datetime import datetime
 
-from util import get_transformed_data, forward, error_rate, cost, gradW, gradb, y2indicator
+from util import get_normalized_data, forward, error_rate, cost, gradW, gradb, y2indicator
 
 
 def main():
-    Xtrain, Xtest, Ytrain, Ytest = get_transformed_data()
+    Xtrain, Xtest, Ytrain, Ytest = get_normalized_data()
     print("Performing logistic regression...")
 
     N, D = Xtrain.shape
@@ -38,72 +32,101 @@ def main():
     # 1. full
     W = np.random.randn(D, 10) / np.sqrt(D)
     b = np.zeros(10)
-    LL = []
-    lr = 0.0001
-    reg = 0.01
+    test_losses_full = []
+    lr = 0.9
+    # lr0 = lr # save for later
+    reg = 0.
     t0 = datetime.now()
+    last_dt = 0
+    intervals = []
     for i in range(50):
         p_y = forward(Xtrain, W, b)
 
-        W += lr*(gradW(Ytrain_ind, p_y, Xtrain) - reg*W)
-        b += lr*(gradb(Ytrain_ind, p_y) - reg*b)
-        
+        gW = gradW(Ytrain_ind, p_y, Xtrain) / N
+        gb = gradb(Ytrain_ind, p_y) / N
+
+        W += lr*(gW - reg*W)
+        b += lr*(gb - reg*b)
 
         p_y_test = forward(Xtest, W, b)
-        ll = cost(p_y_test, Ytest_ind)
-        LL.append(ll)
-        if i % 1 == 0:
-            err = error_rate(p_y_test, Ytest)
-            if i % 10 == 0:
-                print("Cost at iteration %d: %.6f" % (i, ll))
-                print("Error rate:", err)
+        test_loss = cost(p_y_test, Ytest_ind)
+        dt = (datetime.now() - t0).total_seconds()
+
+        # save these
+        dt2 = dt - last_dt
+        last_dt = dt
+        intervals.append(dt2)
+
+        test_losses_full.append([dt, test_loss])
+        if (i + 1) % 10 == 0:
+            print("Cost at iteration %d: %.6f" % (i + 1, test_loss))
     p_y = forward(Xtest, W, b)
     print("Final error rate:", error_rate(p_y, Ytest))
     print("Elapsted time for full GD:", datetime.now() - t0)
+
+    # save the max time so we don't surpass it in subsequent iterations
+    max_dt = dt
+    avg_interval_dt = np.mean(intervals)
 
 
     # 2. stochastic
     W = np.random.randn(D, 10) / np.sqrt(D)
     b = np.zeros(10)
-    LL_stochastic = []
-    lr = 0.0001
-    reg = 0.01
+    test_losses_sgd = []
+    lr = 0.001
+    reg = 0.
 
     t0 = datetime.now()
+    last_dt_calculated_loss = 0
+    done = False
     for i in range(50): # takes very long since we're computing cost for 41k samples
         tmpX, tmpY = shuffle(Xtrain, Ytrain_ind)
-        for n in range(min(N, 500)): # shortcut so it won't take so long...
+        for n in range(N):
             x = tmpX[n,:].reshape(1,D)
             y = tmpY[n,:].reshape(1,10)
             p_y = forward(x, W, b)
 
-            W += lr*(gradW(y, p_y, x) - reg*W)
-            b += lr*(gradb(y, p_y) - reg*b)
+            gW = gradW(y, p_y, x)
+            gb = gradb(y, p_y)
 
-            p_y_test = forward(Xtest, W, b)
-            ll = cost(p_y_test, Ytest_ind)
-            LL_stochastic.append(ll)
+            W += lr*(gW - reg*W)
+            b += lr*(gb - reg*b)
 
-        if i % 1 == 0:
-            err = error_rate(p_y_test, Ytest)
-            if i % 10 == 0:
-                print("Cost at iteration %d: %.6f" % (i, ll))
-                print("Error rate:", err)
+            dt = (datetime.now() - t0).total_seconds()
+            dt2 = dt - last_dt_calculated_loss
+
+            if dt2 > avg_interval_dt:
+                p_y_test = forward(Xtest, W, b)
+                test_loss = cost(p_y_test, Ytest_ind)
+                test_losses_sgd.append([dt, test_loss])
+
+            # time to quit
+            if dt > max_dt:
+                done = True
+                break
+        if done:
+            break
+
+        if (i + 1) % 10 == 0:
+            print("Cost at iteration %d: %.6f" % (i + 1, test_loss))
     p_y = forward(Xtest, W, b)
     print("Final error rate:", error_rate(p_y, Ytest))
     print("Elapsted time for SGD:", datetime.now() - t0)
 
 
-    # 3. batch
+    # 3. mini-batch
     W = np.random.randn(D, 10) / np.sqrt(D)
     b = np.zeros(10)
-    LL_batch = []
-    lr = 0.0001
-    reg = 0.01
+    test_losses_batch = []
     batch_sz = 500
+    lr = 0.08
+    reg = 0.
     n_batches = N // batch_sz
 
+
     t0 = datetime.now()
+    last_dt_calculated_loss = 0
+    done = False
     for i in range(50):
         tmpX, tmpY = shuffle(Xtrain, Ytrain_ind)
         for j in range(n_batches):
@@ -111,29 +134,43 @@ def main():
             y = tmpY[j*batch_sz:(j*batch_sz + batch_sz),:]
             p_y = forward(x, W, b)
 
-            W += lr*(gradW(y, p_y, x) - reg*W)
-            b += lr*(gradb(y, p_y) - reg*b)
+            gW = gradW(y, p_y, x) / batch_sz
+            gb = gradb(y, p_y) / batch_sz
 
-            p_y_test = forward(Xtest, W, b)
-            ll = cost(p_y_test, Ytest_ind)
-            LL_batch.append(ll)
-        if i % 1 == 0:
-            err = error_rate(p_y_test, Ytest)
-            if i % 10 == 0:
-                print("Cost at iteration %d: %.6f" % (i, ll))
-                print("Error rate:", err)
+            W += lr*(gW - reg*W)
+            b += lr*(gb - reg*b)
+
+            dt = (datetime.now() - t0).total_seconds()
+            dt2 = dt - last_dt_calculated_loss
+
+            if dt2 > avg_interval_dt:
+                p_y_test = forward(Xtest, W, b)
+                test_loss = cost(p_y_test, Ytest_ind)
+                test_losses_batch.append([dt, test_loss])
+
+            # time to quit
+            if dt > max_dt:
+                done = True
+                break
+        if done:
+            break
+
+        if (i + 1) % 10 == 0:
+            print("Cost at iteration %d: %.6f" % (i + 1, test_loss))
     p_y = forward(Xtest, W, b)
     print("Final error rate:", error_rate(p_y, Ytest))
-    print("Elapsted time for batch GD:", datetime.now() - t0)
+    print("Elapsted time for mini-batch GD:", datetime.now() - t0)
 
 
+    # convert to numpy arrays
+    test_losses_full = np.array(test_losses_full)
+    test_losses_sgd = np.array(test_losses_sgd)
+    test_losses_batch = np.array(test_losses_batch)
 
-    x1 = np.linspace(0, 1, len(LL))
-    plt.plot(x1, LL, label="full")
-    x2 = np.linspace(0, 1, len(LL_stochastic))
-    plt.plot(x2, LL_stochastic, label="stochastic")
-    x3 = np.linspace(0, 1, len(LL_batch))
-    plt.plot(x3, LL_batch, label="batch")
+    
+    plt.plot(test_losses_full[:,0], test_losses_full[:,1], label="full")
+    plt.plot(test_losses_sgd[:,0], test_losses_sgd[:,1], label="sgd")
+    plt.plot(test_losses_batch[:,0], test_losses_batch[:,1], label="mini-batch")
     plt.legend()
     plt.show()
 
