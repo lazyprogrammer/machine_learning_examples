@@ -7,6 +7,9 @@ https://arxiv.org/abs/1609.08326
 Asynchronous Stochastic Gradient Descent with Variance Reduction for Non-Convex Optimization
 https://arxiv.org/abs/1604.03584
 
+Adam: A Method for Stochastic Optimization
+https://arxiv.org/abs/1412.6980
+
 Large Scale Distributed Deep Networks
 https://static.googleusercontent.com/media/research.google.com/en//archive/large_deep_networks_nips2012.pdf
 
