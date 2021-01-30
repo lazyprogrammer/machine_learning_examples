@@ -31,10 +31,10 @@ def main():
 
     # 1. full
     W = np.random.randn(D, 10) / np.sqrt(D)
+    W0 = W.copy() # save for later
     b = np.zeros(10)
     test_losses_full = []
     lr = 0.9
-    # lr0 = lr # save for later
     reg = 0.
     t0 = datetime.now()
     last_dt = 0
@@ -70,7 +70,7 @@ def main():
 
 
     # 2. stochastic
-    W = np.random.randn(D, 10) / np.sqrt(D)
+    W = W0.copy()
     b = np.zeros(10)
     test_losses_sgd = []
     lr = 0.001
@@ -96,6 +96,7 @@ def main():
             dt2 = dt - last_dt_calculated_loss
 
             if dt2 > avg_interval_dt:
+                last_dt_calculated_loss = dt
                 p_y_test = forward(Xtest, W, b)
                 test_loss = cost(p_y_test, Ytest_ind)
                 test_losses_sgd.append([dt, test_loss])
@@ -107,7 +108,7 @@ def main():
         if done:
             break
 
-        if (i + 1) % 10 == 0:
+        if (i + 1) % 1 == 0:
             print("Cost at iteration %d: %.6f" % (i + 1, test_loss))
     p_y = forward(Xtest, W, b)
     print("Final error rate:", error_rate(p_y, Ytest))
@@ -115,13 +116,13 @@ def main():
 
 
     # 3. mini-batch
-    W = np.random.randn(D, 10) / np.sqrt(D)
+    W = W0.copy()
     b = np.zeros(10)
     test_losses_batch = []
     batch_sz = 500
     lr = 0.08
     reg = 0.
-    n_batches = N // batch_sz
+    n_batches = int(np.ceil(N / batch_sz))
 
 
     t0 = datetime.now()
@@ -130,12 +131,13 @@ def main():
     for i in range(50):
         tmpX, tmpY = shuffle(Xtrain, Ytrain_ind)
         for j in range(n_batches):
-            x = tmpX[j*batch_sz:(j*batch_sz + batch_sz),:]
-            y = tmpY[j*batch_sz:(j*batch_sz + batch_sz),:]
+            x = tmpX[j*batch_sz:(j + 1)*batch_sz,:]
+            y = tmpY[j*batch_sz:(j + 1)*batch_sz,:]
             p_y = forward(x, W, b)
 
-            gW = gradW(y, p_y, x) / batch_sz
-            gb = gradb(y, p_y) / batch_sz
+            current_batch_sz = len(x)
+            gW = gradW(y, p_y, x) / current_batch_sz
+            gb = gradb(y, p_y) / current_batch_sz
 
             W += lr*(gW - reg*W)
             b += lr*(gb - reg*b)
@@ -144,6 +146,7 @@ def main():
             dt2 = dt - last_dt_calculated_loss
 
             if dt2 > avg_interval_dt:
+                last_dt_calculated_loss = dt
                 p_y_test = forward(Xtest, W, b)
                 test_loss = cost(p_y_test, Ytest_ind)
                 test_losses_batch.append([dt, test_loss])
