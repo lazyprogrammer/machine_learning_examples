@@ -59,7 +59,7 @@ def play_game(grid, policy, max_steps=20):
 if __name__ == '__main__':
   # use the standard grid again (0 for every step) so that we can compare
   # to iterative policy evaluation
-  # grid = standard_grid()
+  grid = standard_grid()
 
   # print rewards
   print("rewards:")
