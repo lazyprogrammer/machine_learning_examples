@@ -169,7 +169,8 @@ class WindyGrid:
     next_state_probs = self.probs[(s, a)]
     next_states = list(next_state_probs.keys())
     next_probs = list(next_state_probs.values())
-    s2 = np.random.choice(next_states, p=next_probs)
+    next_state_idx = np.random.choice(len(next_states), p=next_probs)
+    s2 = next_states[next_state_idx]
 
     # update the current state
     self.i, self.j = s2
