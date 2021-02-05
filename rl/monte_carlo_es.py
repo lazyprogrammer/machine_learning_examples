@@ -98,17 +98,12 @@ if __name__ == '__main__':
 
   # initialize Q(s,a) and returns
   Q = {}
-  sample_counts = {}
-  # returns = {} # dictionary of state -> list of returns we've received
   states = grid.all_states()
   for s in states:
     if s in grid.actions: # not a terminal state
       Q[s] = {}
-      sample_counts[s] = {}
       for a in ALL_POSSIBLE_ACTIONS:
         Q[s][a] = 0 # needs to be initialized to something so we can argmax it
-        sample_counts[s][a] = 0
-        # returns[(s,a)] = []
     else:
       # terminal state or state we can't otherwise get to
       pass
@@ -129,7 +124,6 @@ if __name__ == '__main__':
       sa = (s, a)
       if sa not in seen_state_action_pairs:
         old_q = Q[s][a]
-        # returns[sa].append(G)
         Q[s][a] = old_q + LEARNING_RATE * (G - old_q)
         biggest_change = max(biggest_change, np.abs(old_q - Q[s][a]))
         seen_state_action_pairs.add(sa)
