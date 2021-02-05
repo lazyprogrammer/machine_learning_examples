@@ -13,6 +13,7 @@ from iterative_policy_evaluation import print_values, print_policy
 from monte_carlo_es import max_dict
 
 GAMMA = 0.9
+LEARNING_RATE = 0.1
 ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
 
 # NOTE: find optimal policy and value function
@@ -35,19 +36,19 @@ def random_action(a, eps=0.1):
   else:
     return np.random.choice(ALL_POSSIBLE_ACTIONS)
 
-def play_game(grid, policy):
+def play_game(grid, policy, eps, max_steps=20):
   # returns a list of states and corresponding returns
   # in this version we will NOT use "exploring starts" method
   # instead we will explore using an epsilon-soft policy
   s = (2, 0)
   grid.set_state(s)
-  a = random_action(policy[s])
+  a = random_action(policy[s], eps)
 
   # be aware of the timing
   # each triple is s(t), a(t), r(t)
   # but r(t) results from taking action a(t-1) from s(t-1) and landing in s(t)
   states_actions_rewards = [(s, a, 0)]
-  while True:
+  for _ in range(max_steps):
     r = grid.move(a)
     s = grid.current_state()
     if grid.game_over():
@@ -77,10 +78,10 @@ def play_game(grid, policy):
 if __name__ == '__main__':
   # use the standard grid again (0 for every step) so that we can compare
   # to iterative policy evaluation
-  # grid = standard_grid()
+  grid = standard_grid()
   # try the negative grid too, to see if agent will learn to go past the "bad spot"
   # in order to minimize number of steps
-  grid = negative_grid(step_cost=-0.1)
+  # grid = negative_grid(step_cost=-0.1)
 
   # print rewards
   print("rewards:")
@@ -94,27 +95,28 @@ if __name__ == '__main__':
 
   # initialize Q(s,a) and returns
   Q = {}
-  returns = {} # dictionary of state -> list of returns we've received
+  # returns = {} # dictionary of state -> list of returns we've received
   states = grid.all_states()
   for s in states:
     if s in grid.actions: # not a terminal state
       Q[s] = {}
       for a in ALL_POSSIBLE_ACTIONS:
         Q[s][a] = 0
-        returns[(s,a)] = []
+        # returns[(s,a)] = []
     else:
       # terminal state or state we can't otherwise get to
       pass
 
   # repeat until convergence
   deltas = []
-  for t in range(5000):
-    if t % 1000 == 0:
+  eps = 1.0
+  for t in range(10000):
+    if t % 2000 == 0:
       print(t)
 
     # generate an episode using pi
     biggest_change = 0
-    states_actions_returns = play_game(grid, policy)
+    states_actions_returns = play_game(grid, policy, eps=eps)
 
     # calculate Q(s,a)
     seen_state_action_pairs = set()
@@ -124,8 +126,8 @@ if __name__ == '__main__':
       sa = (s, a)
       if sa not in seen_state_action_pairs:
         old_q = Q[s][a]
-        returns[sa].append(G)
-        Q[s][a] = np.mean(returns[sa])
+        # returns[sa].append(G)
+        Q[s][a] = old_q + LEARNING_RATE * (G - old_q)
         biggest_change = max(biggest_change, np.abs(old_q - Q[s][a]))
         seen_state_action_pairs.add(sa)
     deltas.append(biggest_change)
@@ -134,6 +136,9 @@ if __name__ == '__main__':
     for s in policy.keys():
       a, _ = max_dict(Q[s])
       policy[s] = a
+
+    # update epsilon
+    eps = max(eps - 0.01, 0.1)
 
   plt.plot(deltas)
   plt.show()

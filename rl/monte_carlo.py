@@ -10,13 +10,13 @@ import numpy as np
 from grid_world import standard_grid, negative_grid
 from iterative_policy_evaluation import print_values, print_policy
 
-SMALL_ENOUGH = 1e-3
+SMALL_ENOUGH = 1e-5
 GAMMA = 0.9
 ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
 
 # NOTE: this is only policy evaluation, not optimization
 
-def play_game(grid, policy):
+def play_game(grid, policy, max_steps=20):
   # returns a list of states and corresponding returns
 
   # reset game to start at a random position
@@ -28,11 +28,17 @@ def play_game(grid, policy):
 
   s = grid.current_state()
   states_and_rewards = [(s, 0)] # list of tuples of (state, reward)
+  steps = 0
   while not grid.game_over():
     a = policy[s]
     r = grid.move(a)
     s = grid.current_state()
     states_and_rewards.append((s, r))
+
+    steps += 1
+    if steps >= max_steps:
+      break
+
   # calculate the returns by working backwards from the terminal state
   G = 0
   states_and_returns = []

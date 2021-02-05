@@ -12,12 +12,13 @@ from grid_world import standard_grid, negative_grid
 from iterative_policy_evaluation import print_values, print_policy
 
 GAMMA = 0.9
+LEARNING_RATE = 0.1
 ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
 
 # NOTE: this script implements the Monte Carlo Exploring-Starts method
 #       for finding the optimal policy
 
-def play_game(grid, policy):
+def play_game(grid, policy, max_steps=20):
   # returns a list of states and corresponding returns
 
   # reset game to start at a random position
@@ -35,31 +36,18 @@ def play_game(grid, policy):
   # each triple is s(t), a(t), r(t)
   # but r(t) results from taking action a(t-1) from s(t-1) and landing in s(t)
   states_actions_rewards = [(s, a, 0)]
-  seen_states = set()
-  seen_states.add(grid.current_state())
-  num_steps = 0
-  while True:
+  for _ in range(max_steps):
     r = grid.move(a)
-    num_steps += 1
     s = grid.current_state()
-
-    if s in seen_states:
-      # hack so that we don't end up in an infinitely long episode
-      # bumping into the wall repeatedly
-      # if num_steps == 1 -> bumped into a wall and haven't moved anywhere
-      #   reward = -10
-      # else:
-      #   reward = falls off by 1 / num_steps
-      reward = -10. / num_steps
-      states_actions_rewards.append((s, None, reward))
-      break
-    elif grid.game_over():
+    
+    if grid.game_over():
       states_actions_rewards.append((s, None, r))
       break
     else:
       a = policy[s]
       states_actions_rewards.append((s, a, r))
-    seen_states.add(s)
+
+    # seen_states.add(s)
 
   # calculate the returns by working backwards from the terminal state
   G = 0
@@ -93,10 +81,10 @@ def max_dict(d):
 if __name__ == '__main__':
   # use the standard grid again (0 for every step) so that we can compare
   # to iterative policy evaluation
-  # grid = standard_grid()
+  grid = standard_grid()
   # try the negative grid too, to see if agent will learn to go past the "bad spot"
   # in order to minimize number of steps
-  grid = negative_grid(step_cost=-0.9)
+  # grid = negative_grid(step_cost=-0.9)
 
   # print rewards
   print("rewards:")
@@ -110,22 +98,25 @@ if __name__ == '__main__':
 
   # initialize Q(s,a) and returns
   Q = {}
-  returns = {} # dictionary of state -> list of returns we've received
+  sample_counts = {}
+  # returns = {} # dictionary of state -> list of returns we've received
   states = grid.all_states()
   for s in states:
     if s in grid.actions: # not a terminal state
       Q[s] = {}
+      sample_counts[s] = {}
       for a in ALL_POSSIBLE_ACTIONS:
         Q[s][a] = 0 # needs to be initialized to something so we can argmax it
-        returns[(s,a)] = []
+        sample_counts[s][a] = 0
+        # returns[(s,a)] = []
     else:
       # terminal state or state we can't otherwise get to
       pass
 
   # repeat until convergence
   deltas = []
-  for t in range(2000):
-    if t % 100 == 0:
+  for t in range(10000):
+    if t % 1000 == 0:
       print(t)
 
     # generate an episode using pi
@@ -138,8 +129,8 @@ if __name__ == '__main__':
       sa = (s, a)
       if sa not in seen_state_action_pairs:
         old_q = Q[s][a]
-        returns[sa].append(G)
-        Q[s][a] = np.mean(returns[sa])
+        # returns[sa].append(G)
+        Q[s][a] = old_q + LEARNING_RATE * (G - old_q)
         biggest_change = max(biggest_change, np.abs(old_q - Q[s][a]))
         seen_state_action_pairs.add(sa)
     deltas.append(biggest_change)
