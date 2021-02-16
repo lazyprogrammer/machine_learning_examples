@@ -37,9 +37,7 @@ def choose_random_argmax(a):
   return np.random.choice(idx)
 
 
-def experiment(argmax=choose_random_argmax):
-  # argmax can also simply be np.argmax to choose the first argmax in case of ties
-
+def experiment():
   bandits = [BanditArm(p) for p in BANDIT_PROBABILITIES]
 
   rewards = np.zeros(NUM_TRIALS)
@@ -57,7 +55,7 @@ def experiment(argmax=choose_random_argmax):
       j = np.random.randint(len(bandits))
     else:
       num_times_exploited += 1
-      j = argmax([b.p_estimate for b in bandits])
+      j = choose_random_argmax([b.p_estimate for b in bandits])
 
     if j == optimal_j:
       num_optimal += 1
