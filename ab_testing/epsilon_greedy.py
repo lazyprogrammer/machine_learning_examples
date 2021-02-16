@@ -32,7 +32,14 @@ class BanditArm:
     self.p_estimate = ((self.N - 1)*self.p_estimate + x) / self.N
 
 
-def experiment():
+def choose_random_argmax(a):
+  idx = np.argwhere(np.amax(a) == a).flatten()
+  return np.random.choice(idx)
+
+
+def experiment(argmax=choose_random_argmax):
+  # argmax can also simply be np.argmax to choose the first argmax in case of ties
+
   bandits = [BanditArm(p) for p in BANDIT_PROBABILITIES]
 
   rewards = np.zeros(NUM_TRIALS)
@@ -50,7 +57,7 @@ def experiment():
       j = np.random.randint(len(bandits))
     else:
       num_times_exploited += 1
-      j = np.argmax([b.p_estimate for b in bandits])
+      j = argmax([b.p_estimate for b in bandits])
 
     if j == optimal_j:
       num_optimal += 1
