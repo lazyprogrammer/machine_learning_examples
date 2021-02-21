@@ -36,11 +36,16 @@ def get_transition_probs_and_rewards(grid):
   return transition_probs, rewards
 
 
-def evaluate_deterministic_policy(grid, policy):
+def evaluate_deterministic_policy(grid, policy, initV=None):
   # initialize V(s) = 0
-  V = {}
-  for s in grid.all_states():
-    V[s] = 0
+  if initV is None:
+    V = {}
+    for s in grid.all_states():
+      V[s] = 0
+  else:
+    # it's faster to use the existing V(s) since the value won't change
+    # that much from one policy to the next
+    V = initV
 
   # repeat until convergence
   it = 0
@@ -72,7 +77,7 @@ def evaluate_deterministic_policy(grid, policy):
 
 if __name__ == '__main__':
 
-  grid = windy_grid_penalized(-2)
+  grid = windy_grid_penalized(-0.1)
   # grid = windy_grid()
   transition_probs, rewards = get_transition_probs_and_rewards(grid)
 
@@ -91,10 +96,11 @@ if __name__ == '__main__':
   print_policy(policy, grid)
 
   # repeat until convergence - will break out when policy does not change
+  V = None
   while True:
 
     # policy evaluation step - we already know how to do this!
-    V = evaluate_deterministic_policy(grid, policy)
+    V = evaluate_deterministic_policy(grid, policy, initV=V)
 
     # policy improvement step
     is_policy_converged = True
