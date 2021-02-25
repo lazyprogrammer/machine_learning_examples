@@ -26,6 +26,10 @@ PyTorch: Deep Learning and Artificial Intelligence (special discount link for fu
 https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP5
 
 
+Machine Learning Foundation and Data Science in Python and R
+(Use Referral "GL9Y0VSXG9KJM")
+https://www.greatlearning.in/academy 
+
 Financial Engineering and Artificial Intelligence in Python
 https://www.udemy.com/course/ai-finance/?couponCode=FINANCEVIP
 
