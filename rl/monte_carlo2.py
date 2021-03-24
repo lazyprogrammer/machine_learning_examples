@@ -48,6 +48,10 @@ def play_game(grid, policy, max_steps=20):
     # note: there is no need to store the final terminal state
     s = next_s
 
+  # we want to return:
+  # states  = [s(0), s(1), ..., S(T-1)]
+  # rewards = [R(1), R(2), ..., R(T)  ]
+
   return states, rewards
 
 

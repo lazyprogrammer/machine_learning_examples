@@ -40,6 +40,10 @@ def play_game(grid, policy, max_steps=20):
       break
 
   # calculate the returns by working backwards from the terminal state
+
+  # we want to return:
+  # states  = [s(0), s(1), ..., s(T-1)]
+  # returns = [G(0), G(1), ..., G(T-1)]
   G = 0
   states_and_returns = []
   first = True
