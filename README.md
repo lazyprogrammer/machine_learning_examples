@@ -16,14 +16,27 @@ Why you should not fork this repo
 I've noticed that many people have out-of-date forks. Thus, I recommend not forking this repository if you take one of my courses. I am constantly updating my courses, and your fork will soon become out-of-date. You should clone the repository instead to make it easy to get updates (i.e. just "git pull" randomly and frequently).
 
 
+Where is the code for your latest courses?
+==========================================
+
+Beginning with Tensorflow 2, I started to use Google Colab. For those courses, unless otherwise noted, the code will be on Google Colab. Links to the notebooks are provided in the course. See the lecture "Where to get the code" for further details.
+
+
 Direct Course Links
 ===================
 
-PyTorch: Deep Learning and Artificial Intelligence (special discount link for full VIP course as of Aug 2020)
+Financial Engineering and Artificial Intelligence in Python (special discount link for full VIP version as of Apr 2021)
 
-*** Note: if this coupon becomes out of date, check my website for the latest version. I will probably just keep incrementing them numerically, e.g. PYTORCHVIP6, PYTORCHVIP7, etc..
+*** Note: if this coupon becomes out of date, check my website (https://lazyprogrammer.me) for the latest version. I will probably just keep incrementing them numerically, e.g. FINANCEVIP2, FINANCEVIP3, etc..
 
-https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP5
+https://www.udemy.com/course/ai-finance/?couponCode=FINANCEVIP7
+
+
+PyTorch: Deep Learning and Artificial Intelligence (special discount link for full VIP course as of Apr 2021)
+
+*** Note: if this coupon becomes out of date, check my website (https://lazyprogrammer.me) for the latest version. I will probably just keep incrementing them numerically, e.g. PYTORCHVIP6, PYTORCHVIP7, etc..
+
+https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP12
 
 
 Financial Engineering and Artificial Intelligence in Python
