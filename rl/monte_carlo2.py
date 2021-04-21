@@ -27,8 +27,8 @@ def play_game(grid, policy, max_steps=20):
   s = grid.current_state()
 
   # keep track of all states and rewards encountered
-  states = []
-  rewards = []
+  states = [s]
+  rewards = [0]
 
   steps = 0
   while not grid.game_over():
@@ -37,7 +37,7 @@ def play_game(grid, policy, max_steps=20):
     next_s = grid.current_state()
 
     # update states and rewards lists
-    states.append(s)
+    states.append(next_s)
     rewards.append(r)
 
     steps += 1
@@ -49,8 +49,8 @@ def play_game(grid, policy, max_steps=20):
     s = next_s
 
   # we want to return:
-  # states  = [s(0), s(1), ..., S(T-1)]
-  # rewards = [R(1), R(2), ..., R(T)  ]
+  # states  = [s(0), s(1), ..., S(T)]
+  # rewards = [R(0), R(1), ..., R(T)]
 
   return states, rewards
 
@@ -94,9 +94,9 @@ if __name__ == '__main__':
     states, rewards = play_game(grid, policy)
     G = 0
     T = len(states)
-    for t in range(T - 1, -1, -1):
+    for t in range(T - 2, -1, -1):
       s = states[t]
-      r = rewards[t]
+      r = rewards[t+1]
       G = r + GAMMA * G # update return
 
       # we'll use first-visit Monte Carlo

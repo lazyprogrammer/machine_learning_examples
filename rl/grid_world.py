@@ -34,6 +34,12 @@ class Grid: # Environment
   def is_terminal(self, s):
     return s not in self.actions
 
+  def reset(self):
+    # put agent back in start position
+    self.i = 2
+    self.j = 0
+    return (self.i, self.j)
+
   def get_next_state(self, s, a):
     # this answers: where would I end up if I perform action 'a' in state 's'?
     i, j = s[0], s[1]
@@ -246,6 +252,12 @@ def windy_grid():
     ((1, 2), 'R'): {(1, 3): 1.0},
   }
   g.set(rewards, actions, probs)
+  return g
+
+
+def windy_grid_no_wind():
+  g = windy_grid()
+  g.probs[((1, 2), 'U')] = {(0, 2): 1.0}
   return g
 
 
