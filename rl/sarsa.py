@@ -43,11 +43,6 @@ if __name__ == '__main__':
 
   # let's also keep track of how many times Q[s] has been updated
   update_counts = {}
-  update_counts_sa = {}
-  for s in states:
-    update_counts_sa[s] = {}
-    for a in ALL_POSSIBLE_ACTIONS:
-      update_counts_sa[s][a] = 1.0
 
   # repeat until convergence
   reward_per_episode = []
