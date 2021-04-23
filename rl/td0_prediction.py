@@ -16,7 +16,6 @@ GAMMA = 0.9
 ALPHA = 0.1
 ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
 
-# NOTE: this is only policy evaluation, not optimization
 
 def epsilon_greedy(policy, s, eps=0.1):
   # we'll use epsilon-soft to ensure all states are visited
@@ -26,20 +25,6 @@ def epsilon_greedy(policy, s, eps=0.1):
     return policy[s]
   else:
     return np.random.choice(ALL_POSSIBLE_ACTIONS)
-
-# def play_game(grid, policy):
-#   # returns a list of states and corresponding rewards (not returns as in MC)
-#   # start at the designated start state
-#   s = (2, 0)
-#   grid.set_state(s)
-#   states_and_rewards = [(s, 0)] # list of tuples of (state, reward)
-#   while not grid.game_over():
-#     a = policy[s]
-#     a = random_action(a)
-#     r = grid.move(a)
-#     s = grid.current_state()
-#     states_and_rewards.append((s, r))
-#   return states_and_rewards
 
 
 if __name__ == '__main__':
