@@ -18,28 +18,28 @@ ALL_POSSIBLE_ACTIONS = ('U', 'D', 'L', 'R')
 
 # NOTE: this is only policy evaluation, not optimization
 
-def random_action(a, eps=0.1):
+def epsilon_greedy(policy, s, eps=0.1):
   # we'll use epsilon-soft to ensure all states are visited
   # what happens if you don't do this? i.e. eps=0
   p = np.random.random()
   if p < (1 - eps):
-    return a
+    return policy[s]
   else:
     return np.random.choice(ALL_POSSIBLE_ACTIONS)
 
-def play_game(grid, policy):
-  # returns a list of states and corresponding rewards (not returns as in MC)
-  # start at the designated start state
-  s = (2, 0)
-  grid.set_state(s)
-  states_and_rewards = [(s, 0)] # list of tuples of (state, reward)
-  while not grid.game_over():
-    a = policy[s]
-    a = random_action(a)
-    r = grid.move(a)
-    s = grid.current_state()
-    states_and_rewards.append((s, r))
-  return states_and_rewards
+# def play_game(grid, policy):
+#   # returns a list of states and corresponding rewards (not returns as in MC)
+#   # start at the designated start state
+#   s = (2, 0)
+#   grid.set_state(s)
+#   states_and_rewards = [(s, 0)] # list of tuples of (state, reward)
+#   while not grid.game_over():
+#     a = policy[s]
+#     a = random_action(a)
+#     r = grid.move(a)
+#     s = grid.current_state()
+#     states_and_rewards.append((s, r))
+#   return states_and_rewards
 
 
 if __name__ == '__main__':
@@ -70,21 +70,35 @@ if __name__ == '__main__':
   for s in states:
     V[s] = 0
 
-  # repeat until convergence
-  for it in range(1000):
+  # store max change in V(s) per episode
+  deltas = []
 
-    # generate an episode using pi
-    states_and_rewards = play_game(grid, policy)
-    # the first (s, r) tuple is the state we start in and 0
-    # (since we don't get a reward) for simply starting the game
-    # the last (s, r) tuple is the terminal state and the final reward
-    # the value for the terminal state is by definition 0, so we don't
-    # care about updating it.
-    for t in range(len(states_and_rewards) - 1):
-      s, _ = states_and_rewards[t]
-      s2, r = states_and_rewards[t+1]
-      # we will update V(s) AS we experience the episode
-      V[s] = V[s] + ALPHA*(r + GAMMA*V[s2] - V[s])
+  # repeat until convergence
+  n_episodes = 10000
+  for it in range(n_episodes):
+    # begin a new episode
+    s = grid.reset()
+    
+    delta = 0
+    while not grid.game_over():
+      a = epsilon_greedy(policy, s)
+
+      r = grid.move(a)
+      s_next = grid.current_state()
+
+      # update V(s)
+      v_old = V[s]
+      V[s] = V[s] + ALPHA*(r + GAMMA*V[s_next] - V[s])
+      delta = max(delta, np.abs(V[s] - v_old))
+      
+      # next state becomes current state
+      s = s_next
+
+    # store delta
+    deltas.append(delta)
+
+  plt.plot(deltas)
+  plt.show()
 
   print("values:")
   print_values(V, grid)
