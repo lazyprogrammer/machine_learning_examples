@@ -52,7 +52,6 @@ if __name__ == '__main__':
 
     # begin a new episode
     s = grid.reset()
-    biggest_change = 0
     episode_reward = 0
     while not grid.game_over():
       # perform action and get next state + reward
