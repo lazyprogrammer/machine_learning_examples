@@ -31,7 +31,7 @@ class Bandit:
     return np.random.randn() / np.sqrt(self.lambda_) + self.m
 
   def update(self, x):
-    self.m = (self.tau*x + self.lambda_ * self.m) / (self.tau + self.lambda_)
+    self.m = (self.tau * x + self.lambda_ * self.m) / (self.tau + self.lambda_)
     self.lambda_ += self.tau
     self.N += 1
 
