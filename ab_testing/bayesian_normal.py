@@ -21,7 +21,6 @@ class Bandit:
     # parameters for mu - prior is N(0,1)
     self.m = 0
     self.lambda_ = 1
-    self.sum_x = 0 # for convenience
     self.tau = 1
     self.N = 0
 
@@ -32,9 +31,8 @@ class Bandit:
     return np.random.randn() / np.sqrt(self.lambda_) + self.m
 
   def update(self, x):
+    self.m = (self.tau*x + self.lambda_ * self.m) / (self.tau + self.lambda_)
     self.lambda_ += self.tau
-    self.sum_x += x
-    self.m = self.tau*self.sum_x / self.lambda_
     self.N += 1
 
 
