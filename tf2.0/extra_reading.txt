@@ -22,3 +22,6 @@ https://arxiv.org/abs/1703.03906
 
 Practical Deep Reinforcement Learning Approach for Stock Trading
 https://arxiv.org/abs/1811.07522
+
+Inceptionism: Going Deeper into Neural Networks
+https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html
