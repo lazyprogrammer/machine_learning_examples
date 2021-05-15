@@ -1,0 +1,20 @@
+Logistic Regression
+https://www.kaggle.com/uciml/pima-indians-diabetes-database
+https://lazyprogrammer.me/course_files/exercises/diabetes.csv
+
+Linear Regression
+https://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html
+https://lazyprogrammer.me/course_files/exercises/boston.txt
+
+ANN
+https://archive.ics.uci.edu/ml/datasets/ecoli (orig)
+https://www.kaggle.com/elikplim/ecoli-data-set (alt)
+https://lazyprogrammer.me/course_files/exercises/ecoli.csv
+
+CNN
+https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge
+https://lazyprogrammer.me/course_files/fer2013.csv
+
+NLP
+https://www.kaggle.com/crowdflower/twitter-airline-sentiment
+https://lazyprogrammer.me/course_files/exercises/AirlineSentimentTweets.csv
