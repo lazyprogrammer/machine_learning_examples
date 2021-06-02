@@ -11,6 +11,9 @@ https://arxiv.org/abs/1502.03167
 Dropout: A Simple Way to Prevent Neural Networks from Overfitting
 https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf
 
+Implementing Dropout
+https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow/
+
 Convolution arithmetic tutorial
 http://deeplearning.net/software/theano_versions/dev/tutorial/conv_arithmetic.html
 
