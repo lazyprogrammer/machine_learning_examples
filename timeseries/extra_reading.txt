@@ -1,0 +1,24 @@
+Estimating Box-Cox power transformation parameter via goodness of fit tests
+https://arxiv.org/pdf/1401.3812.pdf
+
+Linear Regression
+https://deeplearningcourses.com/c/data-science-linear-regression-in-python/
+
+Logistic Regression
+https://deeplearningcourses.com/c/data-science-logistic-regression-in-python/
+
+Support Vector Machines
+https://deeplearningcourses.com/c/support-vector-machines-in-python
+
+Random Forests
+https://deeplearningcourses.com/c/machine-learning-in-python-random-forest-adaboost
+
+Deep Learning and Tensorflow 2
+https://deeplearningcourses.com/c/deep-learning-tensorflow-2
+
+Gaussian Processes for Regression and Classification
+https://www.cs.toronto.edu/~radford/ftp/val6gp.pdf
+
+How Does Backpropagation Work?
+https://deeplearningcourses.com/c/data-science-deep-learning-in-python/
+https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow/
