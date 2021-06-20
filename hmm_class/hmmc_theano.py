@@ -28,8 +28,7 @@ class HMM:
         self.K = K # number of Gaussians
     
     def fit(self, X, learning_rate=1e-2, max_iter=10):
-        # train the HMM model using the Baum-Welch algorithm
-        # a specific instance of the expectation-maximization algorithm
+        # train the HMM model using gradient descent
 
         N = len(X)
         D = X[0].shape[1] # assume each x is organized (T, D)
