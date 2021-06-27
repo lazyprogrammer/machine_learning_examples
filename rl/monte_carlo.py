@@ -89,7 +89,7 @@ if __name__ == '__main__':
       V[s] = 0
 
   # repeat
-  for t in range(100):
+  for _ in range(100):
     # generate an episode using pi
     states, rewards = play_game(grid, policy)
     G = 0
