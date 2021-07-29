@@ -22,3 +22,6 @@ https://www.cs.toronto.edu/~radford/ftp/val6gp.pdf
 How Does Backpropagation Work? (In-Depth)
 https://deeplearningcourses.com/c/data-science-deep-learning-in-python/
 https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow/
+
+Forecasting at Scale (Facebook Prophet)
+https://peerj.com/preprints/3190.pdf
