@@ -25,3 +25,6 @@ https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflo
 
 Forecasting at Scale (Facebook Prophet)
 https://peerj.com/preprints/3190.pdf
+
+Statistical and Machine Learning forecasting methods: Concerns and ways forward
+https://journals.plos.org/plosone/article%3Fid%3D10.1371/journal.pone.0194889
