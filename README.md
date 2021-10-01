@@ -7,7 +7,15 @@ Find associated tutorials at https://lazyprogrammer.me
 
 Find associated courses at https://deeplearningcourses.com
 
-Please note that not all code from all courses will be found in this repository. Some newer code examples (e.g. everything from Tensorflow 2.0) were done in Google Colab. Therefore, you should check the instructions given in the lectures for the course you are taking.
+Please note that not all code from all courses will be found in this repository. Some newer code examples (e.g. most of Tensorflow 2.0) were done in Google Colab. Therefore, you should check the instructions given in the lectures for the course you are taking.
+
+
+How to I find the code for a particular course?
+===============================================
+
+The code for each course is separated by folder. You can determine which folder corresponds with which course by watching the "Where to get the code" lecture inside the course (usually Lecture 2 or 3).
+
+Remember: one folder = one course.
 
 
 Why you should not fork this repo
