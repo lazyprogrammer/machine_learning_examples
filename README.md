@@ -55,11 +55,24 @@ https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 
 
 
+Deep Learning Courses Exclusives
+================================
+
+Classical Statistical Inference and A/B Testing in Python
+https://deeplearningcourses.com/c/statistical-inference-in-python
+
+Linear Programming for Linear Regression in Python
+https://deeplearningcourses.com/c/linear-programming-python
+
+MATLAB for Students, Engineers, and Professionals in STEM
+https://deeplearningcourses.com/c/matlab
+
+
+
 Other Course Links
 ==================
 
-Tensorflow 2.0: Deep Learning and Artificial Intelligence
-(Main Course - special discount link)
+Tensorflow 2.0: Deep Learning and Artificial Intelligence (non-VIP version)
 https://www.udemy.com/course/deep-learning-tensorflow-2/?referralCode=E10B72D3848AB70FE1B8
 
 Cutting-Edge AI: Deep Reinforcement Learning in Python
