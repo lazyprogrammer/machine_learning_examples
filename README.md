@@ -33,21 +33,24 @@ Beginning with Tensorflow 2, I started to use Google Colab. For those courses, u
 VIP Course Links
 ===================
 
-**Financial Engineering and Artificial Intelligence in Python** (special discount link for full VIP version as of Apr 2021)
+*** Note: if any of these coupons becomes out of date, check my website (https://lazyprogrammer.me) for the latest version. I will probably just keep incrementing them numerically, e.g. FINANCEVIP2, FINANCEVIP3, etc..
 
-*** Note: if this coupon becomes out of date, check my website (https://lazyprogrammer.me) for the latest version. I will probably just keep incrementing them numerically, e.g. FINANCEVIP2, FINANCEVIP3, etc..
+**Time Series Analysis, Forecasting, and Machine Learning**
 
-https://www.udemy.com/course/ai-finance/?couponCode=FINANCEVIP7
-
-
-**PyTorch: Deep Learning and Artificial Intelligence** (special discount link for full VIP course as of Apr 2021)
-
-*** Note: if this coupon becomes out of date, check my website (https://lazyprogrammer.me) for the latest version. I will probably just keep incrementing them numerically, e.g. PYTORCHVIP6, PYTORCHVIP7, etc..
-
-https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP12
+https://www.udemy.com/course/time-series-analysis/?couponCode=TIMEVIP4
 
 
-**Tensorflow 2.0: Deep Learning and Artificial Intelligence** (VIP Content Only)
+**Financial Engineering and Artificial Intelligence in Python**
+
+https://www.udemy.com/course/ai-finance/?couponCode=FINANCEVIP13
+
+
+**PyTorch: Deep Learning and Artificial Intelligence**
+
+https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP18
+
+
+**Tensorflow 2.0: Deep Learning and Artificial Intelligence** (VIP Version)
 https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 
 
