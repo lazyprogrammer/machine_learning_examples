@@ -29,3 +29,6 @@ http://arxiv.org/pdf/1212.0901v2.pdf
 
 Dropout: A Simple Way to Prevent Neural Networks from Overfitting
 https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf
+
+The Loss Surfaces of Multilayer Networks
+https://arxiv.org/pdf/1412.0233.pdf
