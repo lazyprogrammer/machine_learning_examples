@@ -56,6 +56,7 @@ def main():
     losses_batch = []
     errors_batch = []
     for i in range(max_iter):
+        Xtrain, Ytrain, Ytrain_ind = shuffle(Xtrain, Ytrain, Ytrain_ind)
         for j in range(n_batches):
             Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
             Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
@@ -100,6 +101,7 @@ def main():
     dW1 = 0
     db1 = 0
     for i in range(max_iter):
+        Xtrain, Ytrain, Ytrain_ind = shuffle(Xtrain, Ytrain, Ytrain_ind)
         for j in range(n_batches):
             Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
             Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
@@ -151,6 +153,7 @@ def main():
     vW1 = 0
     vb1 = 0
     for i in range(max_iter):
+        Xtrain, Ytrain, Ytrain_ind = shuffle(Xtrain, Ytrain, Ytrain_ind)
         for j in range(n_batches):
             Xbatch = Xtrain[j*batch_sz:(j*batch_sz + batch_sz),]
             Ybatch = Ytrain_ind[j*batch_sz:(j*batch_sz + batch_sz),]
