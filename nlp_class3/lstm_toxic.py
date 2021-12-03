@@ -27,6 +27,7 @@ import keras.backend as K
 
 # Download the data:
 # https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge
+# https://lazyprogrammer.me/course_files/toxic_comment_train.csv
 # Download the word vectors:
 # http://nlp.stanford.edu/data/glove.6B.zip
 
@@ -115,8 +116,8 @@ print('Building model...')
 # create an LSTM network with a single LSTM
 input_ = Input(shape=(MAX_SEQUENCE_LENGTH,))
 x = embedding_layer(input_)
-# x = LSTM(15, return_sequences=True)(x)
-x = Bidirectional(LSTM(15, return_sequences=True))(x)
+x = LSTM(15, return_sequences=True)(x)
+# x = Bidirectional(LSTM(15, return_sequences=True))(x)
 x = GlobalMaxPool1D()(x)
 output = Dense(len(possible_labels), activation="sigmoid")(x)
 

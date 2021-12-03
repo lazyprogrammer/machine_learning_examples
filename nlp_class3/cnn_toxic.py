@@ -19,6 +19,7 @@ from sklearn.metrics import roc_auc_score
 
 # Download the data:
 # https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge
+# https://lazyprogrammer.me/course_files/toxic_comment_train.csv
 # Download the word vectors:
 # http://nlp.stanford.edu/data/glove.6B.zip
 
