@@ -4,8 +4,23 @@ https://www.sciencedirect.com/science/article/abs/pii/S0306457302000213
 A Mathematical Theory of Communication by Claude Shannon
 https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf
 
+Spam Filtering with Naive Bayes – Which Naive Bayes?
+http://www2.aueb.gr/users/ion/docs/ceas2006_paper.pdf
+
+Sentiment analysis using multinomial logistic regression
+https://ieeexplore.ieee.org/document/8226700
+
 Latent Dirichlet Allocation
 https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf
 
 List of Hugging Face Pipelines for NLP
 https://lazyprogrammer.me/list-of-hugging-face-pipelines-for-nlp/
+
+Indexing by Latent Semantic Analysis (Latent Semantic Indexing)
+http://lsa.colorado.edu/papers/JASIS.lsi.90.pdf
+
+Efficient Estimation of Word Representations in Vector Space (word2vec)
+https://arxiv.org/abs/1301.3781
+
+GloVe: Global Vectors for Word Representation (GloVe)
+https://nlp.stanford.edu/pubs/glove.pdf
