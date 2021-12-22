@@ -1,0 +1,11 @@
+An information-theoretic perspective of tf–idf measures
+https://www.sciencedirect.com/science/article/abs/pii/S0306457302000213
+
+A Mathematical Theory of Communication by Claude Shannon
+https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf
+
+Latent Dirichlet Allocation
+https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf
+
+List of Hugging Face Pipelines for NLP
+https://lazyprogrammer.me/list-of-hugging-face-pipelines-for-nlp/
