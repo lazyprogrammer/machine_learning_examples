@@ -4,6 +4,12 @@ https://www.sciencedirect.com/science/article/abs/pii/S0306457302000213
 A Mathematical Theory of Communication by Claude Shannon
 https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf
 
+TextRank: Bringing Order into Texts
+https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf
+
+Variations of the Similarity Function of TextRank for Automated Summarization
+https://arxiv.org/abs/1602.03606
+
 Spam Filtering with Naive Bayes – Which Naive Bayes?
 http://www2.aueb.gr/users/ion/docs/ceas2006_paper.pdf
 
