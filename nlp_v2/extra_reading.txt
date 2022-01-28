@@ -10,6 +10,12 @@ https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf
 Variations of the Similarity Function of TextRank for Automated Summarization
 https://arxiv.org/abs/1602.03606
 
+Generic Text Summarization Using Relevance Measure and Latent Semantic Analysis
+https://www.cs.bham.ac.uk/~pxt/IDA/text_summary.pdf
+
+Using Latent Semantic Analysis in Text Summarization and Summary Evaluation
+http://textmining.zcu.cz/publications/isim.pdf
+
 Spam Filtering with Naive Bayes – Which Naive Bayes?
 http://www2.aueb.gr/users/ion/docs/ceas2006_paper.pdf
 
