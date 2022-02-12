@@ -36,3 +36,6 @@ https://arxiv.org/abs/1301.3781
 
 GloVe: Global Vectors for Word Representation (GloVe)
 https://nlp.stanford.edu/pubs/glove.pdf
+
+Deep Learning with Tensorflow, a bit more in-depth
+https://deeplearningcourses.com/c/deep-learning-tensorflow-2
