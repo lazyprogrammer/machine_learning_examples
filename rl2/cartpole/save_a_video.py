@@ -63,5 +63,6 @@ if __name__ == '__main__':
   plt.show()
 
   # play a final set of episodes
-  env = wrappers.Monitor(env, 'my_awesome_dir')
+  # env = wrappers.Monitor(env, 'my_awesome_dir')
+  env = wrappers.RecordVideo(env, 'my_awesome_dir')
   print("***Final run with final weights***:", play_one_episode(env, params))
