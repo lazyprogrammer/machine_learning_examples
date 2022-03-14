@@ -35,6 +35,11 @@ VIP Course Links
 
 *** Note: if any of these coupons becomes out of date, check my website (https://lazyprogrammer.me) for the latest version. I will probably just keep incrementing them numerically, e.g. FINANCEVIP2, FINANCEVIP3, etc..
 
+**Machine Learning: Natural Language Processing in Python (V2)** (VIP parts)
+
+https://deeplearningcourses.com/c/natural-language-processing-in-python
+
+
 **Time Series Analysis, Forecasting, and Machine Learning**
 
 https://www.udemy.com/course/time-series-analysis/?couponCode=TIMEVIP4
@@ -71,6 +76,9 @@ https://deeplearningcourses.com/c/matlab
 
 Other Course Links
 ==================
+
+Machine Learning: Natural Language Processing in Python (V2)
+https://bit.ly/3idcaE5
 
 Tensorflow 2.0: Deep Learning and Artificial Intelligence (non-VIP version)
 https://www.udemy.com/course/deep-learning-tensorflow-2/?referralCode=E10B72D3848AB70FE1B8
@@ -117,7 +125,7 @@ https://deeplearningcourses.com/c/data-science-linear-regression-in-python
 Deep Learning Prerequisites: Logistic Regression in Python
 https://deeplearningcourses.com/c/data-science-logistic-regression-in-python
 
-Deep Learning in Python
+Data Science: Deep Learning and Neural Networks in Python
 https://deeplearningcourses.com/c/data-science-deep-learning-in-python
 
 Cluster Analysis and Unsupervised Machine Learning in Python
@@ -129,10 +137,10 @@ https://deeplearningcourses.com/c/data-science-supervised-machine-learning-in-py
 Bayesian Machine Learning in Python: A/B Testing
 https://deeplearningcourses.com/c/bayesian-machine-learning-in-python-ab-testing
 
-Easy Natural Language Processing in Python
+Data Science: Natural Language Processing in Python
 https://deeplearningcourses.com/c/data-science-natural-language-processing-in-python
 
-Practical Deep Learning in Theano and TensorFlow
+Modern Deep Learning in Python
 https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow
 
 Ensemble Machine Learning in Python: Random Forest and AdaBoost
