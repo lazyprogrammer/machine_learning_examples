@@ -425,7 +425,7 @@ train_steps = int(np.ceil(len(train_positives) * 2 / batch_size))
 valid_steps = int(np.ceil(len(test_positives) * 2 / batch_size))
 
 # fit the model
-r = model.fit_generator(
+r = model.fit(
   train_generator(),
   steps_per_epoch=train_steps,
   epochs=20,

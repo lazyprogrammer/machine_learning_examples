@@ -102,7 +102,7 @@ model.compile(
 )
 
 
-r = model.fit_generator(
+r = model.fit(
   generator(A, mask),
   validation_data=test_generator(A_copy, mask_copy, A_test_copy, mask_test_copy),
   epochs=epochs,

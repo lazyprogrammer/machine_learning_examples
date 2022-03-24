@@ -123,7 +123,7 @@ valid_generator = gen.flow_from_directory(
 
 
 # fit the model
-r = model.fit_generator(
+r = model.fit(
   train_generator,
   validation_data=valid_generator,
   epochs=epochs,

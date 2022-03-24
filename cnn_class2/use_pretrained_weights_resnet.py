@@ -8,7 +8,7 @@ from builtins import range, input
 
 from keras.layers import Input, Lambda, Dense, Flatten
 from keras.models import Model
-from keras.applications.resnet50 import ResNet50, preprocess_input
+from keras.applications.resnet import ResNet50, preprocess_input
 # from keras.applications.inception_v3 import InceptionV3, preprocess_input
 from keras.preprocessing import image
 from keras.preprocessing.image import ImageDataGenerator
@@ -21,21 +21,21 @@ from glob import glob
 
 
 # re-size all the images to this
-IMAGE_SIZE = [224, 224] # feel free to change depending on dataset
+IMAGE_SIZE = [100, 100] # feel free to change depending on dataset
 
 # training config:
 epochs = 16
 batch_size = 32
 
 # https://www.kaggle.com/paultimothymooney/blood-cells
-train_path = '../large_files/blood_cell_images/TRAIN'
-valid_path = '../large_files/blood_cell_images/TEST'
+# train_path = '../large_files/blood_cell_images/TRAIN'
+# valid_path = '../large_files/blood_cell_images/TEST'
 
 # https://www.kaggle.com/moltean/fruits
 # train_path = '../large_files/fruits-360/Training'
 # valid_path = '../large_files/fruits-360/Validation'
-# train_path = '../large_files/fruits-360-small/Training'
-# valid_path = '../large_files/fruits-360-small/Validation'
+train_path = '../large_files/fruits-360-small/Training'
+valid_path = '../large_files/fruits-360-small/Validation'
 
 # useful for getting number of files
 image_files = glob(train_path + '/*/*.jp*g')
@@ -125,7 +125,7 @@ valid_generator = gen.flow_from_directory(
 
 
 # fit the model
-r = model.fit_generator(
+r = model.fit(
   train_generator,
   validation_data=valid_generator,
   epochs=epochs,
