@@ -12,7 +12,7 @@ Dropout: A Simple Way to Prevent Neural Networks from Overfitting
 https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf
 
 Convolution arithmetic tutorial
-http://deeplearning.net/software/theano_versions/dev/tutorial/conv_arithmetic.html
+https://theano-pymc.readthedocs.io/en/latest/tutorial/conv_arithmetic.html
 
 On the Practical Computational Power of Finite Precision RNNs for Language Recognition
 https://arxiv.org/abs/1805.04908

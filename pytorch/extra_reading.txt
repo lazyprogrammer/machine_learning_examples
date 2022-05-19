@@ -15,7 +15,7 @@ Implementing Dropout
 https://deeplearningcourses.com/c/data-science-deep-learning-in-theano-tensorflow/
 
 Convolution arithmetic tutorial
-http://deeplearning.net/software/theano_versions/dev/tutorial/conv_arithmetic.html
+https://theano-pymc.readthedocs.io/en/latest/tutorial/conv_arithmetic.html
 
 On the Practical Computational Power of Finite Precision RNNs for Language Recognition
 https://arxiv.org/abs/1805.04908
