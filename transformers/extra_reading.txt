@@ -1,0 +1,32 @@
+Attention Is All You Need
+https://arxiv.org/abs/1706.03762
+
+BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
+https://arxiv.org/abs/1810.04805v2
+
+Improving Language Understanding by Generative Pre-Training (GPT)
+https://s3-us-west-2.amazonaws.com/openai-assets/research-covers/language-unsupervised/language_understanding_paper.pdf
+
+Improving Language Understanding with Unsupervised Learning
+https://openai.com/blog/language-unsupervised/
+
+Language Models are Unsupervised Multitask Learners (GPT-2)
+https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf
+
+Better Language Models and Their Implications
+https://openai.com/blog/better-language-models/
+
+Language Models are Few-Shot Learners (GPT-3)
+https://arxiv.org/abs/2005.14165
+
+List of Hugging Face Pipelines for NLP
+https://lazyprogrammer.me/list-of-hugging-face-pipelines-for-nlp/
+
+BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models
+https://arxiv.org/abs/2106.10199
+
+Translation Datasets
+https://opus.nlpl.eu/KDE4.php
+
+Layer Normalization
+https://arxiv.org/abs/1607.06450
