@@ -33,7 +33,10 @@ Beginning with Tensorflow 2, I started to use Google Colab. For those courses, u
 VIP Course Links
 ===================
 
-*** Note: if any of these coupons becomes out of date, check my website (https://lazyprogrammer.me) for the latest version. I will probably just keep incrementing them numerically, e.g. FINANCEVIP2, FINANCEVIP3, etc..
+**Data Science: Transformers for Natural Language Processing**
+
+https://deeplearningcourses.com/c/data-science-transformers-nlp
+
 
 **Machine Learning: Natural Language Processing in Python (V2)** (VIP parts)
 
@@ -42,20 +45,21 @@ https://deeplearningcourses.com/c/natural-language-processing-in-python
 
 **Time Series Analysis, Forecasting, and Machine Learning**
 
-https://www.udemy.com/course/time-series-analysis/?couponCode=TIMEVIP4
+https://deeplearningcourses.com/c/time-series-analysis
 
 
 **Financial Engineering and Artificial Intelligence in Python**
 
-https://www.udemy.com/course/ai-finance/?couponCode=FINANCEVIP13
+https://deeplearningcourses.com/c/ai-finance
 
 
 **PyTorch: Deep Learning and Artificial Intelligence**
 
-https://www.udemy.com/course/pytorch-deep-learning/?couponCode=PYTORCHVIP18
+https://deeplearningcourses.com/c/pytorch-deep-learning
 
 
 **Tensorflow 2.0: Deep Learning and Artificial Intelligence** (VIP Version)
+
 https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 
 
