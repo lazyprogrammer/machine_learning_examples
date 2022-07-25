@@ -81,12 +81,6 @@ https://deeplearningcourses.com/c/matlab
 Other Course Links
 ==================
 
-Machine Learning: Natural Language Processing in Python (V2)
-https://bit.ly/3idcaE5
-
-Tensorflow 2.0: Deep Learning and Artificial Intelligence (non-VIP version)
-https://www.udemy.com/course/deep-learning-tensorflow-2/?referralCode=E10B72D3848AB70FE1B8
-
 Cutting-Edge AI: Deep Reinforcement Learning in Python
 https://deeplearningcourses.com/c/cutting-edge-artificial-intelligence
 
