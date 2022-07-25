@@ -38,7 +38,7 @@ VIP Course Links
 https://deeplearningcourses.com/c/data-science-transformers-nlp
 
 
-**Machine Learning: Natural Language Processing in Python (V2)** (VIP parts)
+**Machine Learning: Natural Language Processing in Python (V2)**
 
 https://deeplearningcourses.com/c/natural-language-processing-in-python
 
