@@ -90,7 +90,6 @@ def watch_agent(model, env, eps):
   while not (done or truncated):
     a = epsilon_greedy(model, s, eps=eps)
     s, r, done, truncated, info = env.step(a)
-    env.render()
     episode_reward += r
   print("Episode reward:", episode_reward)
 
@@ -153,5 +152,6 @@ if __name__ == '__main__':
   plt.show()
 
   # watch trained agent
+  env = gym.make("CartPole-v1", render_mode="human")
   watch_agent(model, env, eps=0)
 
