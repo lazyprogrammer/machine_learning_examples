@@ -29,15 +29,14 @@ def epsilon_greedy(model, s, eps=0.1):
 def gather_samples(env, n_episodes=10000):
   samples = []
   for _ in range(n_episodes):
-    s, info = env.reset()
+    s = env.reset()
     done = False
-    truncated = False
-    while not (done or truncated):
+    while not done:
       a = env.action_space.sample()
       sa = np.concatenate((s, [a]))
       samples.append(sa)
 
-      s, r, done, truncated, info = env.step(a)
+      s, r, done, info = env.step(a)
   return samples
 
 
@@ -71,12 +70,11 @@ def test_agent(model, env, n_episodes=20):
   reward_per_episode = np.zeros(n_episodes)
   for it in range(n_episodes):
     done = False
-    truncated = False
     episode_reward = 0
-    s, info = env.reset()
-    while not (done or truncated):
+    s = env.reset()
+    while not done:
       a = epsilon_greedy(model, s, eps=0)
-      s, r, done, truncated, info = env.step(a)
+      s, r, done, info = env.step(a)
       episode_reward += r
     reward_per_episode[it] = episode_reward
   return np.mean(reward_per_episode)
@@ -84,12 +82,11 @@ def test_agent(model, env, n_episodes=20):
 
 def watch_agent(model, env, eps):
   done = False
-  truncated = False
   episode_reward = 0
-  s, info = env.reset()
-  while not (done or truncated):
+  s = env.reset()
+  while not done:
     a = epsilon_greedy(model, s, eps=eps)
-    s, r, done, truncated, info = env.step(a)
+    s, r, done, info = env.step(a)
     env.render()
     episode_reward += r
   print("Episode reward:", episode_reward)
@@ -97,7 +94,7 @@ def watch_agent(model, env, eps):
 
 if __name__ == '__main__':
   # instantiate environment
-  env = gym.make("CartPole-v1", render_mode="rgb_array")
+  env = gym.make("CartPole-v0")
 
   model = Model(env)
   reward_per_episode = []
@@ -108,13 +105,12 @@ if __name__ == '__main__':
   # repeat until convergence
   n_episodes = 1500
   for it in range(n_episodes):
-    s, info = env.reset()
+    s = env.reset()
     episode_reward = 0
     done = False
-    truncated = False
-    while not (done or truncated):
+    while not done:
       a = epsilon_greedy(model, s)
-      s2, r, done, truncated, info = env.step(a)
+      s2, r, done, info = env.step(a)
 
       # get the target
       if done:
