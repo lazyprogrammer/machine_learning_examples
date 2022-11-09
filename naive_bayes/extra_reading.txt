@@ -1,0 +1,8 @@
+Complement Naive Bayes
+https://people.csail.mit.edu/jrennie/papers/icml03-nb.pdf
+
+Semi-Supervised Learning with Naive Bayes
+http://www.kamalnigam.com/papers/emcat-aaai98.pdf
+
+An empirical study of the naive Bayes classifier
+https://faculty.cc.gatech.edu/~isbell/reading/papers/Rish.pdf
