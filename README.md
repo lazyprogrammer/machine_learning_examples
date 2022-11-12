@@ -81,6 +81,9 @@ https://deeplearningcourses.com/c/matlab
 Other Course Links
 ==================
 
+Data Science & Machine Learning: Naive Bayes in Python
+https://deeplearningcourses.com/c/data-science-machine-learning-naive-bayes-in-python
+
 Cutting-Edge AI: Deep Reinforcement Learning in Python
 https://deeplearningcourses.com/c/cutting-edge-artificial-intelligence
 
