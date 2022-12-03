@@ -67,6 +67,12 @@ https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 Deep Learning Courses Exclusives
 ================================
 
+Data Science: Bayesian Linear Regression in Python
+https://deeplearningcourses.com/c/bayesian-linear-regression-in-python
+
+Data Science: Bayesian Classification in Python
+https://deeplearningcourses.com/c/bayesian-classification-in-python
+
 Classical Statistical Inference and A/B Testing in Python
 https://deeplearningcourses.com/c/statistical-inference-in-python
 
