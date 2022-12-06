@@ -66,11 +66,15 @@ for i in range(10000):
     test_costs.append(ctest)
 
     # gradient descent
-    W2 -= learning_rate*Ztrain.T.dot(pYtrain - Ytrain_ind)
-    b2 -= learning_rate*(pYtrain - Ytrain_ind).sum(axis=0)
-    dZ = (pYtrain - Ytrain_ind).dot(W2.T) * (1 - Ztrain*Ztrain)
-    W1 -= learning_rate*Xtrain.T.dot(dZ)
-    b1 -= learning_rate*dZ.sum(axis=0)
+    gW2 = Ztrain.T.dot(pYtrain - Ytrain_ind)
+    gb2 = (pYtrain - Ytrain_ind).sum(axis=0)
+    dZ  = (pYtrain - Ytrain_ind).dot(W2.T) * (1 - Ztrain * Ztrain)
+    gW1 = Xtrain.T.dot(dZ)
+    gb1 = dZ.sum(axis=0)
+    W2 -= learning_rate * gW2
+    b2 -= learning_rate * gb2
+    W1 -= learning_rate * gW1
+    b1 -= learning_rate * gb1
     if i % 1000 == 0:
         print(i, ctrain, ctest)
 
