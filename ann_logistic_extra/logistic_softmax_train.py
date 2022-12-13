@@ -44,8 +44,8 @@ def predict(P_Y_given_X):
 def classification_rate(Y, P):
     return np.mean(Y == P)
 
-def cross_entropy(T, pY):
-    return -np.mean(T*np.log(pY))
+def cross_entropy(Y, pY):
+    return -np.sum(Y * np.log(pY)) / len(Y)
 
 
 # train loop
