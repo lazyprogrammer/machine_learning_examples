@@ -96,18 +96,23 @@ if __name__ == '__main__':
       # # original: W1 = W1 - lr * inputs.T.dot(dhidden) # VxN NxD --> VxD
 
       # fastest way
+      W1_copy = W1.copy()
       np.subtract.at(W1, inputs, lr * dhidden)
 
-      # test this
-      # i = 0
-      # for w in inputs: # don't include end token
-      #   W1[w] = W1[w] - lr * dhidden[i]
-      #   i += 1
-
       # vs this
+      # W1_test = W1_copy.copy()
       # oh_inputs = np.zeros((n - 1, V))
       # oh_inputs[np.arange(n - 1), sentence[:n-1]] = 1
-      # W1 = W1 - lr * oh_inputs.T.dot(dhidden)
+      # W1_test = W1_test - lr * oh_inputs.T.dot(dhidden)
+      # assert(np.allclose(W1_test, W1))
+
+      # vs this
+      # W1_test = W1_copy.copy()
+      # i = 0
+      # for w in inputs: # don't include end token
+      #   W1_test[w] = W1_test[w] - lr * dhidden[i]
+      #   i += 1
+      # assert(np.allclose(W1_test, W1))
 
       # keep track of the bigram loss
       # only do it for the first epoch to avoid redundancy
