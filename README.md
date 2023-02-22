@@ -87,6 +87,9 @@ https://deeplearningcourses.com/c/matlab
 Other Course Links
 ==================
 
+Math 0-1: Calculus for Data Science & Machine Learning
+https://deeplearningcourses.com/c/calculus-data-science
+
 Data Science & Machine Learning: Naive Bayes in Python
 https://deeplearningcourses.com/c/data-science-machine-learning-naive-bayes-in-python
 
