@@ -28,7 +28,7 @@ class BayesClassifier:
       print("Fitting gmm", k)
       Xk = X[Y == k]
       self.p_y[k] = len(Xk)
-      gmm = BayesianGaussianMixture(10)
+      gmm = BayesianGaussianMixture(n_components=10)
       gmm.fit(Xk)
       self.gaussians.append(gmm)
     # normalize p(y)
