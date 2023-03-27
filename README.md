@@ -87,6 +87,9 @@ https://deeplearningcourses.com/c/matlab
 Other Course Links
 ==================
 
+Financial Analysis: Build a ChatGPT Pairs Trading Bot
+https://deeplearningcourses.com/c/chatgpt-pairs-trading
+
 Math 0-1: Calculus for Data Science & Machine Learning
 https://deeplearningcourses.com/c/calculus-data-science
 
