@@ -1,0 +1,5 @@
+ARIMA (for mean reversion)
+https://deeplearningcourses.com/c/time-series-analysis
+
+Financial Engineering
+https://deeplearningcourses.com/c/ai-finance
