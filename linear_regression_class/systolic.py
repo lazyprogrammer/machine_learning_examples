@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-df = pd.read_excel('mlr02.xls')
+df = pd.read_excel('mlr02.xls', engine='xlrd')
 X = df.values
 
 # using age to predict systolic blood pressure
