@@ -12,3 +12,6 @@ https://arxiv.org/abs/1512.03385
 
 Going Deeper with Convolutions (Inception)
 https://arxiv.org/abs/1409.4842
+
+Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
+https://arxiv.org/abs/1502.03167
