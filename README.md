@@ -7,7 +7,7 @@ Find associated tutorials at https://lazyprogrammer.me
 
 Find associated courses at https://deeplearningcourses.com
 
-Please note that not all code from all courses will be found in this repository. Some newer code examples (e.g. most of Tensorflow 2.0) were done in Google Colab. Therefore, you should check the instructions given in the lectures for the course you are taking.
+Please note that not all code from all courses will be found in this repository. Some newer code examples (e.g. most of TensorFlow 2.0) were done in Google Colab. Therefore, you should check the instructions given in the lectures for the course you are taking.
 
 
 How to I find the code for a particular course?
@@ -27,7 +27,7 @@ I've noticed that many people have out-of-date forks. Thus, I recommend not fork
 Where is the code for your latest courses?
 ==========================================
 
-Beginning with Tensorflow 2, I started to use Google Colab. For those courses, unless otherwise noted, the code will be on Google Colab. Links to the notebooks are provided in the course. See the lecture "Where to get the code" for further details.
+Beginning with TensorFlow 2, I started to use Google Colab. For those courses, unless otherwise noted, the code will be on Google Colab. Links to the notebooks are provided in the course. See the lecture "Where to get the code" for further details.
 
 
 VIP Course Links
@@ -58,7 +58,7 @@ https://deeplearningcourses.com/c/ai-finance
 https://deeplearningcourses.com/c/pytorch-deep-learning
 
 
-**Tensorflow 2.0: Deep Learning and Artificial Intelligence** (VIP Version)
+**TensorFlow 2.0: Deep Learning and Artificial Intelligence** (VIP Version)
 
 https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 
