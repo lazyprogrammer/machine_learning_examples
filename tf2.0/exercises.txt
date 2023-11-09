@@ -13,7 +13,7 @@ https://lazyprogrammer.me/course_files/exercises/ecoli.csv
 
 CNN
 https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge
-https://lazyprogrammer.me/course_files/fer2013.csv
+https://archive.org/download/fer2013_202311/fer2013.csv
 
 RNN
 Find your own stock price dataset!
