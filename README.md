@@ -64,6 +64,7 @@ https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 
 
 **Math 0-1: Linear Algebra for Data Science & Machine Learning**
+
 https://deeplearningcourses.com/c/linear-algebra-data-science
 
 
