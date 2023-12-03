@@ -63,6 +63,9 @@ https://deeplearningcourses.com/c/pytorch-deep-learning
 https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 
 
+**Math 0-1: Linear Algebra for Data Science & Machine Learning**
+https://deeplearningcourses.com/c/linear-algebra-data-science
+
 
 Deep Learning Courses Exclusives
 ================================
@@ -86,6 +89,15 @@ https://deeplearningcourses.com/c/matlab
 
 Other Course Links
 ==================
+
+Math 0-1: Matrix Calculus for Data Science & Machine Learning
+https://deeplearningcourses.com/c/matrix-calculus-machine-learning
+
+Machine Learning: Modern Computer Vision & Generative AI
+https://deeplearningcourses.com/c/computer-vision-kerascv
+
+DeepFakes & Voice Cloning: Machine Learning The Easy Way
+https://deeplearningcourses.com/c/deepfakes-voice-cloning
 
 Financial Analysis: Build a ChatGPT Pairs Trading Bot
 https://deeplearningcourses.com/c/chatgpt-pairs-trading
