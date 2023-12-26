@@ -28,3 +28,9 @@ https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html
 
 The Loss Surfaces of Multilayer Networks
 https://arxiv.org/pdf/1412.0233.pdf
+
+Tensorflow Developer Certificate Installation Guide
+https://www.tensorflow.org/static/extras/cert/Setting_Up_TF_Developer_Certificate_Exam.pdf
+
+Tensorflow Developer Certificate Candidate Handbook
+https://www.tensorflow.org/extras/cert/TF_Certificate_Candidate_Handbook.pdf
