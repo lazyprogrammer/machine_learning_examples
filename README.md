@@ -177,3 +177,6 @@ https://deeplearningcourses.com/c/deep-learning-convolutional-neural-networks-th
 
 Unsupervised Deep Learning in Python
 https://deeplearningcourses.com/c/unsupervised-deep-learning-in-python
+
+Machine Learning Roadmap
+https://www.scaler.com/blog/machine-learning-roadmap/
