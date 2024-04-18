@@ -1,0 +1,206 @@
+[
+  {
+    "review": "(1) His answers are sometimes antagonistic but the guy wants us to think by ourselves. I feel he was guided by questions from students with very little background on the subject. (2) Links are not updated. I understand not updated them on the videos, but on the git repository and the scripts, it should have them updated. (3) Explanations are great, with a few inconsistencies when compared to Gemini.google.com understanding. (4) The course content in general is great.",
+    "response": "(1) I think all students should respect other students taking this course. All students deserve to have their questions answered, and no student can expect to have this course personalized to their own background.\n\n(2) This is incorrect, and you were already instructed on the Q&A to ensure you were looking at the correct repository with the most up-to-date files.\n\n(3) LLMs are known for hallucinating, and their output cannot be trusted, especially if you don't know what you're doing. Instead, you should be using the Q&A to rectify these issues, which is why it's the #1 rule in 'how to succeed in this course'."
+  },
+  {
+    "review": "You should have explained in the introduction video that, you have not yet figured out Stock forecasting, so explaining your (thoughts or beliefs or work) in this course. But marketing in great way , nothing in content other than playing with data.",
+    "response": "Try paying attention and understanding the course. If you still believe there's some magic algorithm to perfectly predict stock prices and I \"just haven't figured it out yet\", you clearly weren't listening, know absolutely nothing about finance, and hence, spreading misinformation to readers."
+  },
+  {
+    "review": "I'm really disappointed. The last update of your codes was 9 years ago. Nothing is running. I tried file after file - nothing works. I don't think you could even continue to sell these courses. Unfortunately, I can no longer cancel the current course, but I will cancel the next course. Your courses do not meet basic standards. Too bad.",
+    "response": "> The last update of your codes was 9 years ago.\n\nNOTE: Our friend here just doesn't know how to use Git properly. My ML Github repo was CREATED 9 years ago (long before I even started making courses)."
+  },
+  {
+    "review": "nao é claro ainda como fazer o donlow de githum",
+    "response": "Thanks for the feedback! Please re-watch the lecture \"Where to get the code / notebooks\" carefully and follow the instructions. It clearly states 5 times (yes, that many times) that the notebooks are not on Github, but rather, are accessed via the code link."
+  },
+  {
+    "review": "It is a good course about RL, as all his courses, but if you are here for the Trading agent, don't buy it... very basic code and does not really work.",
+    "response": "Thanks for your feedback! However, it seems you are basing your rating around your own misconceptions and naivete surrounding trading and finance, rather than the quality of the course itself."
+  },
+  {
+    "review": "Need to explain more about the topic. CNN is more theoretical in the course than programming.",
+    "response": "Incorrect. There are equal parts theory and programming. Every \"theoretical\" concept is implemented in code. And obviously, you must understand \"what\" you are coding before you code it. Please pay attention to improve your understanding, thanks!"
+  },
+  {
+    "review": "The content is ok but the links between videos and sections aren't always obvious. I like the fact that it goes in dept on my subjects but the quality of the audio isn't always good enough. I would still recommend to someone that really want to have a better understanding of AI/ML or specifically logistic regression but expect some extra reading if you really want to understand all the concepts well.",
+    "response": "You should probably revisit the \"introduction and outline\" of the course if you've forgotten the structure of the course. There's only \"extra reading\" if you do not sufficiently meet the prerequisites."
+  },
+  {
+    "review": "I expected some coding and practice but most of the course till now is just theory",
+    "response": "That's incorrect, and this is even visible from simply looking at the lecture titles. There are equal parts theory and code. First we discuss \"what\" we will code, then we code it. Obviously, you can't write code without knowing what you're coding first... Please pay attention to improve your understanding, thanks!"
+  },
+  {
+    "review": "It is all over the place ... not very structured and i have IT and python background , still finding difficult to follow ... i wonder how the Deep learning course will be",
+    "response": "Unclear why you're having trouble following the structure of such a simple short course. There are only 4 sections: Numpy, Matplotlib, Pandas, and Scipy. Please pay attention to improve your understanding, thanks!"
+  },
+  {
+    "review": "Content is good so far, but lecturer seems hung up on the behaviors of the participants which is not helping the instruction time.",
+    "response": "It's important to remember that the course isn't customized for you individually. Therefore, it should be expected that common problems that afflict a non-trivial number of students will be addressed."
+  },
+  {
+    "review": "Explanation is not clear as we are beginners. May be improve better to understand clearly.",
+    "response": "Thanks for the feedback! Please ensure you meet the prerequisites as listed twice in the course description and several more times in lectures such as \"how to succeed in this course\"."
+  },
+  {
+    "review": "Much was great, some frequently explained by referring to other courses as well as skipping some code blocks or instrumental variables, which were readily explained in chat gpt by asking if to add copious explanatory comments. Most, but certainly not all AI ML course instructors are more concerned with taking the time to explain finer details of the code. Early parts on ANN and CNN were excellent in presentation although this was simpler material. In the course was more presenting and explaining than teaching how to code the models, both necessary individually and together sufficient for a solid learning experience. Perhaps sacrifice some optional topics for more time indepth to the course essentials - quantity versus quality.",
+    "response": "Unclear whether you wrote this comment for the wrong course, as there are no sections about ANNs or CNNs in this course... Furthermore, this course is not about in-depth theory - please check the course description and prerequisites, thanks!"
+  },
+  {
+    "review": "Some more details about math equations could be added",
+    "response": "Thanks for the feedback! Please ensure you meet the prerequisites as listed twice in the course description and several more times in lectures such as \"how to succeed in this course\". Furthermore, you may want to read the course description that explains that this course is about Tensorflow 2, not the math behind deep learning. I already have courses on that, so check those out instead."
+  },
+  {
+    "review": "Teaches only Syntax and not any ML or theory behind how any of the Neural Network architectures work.",
+    "response": "Incorrect. This course gives an overview of theory, and furthermore, I already have 15+ in-depth DL courses that go into the math behind DL. Luckily, this is all in the course description, which I'm sure you've diligently read. ;)"
+  },
+  {
+    "review": "It was a good match for my current abilities. I could not access the live python notebooks or links used. I would have appreciated solutions to the end of section exercises. Overall though the instructor is very knowledgeable and the course is free so I can't complain.",
+    "response": "The key is to follow the instructions. All notebooks and exercise solutions are provided, if you can just follow the instructions on how to get them (clicking links). It really is very easy, it just requires paying attention. :)"
+  },
+  {
+    "review": "The Neural Network part is not very clear",
+    "response": "This course doesn't talk about neural networks..."
+  },
+  {
+    "review": "need more examples",
+    "response": "The course is full of examples, please use the Q&A if you have difficulties understanding them"
+  },
+  {
+    "review": "Could use a bit more time spent on explaining certain concepts, like Box-Cox, giving more intuition and explanation of why that is useful",
+    "response": "Please use the Q&A to inquire about your misunderstandings, as stated in \"how to succeed in this course\"."
+  },
+  {
+    "review": "Interesting course with lots of examples and lectures. Although some parts of the course become repetitive. There are lectures where he explains the code step by step and then goes on to repeat the same thing in the \"... in Python\" lectures. It would have been nice if he had proposed other exercises with a different dataset than the lectures, even though he does not provide the solution. It is fine to say that we should try to write the code ourselves first and then check the solution, but when this is reduced to copy and paste from the previous lecture it seems ridiculous to me.",
+    "response": "This is a practical course, meaning that you are shown the code and can do with it what you wish (there's no way to \"exercise\" writing library code without first being shown the syntax, which doesn't make any sense). Additionally, repetition is a research-backed learning technique: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8442015/ Furthermore, please remember that the course is not customized to you. Therefore, if you personally choose to avoid repetition, you are free to do so, nobody is stopping you."
+  },
+  {
+    "review": "I enjoyed the author explanation on the differences between statistics regression and ML regression content. But I think the lecture on the differences was pedantic and unnecessary even. The content list and summary to this lecture is where the distinction could be made. Instead, it was spent ranting within the lecture, how does that provide any value and meaningful experience? Worry not about the review, if the content is good, the review would come.",
+    "response": "> But I think the lecture on the differences was pedantic and unnecessary even.\n\nPlease remember, the course is not customized for you personally, it's for all students and therefore addresses common student mistakes, irrespective of your personal needs. Obviously, I have to answer ALL student questions, whether or not you personally find the question/answer helpful."
+  },
+  {
+    "review": "The instructor seems inadequately prepared for each segment of the course. There is a noticeable absence of demonstrations that are essential for a comprehensive understanding of the material. Furthermore, there is a disproportionate emphasis on paid websites over free alternatives, raising concerns about potential conflicts of interest due to affiliate marketing associations with these paid platforms.",
+    "response": "Everything is demonstrated in Colab notebooks. I challenge you to list specific examples instead of vague accusations like \"inadequately prepared\" and \"noticeable absence of demonstrations\".\n\n> disproportionate emphasis on paid websites over free alternatives\n\nThat is merely what you are paying attention to and triggered by. Most tools in the course are free or have free alternatives. Furthermore, I don't choose what's free, they are not my companies, so I am unsure why you think this is my fault...?"
+  },
+  {
+    "review": "I have taken this course and have spent lot of hrs and can tell that, this 12 hrs course will take lot of time to understand and complete (150 hrs). This can be done if we have 100% free time for 4 weeks. Good thing is if you have little idea of Calculus and we flow what is being taught, this course will make us ready to understand ML. Having said that the instructor should again go back and try to minimize the un-necessary or repetitive content.",
+    "response": "There is no unnecessary or repetitive content, and if you believe there is, you should use the Q&A to clear up any misunderstandings as instructed in the \"how to succeed in this course\" video."
+  },
+  {
+    "review": "Content is inconsistent in difficulty. Instructor is not good at explaining highly complicated topics that require a lot of Mathematics.",
+    "response": "Thanks for the feedback! Please ensure you meet the prerequisites as listed twice in the course description and several more times in lectures such as \"how to succeed in this course\". Please recall that each section is denoted as \"beginner\", \"intermediate\", or \"advanced\" (as stated in the intro). One must choose according to their own skill level. This obvious lack of attention explains why you are having trouble understanding the course (since clearly, even the basic info in the intro was beyond your understanding)."
+  },
+  {
+    "review": "you are READING the slide nicely.",
+    "response": "Incorrect. The slides provide a summary of the spoken audio, like all courses on this site, all other video-based courses, and all presentations around the world. I'm amused that you would act \"surprised\" by such a normal occurrence... The slides are not being \"read\", and anyone taking the course can confirm this fact readily, so this comment is both inaccurate and misleading to potential students."
+  },
+  {
+    "review": "There are some good topics explained, but lots of tutorials are just off topic (not about NLP), but various attempts from the instructor the explain to others why they're not able to understand stuff.",
+    "response": "You just have to remember that the course is not customized for you, it's for everyone. The \"FAQ\" section (meaning \"frequently asked questions\") answers questions other students are asking. It's unkind to suggest that I shouldn't answer questions from your fellow students."
+  },
+  {
+    "review": "It doesn’t make sense to have to make an account outside of Udemy to then have to read an article that gives an analogy about \"burgers\" just to then inform you that you have to wait 31 days to view the material. Just upload the video like every other instructor and inform us that you have other material. Don’t force us to the material.",
+    "response": "Incorrect. You don't have to \"make an account outside of Udemy\" to take this course. That is for a different VERSION of the course for students who want to go above and beyond and learn more exciting material, in case they want to learn stuff OUTSIDE the course description [which I'm sure you've diligently read ;)]."
+  },
+  {
+    "review": "I feel pretty lost, I feel like showing an example of what we're trying to achieve even thought it comes way later in the course would show how the individual parts of the course will play into it.",
+    "response": "This is what happens when you don't follow the instructions, like meeting the prerequisites or using the Q&A."
+  },
+  {
+    "review": "Teacher is good at explaining concepts,albeit he has some language problems.",
+    "response": "English is my only language, but based on your comment alone, it is clear that the language problems may be on your end. I suggest improving in this area to better understand the course, thanks!"
+  },
+  {
+    "review": "Honestly !! this is highly insufficient material. When we open the books of Machine Learning, we are lost in understanding the mathematical notations. However, this course is teaching Integration way below the levels of Class 12. My comment - It needs improvement",
+    "response": "Please make sure you read the course description so you understand the purpose of this course. For example, hard integration problems would not serve that purpose."
+  },
+  {
+    "review": "The course has no depth where the instructor explains an intuition and runs off. The exercises given have no solutions and you have to do it either yourself or you suck and they can't help you! I wouldn't recommend it. Feels more like a refresher course than a course for someone to learn from scratch.",
+    "response": "> The course has no depth where the instructor explains an intuition and runs off.\n\nIncorrect. Every concept lecture is followed by Python code.\n\n> The exercises given have no solutions\n\nIncorrect. Exercise solutions are in the videos... please pay attention to improve your understanding, thanks."
+  },
+  {
+    "review": "I feel helped by this course, but I am a bit confused about understanding the Markov model, but in other materials I can smoothly. Thank you for making this class, I hope you are always healthy.",
+    "response": "Please note that the sections are clearly marked beginner, intermediate, or advanced. This is so that you can stick to your level without being confused about material that is too advanced for you."
+  },
+  {
+    "review": "Thank you for your prompt response. Let's be frank. I'm no novice to this topic, and I took your course hoping to get a fresh perspective. However, I was met with content that seemed hastily put together and felt more like a reference guide rather than a comprehensive educational course. I've previously enrolled in some of your courses, which were of higher quality. My feedback is based on a comparison with your own past materials. I hope you'll take this as an opportunity to review and enhance the course content for the benefit of future students.",
+    "response": "All algorithms are derived from scratch and based on the prerequisites, it is not a \"reference guide\". It seems strange that someone who is \"no novice to this topic\" would get those confused..."
+  },
+  {
+    "review": "Too much talking, less content till now",
+    "response": "It's a video course, I'm not sure how one would avoid talking..."
+  },
+  {
+    "review": "While this course has multiple sections on how LP believes you should be learning. That time could have been spent reinforcing some of the more difficult concepts with additional examples.",
+    "response": "This is a common misunderstanding of the appendix/FAQ. It's not \"That time could have been spent reinforcing some of the more difficult concepts with additional examples\". This content doesn't displace any other content."
+  },
+  {
+    "review": "Therotical only.....No Example......just copy from book and paste it.......read it.....No Implementation...................",
+    "response": "Incorrect. Everything has been implemented from scratch. Please pay attention to improve your understanding, and please watch the FAQ lecture \"Beginner's Coding Tips\", thanks!"
+  },
+  {
+    "review": "I haven't proceeded in the course yet but I wouldn't say I liked the instructor's stance on students asking dumb questions.",
+    "response": "That seems very weird. In the \"how to succeed\" lecture it clearly states that I encourage any and all questions. Why would you disagree with that?"
+  },
+  {
+    "review": "If you hang out on YouTube probably you find the same information in the same time",
+    "response": "You can say that about any subject. The real question is, if it's so easy, then why haven't you done so? ;)"
+  },
+  {
+    "review": "Generally useful but structure of content and direction of course is not always clear. We jump backwards and forwards between methods more than I would like.",
+    "response": "Each section is devoted to a different \"method\", there's no jumping \"back and forth\" between them..."
+  },
+  {
+    "review": "I do not think its advanced stuff at all, nevertheless its good.",
+    "response": "Read the course description to learn what this course is about. In addition, please see the FAQ, which answers questions such as whether this course is for beginners or experts."
+  },
+  {
+    "review": "There is constant talk about not having to understand the theory but it seems like the maths goes hand in hand with the models so not sure if it is feasible to just learn the code without understanding why you do certain things",
+    "response": "Because you're not implementing any of that math yourself, only using high level libraries. Please pay more attention to improve your understanding, thanks!"
+  },
+  {
+    "review": "not get any technical knowledge yet",
+    "response": "Why not read the course description so that you understand what this course is about?"
+  },
+  {
+    "review": "I came here to learn industry level but it does not meet my expectations. this course suits you well for beginners because you can learn all the math and coding from scratch.",
+    "response": "You simply have an incorrect understanding about what constitutes \"industry level\" (hint: you are not at this level)."
+  },
+  {
+    "review": "there could be hands-on session rather than pre written code . This would help in understanding the logic better.",
+    "response": "I've instructed you to code by yourself, not to peek at my prewritten solutions. Therefore, you have simply not followed the instructions. You claim to want to be \"hands-on\", yet you haven't even done the hands-on work I've prescribed."
+  },
+  {
+    "review": "If you are new to AI, don't take this course. Find something else to start with. Most of what I got from this course is exposure to possibilities with recommender systems. It is not the most organized course either",
+    "response": "Why should you be new to AI? You should meet the prerequisites, as instructed. Furthermore, it's not \"exposure to possibilities\", we are implementing many concrete algorithms. If you're having trouble understanding how the course is organized, it's one algorithm per section. I suggest simply paying more attention. Thanks!"
+  },
+  {
+    "review": "sometimes a little superficial",
+    "response": "Thanks for your feedback. Please make sure to READ the course description so you understand what this course is about before taking it, thanks!"
+  },
+  {
+    "review": "I am an industry data scientist with an academic background in Machine learning, I have done several deep learning projects in my school years, I am taking this as a refresher. But equations don't have an explanation of variables, and what they stand for, the instructor repetitively mentions that if you don't know any equations you are not ready for this course but no one knows an equation, how it is derived, and what all the greek symbols mean right off the bat especially if you are away from macadamia for a few years. If you add additional resources(eg: citation as you should!) we can read and understand your variables, also many textbooks use different notations, so you need to make your description clear. Also, I don't like the tone and rudeness of the instructor. He sounds like a mad professor, this is a recorded video, so take away the anger",
+    "response": "> But equations don't have an explanation of variables, and what they stand for\n\nThere is literally a lecture titled \"What do all these symbols and letters mean?\", which is actually a review of previously taught explanations (in other words, variables have been defined multiple times in many cases). Perhaps the problem is that you're simply not paying attention...\n\nAt the very least, thank you for making it obvious to the readers here that your claims are unfounded.\n\n> Also, I don't like the tone and rudeness of the instructor.\n\nYes, I know some students don't like being corrected (as above) and construe all corrections as rude because it's impossible for them to be wrong. But how can a teacher do his job if every correction is interpreted as rude?"
+  },
+  {
+    "review": "They can't send me slide for this course.",
+    "response": "Incorrect. Slides are available upon request. Simply use the Q&A as instructed in the how to succeed lecture."
+  },
+  {
+    "review": "The instructor is poor. Read their responses to other negative reviews. Really off-putting. Constantly stating how people are INCORRECT showing the instructor clearly has no ability to take constructive criticism. If only the instructor could A/B test their own responses. Honestly thought it was a good-ish course. The instructor earned a 1-star here.",
+    "response": "No, \"incorrect\" is used to denote factually wrong statements. It appears you are too emotional, focusing on your feelings (you're offended that I've corrected others) instead of the facts."
+  },
+  {
+    "review": "Please respect yourself, you must be ashamed of yourself because of this. Peyser",
+    "response": "Thanks for your feedback! It'd be great if you could provide specifics regarding what you didn't like about the course..."
+  },
+  {
+    "review": "Mentor is providing slides for video and he is also fooling student to stay 31 on Udemy but after 31 days I am not finding any slides and note from instructor side.",
+    "response": "Incorrect. Comment speaks for itself really."
+  },
+  {
+    "review": "This course kind of breezes over the topics, there are colabs used in the videos that we do not have access to and Section 4 is irrelevant to the course, I would rather see my on the topic and learn something than how to install tools that I already know how to do. Section 4 should actually be on his youtube site. There should also be more links to the tools he speaks of or uses, you have to stop the video and actually go google the tools and search for them. I am still trying to find ffmpegexamples.ipynb that is used for a whole segment of the training but there is no access to. Good course but needs a lot of fine-tuning to be better. I hope to see more added to create better content.",
+    "response": "> there are colabs used in the videos that we do not have access to\n\nIncorrect. Lecture 4 is called \"COURSE RESOURCES\". Any guesses about what this is for?\n\n> Section 4 is irrelevant to the course\n\nInteresting, who should decide what's relevant to the course? Instructor (who understands the course content) or student (who does not)?\n\n> I would rather see my on the topic\n\nThis is not even a coherent sentence.\n\n> There should also be more links to the tools he speaks of or uses, you have to stop the video and actually go google the tools and search for them\n\nAgain, no you do not. This is what happens when you don't pay attention.\n\n> I am still trying to find ffmpegexamples.ipynb\n\nIf you paid attention, you would have already found it.\n\n> Good course but needs a lot of fine-tuning to be better. I hope to see more added to create better content.\n\nNo, you just need to follow the instructions and use the Q&A to fix your misunderstandings. I don't see how it could be any simpler."
+  }
+]

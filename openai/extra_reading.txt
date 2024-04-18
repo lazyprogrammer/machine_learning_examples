@@ -1,0 +1,14 @@
+How to Set Environment Variables Permanently in Windows, Linux, and Mac
+https://lazyprogrammer.me/how-to-set-environment-variables-permanently-in-windows-linux-and-mac/
+
+How to make your completions outputs consistent with the new seed parameter
+https://cookbook.openai.com/examples/reproducible_outputs_with_the_seed_parameter
+
+What is Temperature in NLP / LLMs?
+https://medium.com/@lazyprogrammerofficial/what-is-temperature-in-nlp-llms-aa2a7212e687
+
+Large Language Models are Zero-Shot Reasoners (CoT)
+https://arxiv.org/abs/2205.11916
+
+Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+https://arxiv.org/abs/2201.11903
