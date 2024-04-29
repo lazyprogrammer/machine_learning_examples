@@ -12,3 +12,10 @@ https://arxiv.org/abs/2205.11916
 
 Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
 https://arxiv.org/abs/2201.11903
+
+A much better example of "ELI5"
+https://www.reddit.com/r/ChatGPT/comments/1c5s51g/my_mother_and_i_had_difficulty_understanding_my
+
+What is RAG? — Retrieval-Augmented Generation Explained
+https://medium.com/@lazyprogrammerofficial/what-is-rag-retrieval-augmented-generation-explained-148c8bb9c00f
+https://lazyprogrammer.me/what-is-rag-retrieval-augmented-generation-explained/
