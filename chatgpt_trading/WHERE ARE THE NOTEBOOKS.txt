@@ -1,3 +1,5 @@
-If you're here, this means you haven't watched the "where to get the code" lecture very carefully!
+As stated in the "where to get the code" / "where to get the notebooks" lecture, the notebooks are NOT on Github.
 
-Please watch it again, and follow the instructions.
+If you missed this, please review the lecture for the actual location of the notebooks.
+
+If, after reviewing it, you still need assistance, please contact info@deeplearningcourses.com.
