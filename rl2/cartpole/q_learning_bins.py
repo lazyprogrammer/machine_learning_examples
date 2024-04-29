@@ -15,6 +15,10 @@ import matplotlib.pyplot as plt
 from gym import wrappers
 from datetime import datetime
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
 
 # turns list of integers into an int
 # Ex.

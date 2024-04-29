@@ -23,6 +23,10 @@ from datetime import datetime
 # code we already wrote
 from q_learning import plot_cost_to_go, FeatureTransformer, plot_running_avg
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
 
 class BaseModel:
   def __init__(self, D):
@@ -83,9 +87,9 @@ def play_one(model, env, eps, gamma, lambda_):
     observation, reward, done, info = env.step(action)
 
     # update the model
-    next = model.predict(observation)
-    assert(next.shape == (1, env.action_space.n))
-    G = reward + gamma*np.max(next[0])
+    Qnext = model.predict(observation)
+    assert(Qnext.shape == (1, env.action_space.n))
+    G = reward + gamma*np.max(Qnext[0])
     model.update(prev_observation, action, G, gamma, lambda_)
 
     totalreward += reward

@@ -27,6 +27,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.kernel_approximation import RBFSampler
 from sklearn.linear_model import SGDRegressor
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+  
 
 # SGDRegressor defaults:
 # loss='squared_loss', penalty='l2', alpha=0.0001,
@@ -109,9 +113,13 @@ def play_one(model, env, eps, gamma):
     observation, reward, done, info = env.step(action)
 
     # update the model
-    next = model.predict(observation)
-    # assert(next.shape == (1, env.action_space.n))
-    G = reward + gamma*np.max(next[0])
+    if done:
+      G = reward
+    else:
+      Qnext = model.predict(observation)
+      # assert(next.shape == (1, env.action_space.n))
+      G = reward + gamma*np.max(Qnext[0])
+
     model.update(prev_observation, action, G)
 
     totalreward += reward
@@ -165,14 +173,14 @@ def main(show_plots=True):
   N = 300
   totalrewards = np.empty(N)
   for n in range(N):
-    # eps = 1.0/(0.1*n+1)
-    eps = 0.1*(0.97**n)
+    eps = 1.0/(0.1*n+1)
+    # eps = 0.1*(0.97**n)
     if n == 199:
       print("eps:", eps)
     # eps = 1.0/np.sqrt(n+1)
     totalreward = play_one(model, env, eps, gamma)
     totalrewards[n] = totalreward
-    if (n + 1) % 100 == 0:
+    if (n + 1) % 10 == 0:
       print("episode:", n, "total reward:", totalreward)
   print("avg reward for last 100 episodes:", totalrewards[-100:].mean())
   print("total steps:", -totalrewards.sum())

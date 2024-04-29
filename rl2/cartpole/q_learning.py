@@ -20,6 +20,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.kernel_approximation import RBFSampler
 from q_learning_bins import plot_running_avg
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
 
 class SGDRegressor:
   def __init__(self, D):

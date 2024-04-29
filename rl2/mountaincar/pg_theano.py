@@ -208,7 +208,7 @@ class ValueModel:
     return self.predict_op(X)
 
 
-def play_one_td(env, pmodel, vmodel, gamma, train=True):
+def play_one_td(env, pmodel, vmodel, gamma):
   observation = env.reset()
   done = False
   totalreward = 0
@@ -224,12 +224,15 @@ def play_one_td(env, pmodel, vmodel, gamma, train=True):
     totalreward += reward
 
     # update the models
-    if train:
+    if done:
+      G = reward
+    else:
       V_next = vmodel.predict(observation)
       G = reward + gamma*V_next
-      advantage = G - vmodel.predict(prev_observation)
-      pmodel.partial_fit(prev_observation, action, advantage)
-      vmodel.partial_fit(prev_observation, G)
+
+    advantage = G - vmodel.predict(prev_observation)
+    pmodel.partial_fit(prev_observation, action, advantage)
+    vmodel.partial_fit(prev_observation, G)
 
     iters += 1
 

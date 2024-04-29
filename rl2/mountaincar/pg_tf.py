@@ -15,6 +15,13 @@ from gym import wrappers
 from datetime import datetime
 from q_learning import plot_running_avg, FeatureTransformer, plot_cost_to_go
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
+if tf.__version__.startswith('2'):
+  exit("Please install Tensorflow 1.x")
+
 
 # so you can test different architectures
 class HiddenLayer:
@@ -177,8 +184,12 @@ def play_one_td(env, pmodel, vmodel, gamma):
     totalreward += reward
 
     # update the models
-    V_next = vmodel.predict(observation)
-    G = reward + gamma*V_next
+    if done:
+      G = reward
+    else:
+      V_next = vmodel.predict(observation)
+      G = reward + gamma*V_next
+
     advantage = G - vmodel.predict(prev_observation)
     pmodel.partial_fit(prev_observation, action, advantage)
     vmodel.partial_fit(prev_observation, G)

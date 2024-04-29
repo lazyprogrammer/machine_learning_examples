@@ -10,6 +10,11 @@ from gym import wrappers
 import numpy as np
 import matplotlib.pyplot as plt
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+  
+
 
 def get_action(s, w):
   return 1 if s.dot(w) > 0 else 0
@@ -63,6 +68,5 @@ if __name__ == '__main__':
   plt.show()
 
   # play a final set of episodes
-  # env = wrappers.Monitor(env, 'my_awesome_dir')
   env = wrappers.RecordVideo(env, 'my_awesome_dir')
   print("***Final run with final weights***:", play_one_episode(env, params))

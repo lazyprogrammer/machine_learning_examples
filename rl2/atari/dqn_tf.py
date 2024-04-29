@@ -19,7 +19,12 @@ from scipy.misc import imresize
 
 
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
 
+if tf.__version__.startswith('2'):
+  exit("Please install Tensorflow 1.x")
 
 ##### testing only
 # MAX_EXPERIENCES = 10000
@@ -141,7 +146,11 @@ class ReplayMemory:
       self.states[i] = self._get_state(idx - 1)
       self.new_states[i] = self._get_state(idx)
     
-    return np.transpose(self.states, axes=(0, 2, 3, 1)), self.actions[self.indices], self.rewards[self.indices], np.transpose(self.new_states, axes=(0, 2, 3, 1)), self.terminal_flags[self.indices]
+    return np.transpose(self.states, axes=(0, 2, 3, 1)), \
+      self.actions[self.indices], \
+      self.rewards[self.indices], \
+      np.transpose(self.new_states, axes=(0, 2, 3, 1)), \
+      self.terminal_flags[self.indices]
 
 
 class DQN:

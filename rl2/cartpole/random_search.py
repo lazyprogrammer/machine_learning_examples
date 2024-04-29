@@ -9,6 +9,10 @@ import gym
 import numpy as np
 import matplotlib.pyplot as plt
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
 
 def get_action(s, w):
   return 1 if s.dot(w) > 0 else 0

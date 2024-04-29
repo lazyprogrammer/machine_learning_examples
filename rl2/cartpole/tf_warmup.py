@@ -7,6 +7,9 @@ import numpy as np
 import tensorflow as tf
 import q_learning
 
+if tf.__version__.startswith('2'):
+  exit("Please install Tensorflow 1.x")
+
 
 class SGDRegressor:
   def __init__(self, D):

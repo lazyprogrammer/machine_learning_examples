@@ -24,6 +24,10 @@ from datetime import datetime
 import q_learning
 from q_learning import plot_cost_to_go, FeatureTransformer, Model, plot_running_avg
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
 
 class SGDRegressor:
   def __init__(self, **kwargs):

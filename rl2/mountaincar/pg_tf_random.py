@@ -15,6 +15,13 @@ from gym import wrappers
 from datetime import datetime
 from q_learning import plot_running_avg, FeatureTransformer
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
+if tf.__version__.startswith('2'):
+  exit("Please install Tensorflow 1.x")
+
 
 # so you can test different architectures
 class HiddenLayer:

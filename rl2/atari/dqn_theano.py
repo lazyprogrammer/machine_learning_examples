@@ -140,7 +140,11 @@ class ReplayMemory:
       self.states[i] = self._get_state(idx - 1)
       self.new_states[i] = self._get_state(idx)
     
-    return self.states, self.actions[self.indices], self.rewards[self.indices], self.new_states, self.terminal_flags[self.indices]
+    return self.states, \
+      self.actions[self.indices], \
+      self.rewards[self.indices], \
+      self.new_states, \
+      self.terminal_flags[self.indices]
 
 
 def init_filter(shape):

@@ -13,6 +13,14 @@ from nets import create_networks
 from worker import Worker
 
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
+if tf.__version__.startswith('2'):
+  exit("Please install Tensorflow 1.x")
+
+
 ENV_NAME = "Breakout-v0"
 MAX_GLOBAL_STEPS = 5e6
 STEPS_PER_UPDATE = 5
