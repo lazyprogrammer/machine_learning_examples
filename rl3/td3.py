@@ -1,4 +1,3 @@
-# https://deeplearningcourses.com/c/cutting-edge-artificial-intelligence
 import numpy as np
 import tensorflow as tf
 import gym
@@ -45,14 +44,17 @@ def CreateNetworks(
 
   with tf.variable_scope('mu'):
     mu = action_max * ANN(s, list(hidden_sizes)+[num_actions], hidden_activation, output_activation)
-  with tf.variable_scope('q'):
+  with tf.variable_scope('q1'):
     input_ = tf.concat([s, a], axis=-1) # (state, action)
-    q = tf.squeeze(ANN(input_, list(hidden_sizes)+[1], hidden_activation, None), axis=1)
-  with tf.variable_scope('q', reuse=True):
+    q1 = tf.squeeze(ANN(input_, list(hidden_sizes)+[1], hidden_activation, None), axis=1)
+  with tf.variable_scope('q2'):
+    input_ = tf.concat([s, a], axis=-1) # (state, action)
+    q2 = tf.squeeze(ANN(input_, list(hidden_sizes)+[1], hidden_activation, None), axis=1)
+  with tf.variable_scope('q1', reuse=True):
     # reuse is True, so it reuses the weights from the previously defined Q network
     input_ = tf.concat([s, mu], axis=-1) # (state, mu(state))
-    q_mu = tf.squeeze(ANN(input_, list(hidden_sizes)+[1], hidden_activation, None), axis=1)
-  return mu, q, q_mu
+    q1_mu = tf.squeeze(ANN(input_, list(hidden_sizes)+[1], hidden_activation, None), axis=1)
+  return mu, q1, q2, q1_mu
 
 
 ### The experience replay memory ###
@@ -83,8 +85,8 @@ class ReplayBuffer:
                 d=self.done_buf[idxs])
 
 
-### Implement the DDPG algorithm ###
-def ddpg(
+### Implement the TD3 algorithm ###
+def td3(
     env_fn,
     ac_kwargs=dict(),
     seed=0,
@@ -99,6 +101,9 @@ def ddpg(
     batch_size=100,
     start_steps=10000, 
     action_noise=0.1,
+    target_noise=0.2,
+    noise_clip=0.5,
+    policy_delay=2,
     max_episode_length=1000):
 
   tf.set_random_seed(seed)
@@ -129,19 +134,24 @@ def ddpg(
 
   # Main network outputs
   with tf.variable_scope('main'):
-    mu, q, q_mu = CreateNetworks(X, A, num_actions, action_max, **ac_kwargs)
+    mu, q1, q2, q1_mu = CreateNetworks(X, A, num_actions, action_max, **ac_kwargs)
   
   # Target networks
+  # First, get the output policy given next state X2
   with tf.variable_scope('target'):
-    # We don't need the Q network output with arbitrary input action A
-    # because that's not actually used in our loss functions
-    # NOTE 1: The state input is X2, NOT X
-    #         We only care about max_a{ Q(s', a) }
-    #         Where this is equal to Q(s', mu(s'))
-    #         This is because it's used in the target calculation: r + gamma * max_a{ Q(s',a) }
-    #         Where s' = X2
-    # NOTE 2: We ignore the first 2 networks for the same reason
-    _, _, q_mu_targ = CreateNetworks(X2, A, num_actions, action_max, **ac_kwargs)
+    # Note: "A" placeholder is effectively ignored
+    #       since mu is only a function of state (X2)
+    mu_targ, _, _, _ = CreateNetworks(X2, A, num_actions, action_max, **ac_kwargs)
+
+  # Next, add noise to mu_targ, before passing it through the target Q-networks
+  with tf.variable_scope('target', reuse=True):
+    # Add Gaussian noise and clip to valid action range
+    epsilon = tf.random_normal(tf.shape(mu_targ), stddev=target_noise)
+    epsilon = tf.clip_by_value(epsilon, -noise_clip, noise_clip)
+    A2 = mu_targ + epsilon
+    A2 = tf.clip_by_value(A2, -action_max, action_max)
+
+    _, q1_targ, q2_targ, _ = CreateNetworks(X2, A2, num_actions, action_max, **ac_kwargs)
 
   # Experience replay memory
   replay_buffer = ReplayBuffer(obs_dim=num_states, act_dim=num_actions, size=replay_size)
@@ -149,15 +159,17 @@ def ddpg(
 
   # Target value for the Q-network loss
   # We use stop_gradient to tell Tensorflow not to differentiate
-  # q_mu_targ wrt any params
-  # i.e. consider q_mu_targ values constant
-  q_target = tf.stop_gradient(R + gamma * (1 - D) * q_mu_targ)
+  # Take the smaller of Q1 and Q2!
+  min_q_targ = tf.minimum(q1_targ, q2_targ)
+  q_target = tf.stop_gradient(R + gamma * (1 - D) * min_q_targ)
 
-  # DDPG losses
-  mu_loss = -tf.reduce_mean(q_mu)
-  q_loss = tf.reduce_mean((q - q_target)**2)
+  # TD3 losses
+  mu_loss = -tf.reduce_mean(q1_mu)
+  q1_loss = tf.reduce_mean((q1 - q_target)**2)
+  q2_loss = tf.reduce_mean((q2 - q_target)**2)
+  q_loss = q1_loss + q2_loss # minimize simultaneously
 
-  # Train each network separately
+  # Train policy and value separately
   mu_optimizer = tf.train.AdamOptimizer(learning_rate=mu_lr)
   q_optimizer = tf.train.AdamOptimizer(learning_rate=q_lr)
   mu_train_op = mu_optimizer.minimize(mu_loss, var_list=get_vars('main/mu'))
@@ -245,7 +257,7 @@ def ddpg(
       s = s2
 
     # Perform the updates
-    for _ in range(episode_length):
+    for j in range(episode_length):
       batch = replay_buffer.sample_batch(batch_size)
       feed_dict = {
         X: batch['s'],
@@ -257,14 +269,15 @@ def ddpg(
 
       # Q network update
       # Note: plot the Q loss if you want
-      ql, _, _ = sess.run([q_loss, q, q_train_op], feed_dict)
+      ql, _ = sess.run([q_loss, q_train_op], feed_dict)
       q_losses.append(ql)
 
       # Policy update
       # (And target networks update)
       # Note: plot the mu loss if you want
-      mul, _, _ = sess.run([mu_loss, mu_train_op, target_update], feed_dict)
-      mu_losses.append(mul)
+      if j % policy_delay == 0:
+        mul, _, _ = sess.run([mu_loss, mu_train_op, target_update], feed_dict)
+        mu_losses.append(mul)
 
     print("Episode:", i_episode + 1, "Return:", episode_return, 'episode_length:', episode_length)
     returns.append(episode_return)
@@ -275,7 +288,7 @@ def ddpg(
 
   # on Mac, plotting results in an error, so just save the results for later
   # if you're not on Mac, feel free to uncomment the below lines
-  np.savez('ddpg_results.npz', train=returns, test=test_returns, q_losses=q_losses, mu_losses=mu_losses)
+  np.savez('td3_results.npz', train=returns, test=test_returns, q_losses=q_losses, mu_losses=mu_losses)
 
   # plt.plot(returns)
   # plt.plot(smooth(np.array(returns)))
@@ -316,11 +329,11 @@ if __name__ == '__main__':
   parser.add_argument('--gamma', type=float, default=0.99)
   parser.add_argument('--seed', type=int, default=0)
   parser.add_argument('--num_train_episodes', type=int, default=200)
-  parser.add_argument('--save_folder', type=str, default='ddpg_monitor')
+  parser.add_argument('--save_folder', type=str, default='td3_monitor')
   args = parser.parse_args()
 
 
-  ddpg(
+  td3(
     lambda : gym.make(args.env),
     ac_kwargs=dict(hidden_sizes=[args.hidden_layer_sizes]*args.num_layers),
     gamma=args.gamma,

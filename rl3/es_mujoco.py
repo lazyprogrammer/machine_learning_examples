@@ -10,6 +10,11 @@ from multiprocessing.dummy import Pool
 import gym
 import sys
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
+
 
 # environment
 ENV_NAME = 'HalfCheetah-v2'

@@ -5,6 +5,9 @@ import numpy as np
 import tensorflow as tf
 import os
 
+if tf.__version__.startswith('2'):
+  exit("Please install Tensorflow 1.x")
+
 
 def set_global_seeds(i):
     tf.set_random_seed(i)

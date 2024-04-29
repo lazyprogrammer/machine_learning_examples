@@ -11,6 +11,10 @@ import gym
 import argparse
 import logging
 
+gym_minor_version = int(gym.__version__.split('.')[1])
+if gym_minor_version >= 19:
+  exit("Please install OpenAI Gym 0.19.0 or earlier")
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Mute missing instructions errors
 
 MODEL_PATH = 'models'
