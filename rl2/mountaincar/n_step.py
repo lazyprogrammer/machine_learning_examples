@@ -24,10 +24,6 @@ from datetime import datetime
 import q_learning
 from q_learning import plot_cost_to_go, FeatureTransformer, Model, plot_running_avg
 
-gym_minor_version = int(gym.__version__.split('.')[1])
-if gym_minor_version >= 19:
-  exit("Please install OpenAI Gym 0.19.0 or earlier")
-
 
 class SGDRegressor:
   def __init__(self, **kwargs):
@@ -58,7 +54,7 @@ q_learning.SGDRegressor = SGDRegressor
 
 # returns a list of states_and_rewards, and the total reward
 def play_one(model, eps, gamma, n=5):
-  observation = env.reset()
+  observation = env.reset()[0]
   done = False
   totalreward = 0
   rewards = []
@@ -77,7 +73,7 @@ def play_one(model, eps, gamma, n=5):
     actions.append(action)
 
     prev_observation = observation
-    observation, reward, done, info = env.step(action)
+    observation, reward, done, truncated, info = env.step(action)
 
     rewards.append(reward)
 
@@ -85,7 +81,10 @@ def play_one(model, eps, gamma, n=5):
     if len(rewards) >= n:
       # return_up_to_prediction = calculate_return_before_prediction(rewards, gamma)
       return_up_to_prediction = multiplier.dot(rewards[-n:])
-      G = return_up_to_prediction + (gamma**n)*np.max(model.predict(observation)[0])
+      action_values = model.predict(observation)[0]
+      # print("action_values.shape:", action_values.shape)
+      G = return_up_to_prediction + (gamma**n)*np.max(action_values)
+      # print("G:", G)
       model.update(states[-n], actions[-n], G)
 
     # if len(rewards) > n:

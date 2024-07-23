@@ -27,10 +27,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.kernel_approximation import RBFSampler
 from sklearn.linear_model import SGDRegressor
 
-gym_minor_version = int(gym.__version__.split('.')[1])
-if gym_minor_version >= 19:
-  exit("Please install OpenAI Gym 0.19.0 or earlier")
-  
 
 # SGDRegressor defaults:
 # loss='squared_loss', penalty='l2', alpha=0.0001,
@@ -74,7 +70,7 @@ class Model:
     self.feature_transformer = feature_transformer
     for i in range(env.action_space.n):
       model = SGDRegressor(learning_rate=learning_rate)
-      model.partial_fit(feature_transformer.transform( [env.reset()] ), [0])
+      model.partial_fit(feature_transformer.transform( [env.reset()[0]] ), [0])
       self.models.append(model)
 
   def predict(self, s):
@@ -103,14 +99,14 @@ class Model:
 
 # returns a list of states_and_rewards, and the total reward
 def play_one(model, env, eps, gamma):
-  observation = env.reset()
+  observation = env.reset()[0]
   done = False
   totalreward = 0
   iters = 0
   while not done and iters < 10000:
     action = model.sample_action(observation, eps)
     prev_observation = observation
-    observation, reward, done, info = env.step(action)
+    observation, reward, done, truncated, info = env.step(action)
 
     # update the model
     if done:
