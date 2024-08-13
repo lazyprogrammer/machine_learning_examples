@@ -66,7 +66,7 @@ text = [filter_tweet(s) for s in text]
 
 # transform the text into a data matrix
 tfidf = TfidfVectorizer(max_features=100, stop_words=stopwords)
-X = tfidf.fit_transform(text).todense()
+X = tfidf.fit_transform(text).asformat('array')
 
 
 # subsample for efficiency
