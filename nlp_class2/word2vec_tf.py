@@ -71,7 +71,7 @@ def get_wiki():
   files = glob('../large_files/enwiki*.txt')
   all_word_counts = {}
   for f in files:
-    for line in open(f):
+    for line in open(f, encoding='utf-8'):
       if line and line[0] not in '[*-|=\{\}':
         s = remove_punctuation(line).lower().split()
         if len(s) > 1:
@@ -90,7 +90,7 @@ def get_wiki():
 
   sents = []
   for f in files:
-    for line in open(f):
+    for line in open(f, encoding='utf-8'):
       if line and line[0] not in '[*-|=\{\}':
         s = remove_punctuation(line).lower().split()
         if len(s) > 1:
@@ -122,7 +122,7 @@ def train_model(savedir):
   D = 50 # word embedding size
 
   # learning rate decay
-  learning_rate_delta = (learning_rate - final_learning_rate) / epochs
+  learning_rate_delta = (learning_rate - final_learning_rate)/epochs
 
   # distribution for drawing negative samples
   p_neg = get_negative_sampling_distribution(sentences)
@@ -202,7 +202,7 @@ def train_model(savedir):
 
   # for subsampling each sentence
   threshold = 1e-5
-  p_drop = 1 - np.sqrt(threshold / p_neg)
+  p_drop = 1 - np.sqrt(threshold/p_neg)
 
 
   # train the model
@@ -221,9 +221,7 @@ def train_model(savedir):
     for sentence in sentences:
 
       # keep only certain words based on p_neg
-      sentence = [w for w in sentence \
-        if np.random.random() < (1 - p_drop[w])
-      ]
+      sentence = [w for w in sentence if np.random.random() < (1 - p_drop[w])]
       if len(sentence) < 2:
         continue
 
@@ -282,14 +280,14 @@ def train_model(savedir):
 
       counter += 1
       if counter % 100 == 0:
-        sys.stdout.write("processed %s / %s\r" % (counter, len(sentences)))
+        sys.stdout.write(f"processed {counter}/{len(sentences)}\r")
         sys.stdout.flush()
         # break
 
 
     # print stuff so we don't stare at a blank screen
     dt = datetime.now() - t0
-    print("epoch complete:", epoch, "cost:", cost, "dt:", dt)
+    print(f"epoch complete: {epoch}, cost: {cost}, dt: {dt}")
 
     # save the cost
     costs.append(cost)
@@ -310,10 +308,10 @@ def train_model(savedir):
   if not os.path.exists(savedir):
     os.mkdir(savedir)
 
-  with open('%s/word2idx.json' % savedir, 'w') as f:
+  with open(f'{savedir}/word2idx.json', 'w') as f:
     json.dump(word2idx, f)
 
-  np.savez('%s/weights.npz' % savedir, W, V)
+  np.savez(f'{savedir}/weights.npz', W, V)
 
   # return the model
   return word2idx, W, V
@@ -341,7 +339,7 @@ def get_negative_sampling_distribution(sentences):
       p_neg[j] = word_freq[j]**0.75
 
   # normalize it
-  p_neg = p_neg / p_neg.sum()
+  p_neg = p_neg/p_neg.sum()
 
   assert(np.all(p_neg > 0))
   return p_neg
@@ -366,9 +364,9 @@ def get_context(pos, sentence, window_size):
 
 
 def load_model(savedir):
-  with open('%s/word2idx.json' % savedir) as f:
+  with open(f'{savedir}/word2idx.json') as f:
     word2idx = json.load(f)
-  npz = np.load('%s/weights.npz' % savedir)
+  npz = np.load(f'{savedir}/weights.npz')
   W = npz['arr_0']
   V = npz['arr_1']
   return word2idx, W, V
@@ -379,10 +377,10 @@ def analogy(pos1, neg1, pos2, neg2, word2idx, idx2word, W):
   V, D = W.shape
 
   # don't actually use pos2 in calculation, just print what's expected
-  print("testing: %s - %s = %s - %s" % (pos1, neg1, pos2, neg2))
+  print(f"testing: {pos1} - {neg1} = {pos2} - {neg2}")
   for w in (pos1, neg1, pos2, neg2):
     if w not in word2idx:
-      print("Sorry, %s not in word2idx" % w)
+      print(f"Sorry, {w} not in word2idx")
       return
 
   p1 = W[word2idx[pos1]]
@@ -403,12 +401,12 @@ def analogy(pos1, neg1, pos2, neg2, word2idx, idx2word, W):
       best_idx = i
       break
 
-  print("got: %s - %s = %s - %s" % (pos1, neg1, idx2word[idx[0]], neg2))
+  print(f"got: {pos1} - {neg1} = {idx2word[idx[0]]} - {neg2}" )
   print("closest 10:")
   for i in idx:
     print(idx2word[i], distances[i])
 
-  print("dist to %s:" % pos2, cos_dist(p2, vec))
+  print(f"dist to {pos2}: {cos_dist(p2, vec)}")
 
 
 def test_model(word2idx, W, V):
