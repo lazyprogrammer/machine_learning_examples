@@ -13,14 +13,14 @@ import tensorflow as tf
 import os
 import sys
 sys.path.append(os.path.abspath('..'))
-from pos_baseline import get_data
+#from pos_baseline import get_data
 from sklearn.utils import shuffle
 from util import init_weight
 from datetime import datetime
-from sklearn.metrics import f1_score
+#from sklearn.metrics import f1_score
 
-from tensorflow.contrib.rnn import static_rnn as get_rnn_output
-from tensorflow.contrib.rnn import BasicRNNCell, GRUCell
+from tensorflow.contrib.rnn import static_rnn as get_rnn_output #type: ignore
+from tensorflow.contrib.rnn import GRUCell #type: ignore
 
 
 
@@ -47,7 +47,7 @@ def get_data(split_sequences=False):
   Ytrain = []
   currentX = []
   currentY = []
-  for line in open('chunking/train.txt'):
+  for line in open('chunking/train.txt', encoding='utf-8'):
     line = line.rstrip()
     if line:
       r = line.split()
@@ -76,7 +76,7 @@ def get_data(split_sequences=False):
   Ytest = []
   currentX = []
   currentY = []
-  for line in open('chunking/test.txt'):
+  for line in open('chunking/test.txt', encoding='utf-8'):
     line = line.rstrip()
     if line:
       r = line.split()
@@ -222,8 +222,7 @@ for i in range(epochs):
     # print stuff out periodically
     if j % 10 == 0:
       sys.stdout.write(
-        "j/N: %d/%d correct rate so far: %f, cost so far: %f\r" %
-        (j, n_batches, float(n_correct)/n_total, cost)
+        f"j/N: {j}/{n_batches} correct rate so far: {float(n_correct)/n_total}, cost so far: {cost}\r"
       )
       sys.stdout.flush()
 
@@ -236,13 +235,13 @@ for i in range(epochs):
     pii = pi[yi > 0]
     n_test_correct += np.sum(yii == pii)
     n_test_total += len(yii)
-  test_acc = float(n_test_correct) / n_test_total
+  test_acc = float(n_test_correct)/n_test_total
 
   print(
-      "i:", i, "cost:", "%.4f" % cost,
-      "train acc:", "%.4f" % (float(n_correct)/n_total),
-      "test acc:", "%.4f" % test_acc,
-      "time for epoch:", (datetime.now() - t0)
+      f'''i: {i}, cost: {cost:.4f},
+      train acc: {float(n_correct)/n_total:.4f},
+      test acc: {test_acc:.4f},
+      time for epoch: {(datetime.now() - t0)}'''
   )
   costs.append(cost)
 
