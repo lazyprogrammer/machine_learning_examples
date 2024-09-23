@@ -19,8 +19,8 @@ from util import init_weight
 from datetime import datetime
 from sklearn.metrics import f1_score
 
-from tensorflow.contrib.rnn import static_rnn as get_rnn_output
-from tensorflow.contrib.rnn import BasicRNNCell, GRUCell
+from tensorflow.keras.layers.RNN import static_rnn as get_rnn_output #type:ignore
+from tensorflow. import BasicRNNCell, GRUCell #type:ignore
 
 
 
@@ -33,7 +33,7 @@ def get_data(split_sequences=False):
   Ytrain = []
   currentX = []
   currentY = []
-  for line in open('ner.txt'):
+  for line in open('ner.txt', encoding='utf-8'):
     line = line.rstrip()
     if line:
       r = line.split()

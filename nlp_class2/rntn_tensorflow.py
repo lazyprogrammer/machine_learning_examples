@@ -47,9 +47,9 @@ class RNTN:
         We = init_weight(V, D)
 
         # quadratic terms
-        W11 = np.random.randn(D, D, D) / np.sqrt(3*D)
-        W22 = np.random.randn(D, D, D) / np.sqrt(3*D)
-        W12 = np.random.randn(D, D, D) / np.sqrt(3*D)
+        W11 = np.random.randn(D, D, D)/np.sqrt(3*D)
+        W22 = np.random.randn(D, D, D)/np.sqrt(3*D)
+        W12 = np.random.randn(D, D, D)/np.sqrt(3*D)
 
         # linear terms
         W1 = init_weight(D, D)

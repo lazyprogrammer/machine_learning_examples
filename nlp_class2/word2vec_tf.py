@@ -47,23 +47,23 @@ def download_text8(dst):
   pass
 
 
-def get_text8():
-  # download the data if it is not yet in the right place
-  path = '../large_files/text8'
-  if not os.path.exists(path):
-    download_text8(path)
+# def get_text8():
+#   # download the data if it is not yet in the right place
+#   path = '../large_files/text8'
+#   if not os.path.exists(path):
+#     download_text8(path)
 
-  words = open(path).read()
-  word2idx = {}
-  sents = [[]]
-  count = 0
-  for word in words.split():
-    if word not in word2idx:
-      word2idx[word] = count
-      count += 1
-    sents[0].append(word2idx[word])
-  print("count:", count)
-  return sents, word2idx
+#   words = open(path).read()
+#   word2idx = {}
+#   sents = [[]]
+#   count = 0
+#   for word in words.split():
+#     if word not in word2idx:
+#       word2idx[word] = count
+#       count += 1
+#     sents[0].append(word2idx[word])
+#   print("count:", count)
+#   return sents, word2idx
 
 
 def get_wiki():

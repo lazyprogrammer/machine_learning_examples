@@ -49,7 +49,7 @@ all_word_counts = {}
 num_lines = 0
 num_tokens = 0
 for f in files:
-  for line in open(f):
+  for line in open(f, encoding='utf-8'):
     # don't count headers, structured data, lists, etc...
     if line and line[0] not in ('[', '*', '-', '|', '=', '{', '}'):
       num_lines += 1
@@ -112,7 +112,7 @@ if not os.path.exists('pmi_counts_%s.npz' % V):
   k = 0
   # for line in open('../large_files/text8'):
   for f in files:
-    for line in open(f):
+    for line in open(f, encoding='utf-8'):
       # don't count headers, structured data, lists, etc...
       if line and line[0] not in ('[', '*', '-', '|', '=', '{', '}'):
         line_as_idx = []
@@ -153,7 +153,7 @@ c_probs = c_probs.reshape(1, V)
 
 # PMI(w, c) = #(w, c) / #(w) / p(c)
 # pmi = wc_counts / wc_counts.sum(axis=1) / c_probs # works only if numpy arrays
-pmi = wc_counts.multiply(1.0 / wc_counts.sum(axis=1) / c_probs).tocsr()
+pmi = wc_counts.multiply(1.0/wc_counts.sum(axis=1)/c_probs).tocsr()
 # this operation changes it to a coo_matrix
 # which doesn't have functions we need, e.g log1p()
 # so convert it back to a csr
@@ -172,9 +172,9 @@ reg = 0.1
 
 
 # initialize weights
-W = np.random.randn(V, D) / np.sqrt(V + D)
+W = np.random.randn(V, D)/np.sqrt(V + D)
 b = np.zeros(V)
-U = np.random.randn(V, D) / np.sqrt(V + D)
+U = np.random.randn(V, D)/np.sqrt(V + D)
 c = np.zeros(V)
 mu = logX.mean()
 
@@ -220,7 +220,7 @@ for epoch in range(10):
   W = np.linalg.solve(matrix, vector).T
 
   # vectorized update b
-  b = (logX - W.dot(U.T) - c.reshape(1, V) - mu).sum(axis=1) / V
+  b = (logX - W.dot(U.T) - c.reshape(1, V) - mu).sum(axis=1)/V
 
   # vectorized update U
   matrix = reg*np.eye(D) + W.T.dot(W)
@@ -228,7 +228,7 @@ for epoch in range(10):
   U = np.linalg.solve(matrix, vector).T
 
   # vectorized update c
-  c = (logX - W.dot(U.T) - b.reshape(V, 1)  - mu).sum(axis=0) / V
+  c = (logX - W.dot(U.T) - b.reshape(V, 1)  - mu).sum(axis=0)/V
 
 
 print("train duration:", datetime.now() - t0)
