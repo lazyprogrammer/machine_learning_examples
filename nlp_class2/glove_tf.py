@@ -14,13 +14,13 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from datetime import datetime
-from sklearn.utils import shuffle
+#from sklearn.utils import shuffle
 from util import find_analogies
 
 import sys
 sys.path.append(os.path.abspath('..'))
 from rnn_class.util import get_wikipedia_data
-from rnn_class.brown import get_sentences_with_word2idx_limit_vocab, get_sentences_with_word2idx
+from rnn_class.brown import get_sentences_with_word2idx_limit_vocab
 
 if tf.__version__.startswith('2'):
     tf.compat.v1.disable_eager_execution()
@@ -141,7 +141,7 @@ class Glove:
         session.run(init)
 
         costs = []
-        sentence_indexes = range(len(sentences))
+        #sentence_indexes = range(len(sentences))
         for epoch in range(epochs):
             c, _ = session.run((cost, train_op), feed_dict={tfLogX: logX, tffX: fX})
             print("epoch:", epoch, "cost:", c)

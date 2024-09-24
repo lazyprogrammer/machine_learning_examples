@@ -31,67 +31,6 @@ MAX_TAGS = 100
 
 
 
-# def get_data_pos(split_sequences=False):
-#   if not os.path.exists('chunking'):
-#     print("Please create a folder in your local directory called 'chunking'")
-#     print("train.txt and test.txt should be stored in there.")
-#     print("Please check the comments to get the download link.")
-#     exit()
-#   elif not os.path.exists('chunking/train.txt'):
-#     print("train.txt is not in chunking/train.txt")
-#     print("Please check the comments to get the download link.")
-#     exit()
-#   elif not os.path.exists('chunking/test.txt'):
-#     print("test.txt is not in chunking/test.txt")
-#     print("Please check the comments to get the download link.")
-#     exit()
-
-#   Xtrain = []
-#   Ytrain = []
-#   currentX = []
-#   currentY = []
-#   for line in open('chunking/train.txt', encoding='utf-8'):
-#     line = line.rstrip()
-#     if line:
-#       r = line.split()
-#       word, tag, _ = r
-#       currentX.append(word)
-      
-#       currentY.append(tag)
-#     elif split_sequences:
-#       Xtrain.append(currentX)
-#       Ytrain.append(currentY)
-#       currentX = []
-#       currentY = []
-
-#   if not split_sequences:
-#     Xtrain = currentX
-#     Ytrain = currentY
-
-#   # load and score test data
-#   Xtest = []
-#   Ytest = []
-#   currentX = []
-#   currentY = []
-#   for line in open('chunking/test.txt', encoding='utf-8'):
-#     line = line.rstrip()
-#     if line:
-#       r = line.split()
-#       word, tag, _ = r
-#       currentX.append(word)
-#       currentY.append(tag)
-#     elif split_sequences:
-#       Xtest.append(currentX)
-#       Ytest.append(currentY)
-#       currentX = []
-#       currentY = []
-#   if not split_sequences:
-#     Xtest = currentX
-#     Ytest = currentY
-
-#   return Xtrain, Ytrain, Xtest, Ytest
-
-
 def get_data_ner(split_sequences=False):
   Xtrain = []
   Ytrain = []
@@ -179,7 +118,7 @@ for n, sample in enumerate(Ytest):
 
 
 # training config
-epochs = 300
+epochs = 30
 batch_size = 32
 hidden_layer_size = 10
 embedding_dim = 10
@@ -203,20 +142,19 @@ model.compile(
 
 
 print('Training model...')
-with tf.device('/GPU:0'):
-  r = model.fit(Xtrain,
-                Ytrain_onehot,
-                batch_size=batch_size,
-                epochs=epochs,
-                validation_data=(Xtest, Ytest_onehot))
+r = model.fit(Xtrain,
+              Ytrain_onehot,
+              batch_size=batch_size,
+              epochs=epochs,
+              validation_data=(Xtest, Ytest_onehot))
 
-# plot some data
+# plot loss
 plt.plot(r.history['loss'], label='loss')
 plt.plot(r.history['val_loss'], label='val_loss')
 plt.legend()
 plt.show()
 
-# accuracies
+# plot accuracy
 plt.plot(r.history['accuracy'], label='acc')
 plt.plot(r.history['val_accuracy'], label='val_acc')
 plt.legend()

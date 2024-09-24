@@ -18,10 +18,10 @@ from sklearn.utils import shuffle
 from util import init_weight
 from datetime import datetime
 #from sklearn.metrics import f1_score
+from tensorflow.keras.layers import GRUCell, RNN #type: ignore
 
-from tensorflow.contrib.rnn import static_rnn as get_rnn_output #type: ignore
-from tensorflow.contrib.rnn import GRUCell #type: ignore
-
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
 
 
 def get_data(split_sequences=False):
@@ -131,8 +131,8 @@ print("Ytrain.shape:", Ytrain.shape)
 
 
 # inputs
-inputs = tf.placeholder(tf.int32, shape=(None, sequence_length))
-targets = tf.placeholder(tf.int32, shape=(None, sequence_length))
+inputs = tf.compat.v1.placeholder(tf.int32, shape=(None, sequence_length))
+targets = tf.compat.v1.placeholder(tf.int32, shape=(None, sequence_length))
 num_samples = tf.shape(inputs)[0] # useful for later
 
 # embedding
@@ -148,7 +148,8 @@ tfWo = tf.Variable(Wo)
 tfbo = tf.Variable(bo)
 
 # make the rnn unit
-rnn_unit = GRUCell(num_units=hidden_layer_size, activation=tf.nn.relu)
+rnn_unit = RNN(GRUCell(
+  units=hidden_layer_size, activation=tf.nn.relu), return_sequences=True, return_state=True)
 
 
 # get the output
@@ -156,10 +157,10 @@ x = tf.nn.embedding_lookup(tfWe, inputs)
 
 # converts x from a tensor of shape N x T x M
 # into a list of length T, where each element is a tensor of shape N x M
-x = tf.unstack(x, sequence_length, 1)
+#x = tf.unstack(x, sequence_length, 1)
 
 # get the rnn output
-outputs, states = get_rnn_output(rnn_unit, x, dtype=tf.float32)
+outputs, states = rnn_unit(x)
 
 
 # outputs are now of size (T, N, M)
@@ -179,14 +180,14 @@ cost_op = tf.reduce_mean(
     labels=labels_flat
   )
 )
-train_op = tf.train.AdamOptimizer(learning_rate).minimize(cost_op)
+train_op = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(cost_op)
 
 
 
 
 # init stuff
-sess = tf.InteractiveSession()
-init = tf.global_variables_initializer()
+sess = tf.compat.v1.InteractiveSession()
+init = tf.compat.v1.global_variables_initializer()
 sess.run(init)
 
 

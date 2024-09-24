@@ -13,8 +13,8 @@ from builtins import range
 
 import os, sys
 import numpy as np
-#import theano
-#import theano.tensor as T
+import theano
+import theano.tensor as T
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from sklearn.metrics import f1_score
