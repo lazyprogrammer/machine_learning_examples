@@ -110,7 +110,7 @@ K = len(set(flatten(Ytrain)) | set(flatten(Ytest))) + 1 # num classes
 
 
 # training config
-epochs = 20
+epochs = 200
 learning_rate = 1e-2
 mu = 0.99
 batch_size = 32

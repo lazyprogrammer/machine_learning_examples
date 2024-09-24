@@ -190,7 +190,7 @@ def main(we_file, w2i_file, use_brown=True, n_files=50):
 
     V = len(word2idx)
     model = Glove(100, V, 10)
-    model.fit(sentences, cc_matrix=cc_matrix, epochs=200)
+    model.fit(sentences, cc_matrix=cc_matrix, epochs=10000)
     model.save(we_file)
 
 

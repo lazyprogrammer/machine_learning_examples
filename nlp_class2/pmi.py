@@ -259,6 +259,9 @@ vec = king - man + woman
 # set word embedding matrix
 # W = (W + U) / 2
 
+vec = np.asarray(vec)
+W = np.asarray(W)
+
 distances = pairwise_distances(vec.reshape(1, D), W, metric='cosine').reshape(V)
 idx = distances.argsort()[:10]
 
@@ -266,7 +269,9 @@ print("closest 10:")
 for i in idx:
   print(top_words[i], distances[i])
 
-print("dist to queen:", cos_dist(W[word2idx['queen']], vec))
+queen_vector = np.squeeze(W[word2idx['queen']])
+vec = np.squeeze(vec)
+print("dist to queen:", cos_dist(queen_vector, vec))
 
 
 
