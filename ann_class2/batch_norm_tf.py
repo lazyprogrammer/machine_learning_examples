@@ -4,13 +4,15 @@ from builtins import range
 # sudo pip install -U future
 
 import numpy as np
-import pandas as pd
+#import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from sklearn.utils import shuffle
-from sklearn.model_selection import train_test_split
+#from sklearn.model_selection import train_test_split
 from util import get_normalized_data
 
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
 
 def init_weight(M1, M2):
   return np.random.randn(M1, M2) * np.sqrt(2.0 / M1)
@@ -38,13 +40,11 @@ class HiddenLayerBatchNorm(object):
     activation = tf.matmul(X, self.W)
     if is_training:
       batch_mean, batch_var = tf.nn.moments(activation, [0])
-      update_running_mean = tf.assign(
-        self.running_mean,
-        self.running_mean * decay + batch_mean * (1 - decay)
+      update_running_mean = self.running_mean.assign(
+      self.running_mean * decay + batch_mean * (1 - decay)
       )
-      update_running_var = tf.assign(
-        self.running_var,
-        self.running_var * decay + batch_var * (1 - decay)
+      update_running_var = self.running_var.assign(
+      self.running_var * decay + batch_var * (1 - decay)
       )
       
       with tf.control_dependencies([update_running_mean, update_running_var]):
@@ -115,8 +115,8 @@ class ANN(object):
     # for train and test (prediction)
 
     # set up theano functions and variables
-    tfX = tf.placeholder(tf.float32, shape=(None, D), name='X')
-    tfY = tf.placeholder(tf.int32, shape=(None,), name='Y')
+    tfX = tf.compat.v1.placeholder(tf.float32, shape=(None, D), name='X')
+    tfY = tf.compat.v1.placeholder(tf.int32, shape=(None,), name='Y')
 
     # for later use
     self.tfX = tfX
@@ -131,7 +131,7 @@ class ANN(object):
     )
     # train_op = tf.train.AdamOptimizer(learning_rate).minimize(cost)
     # train_op = tf.train.RMSPropOptimizer(learning_rate, decay=0.99, momentum=0.9).minimize(cost)
-    train_op = tf.train.MomentumOptimizer(learning_rate, momentum=0.9, use_nesterov=True).minimize(cost)
+    train_op = tf.compat.v1.train.MomentumOptimizer(learning_rate, momentum=0.9, use_nesterov=True).minimize(cost)
     # train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
 
     # for testing
@@ -141,7 +141,7 @@ class ANN(object):
     # accuracy = tf.reduce_mean(1.0*(tfY == tf.argmax(logits, 1)))
 
     # init the variables
-    self.session.run(tf.global_variables_initializer())
+    self.session.run(tf.compat.v1.global_variables_initializer())
 
     n_batches = N // batch_sz
     costs = []
@@ -187,7 +187,7 @@ def main():
 
   ann = ANN([500, 300])
 
-  session = tf.InteractiveSession()
+  session = tf.compat.v1.InteractiveSession()
   ann.set_session(session)
 
   ann.fit(Xtrain, Ytrain, Xtest, Ytest, show_fig=True)
