@@ -1,26 +1,26 @@
 # https://udemy.com/recommender-systems
 # https://deeplearningcourses.com/recommender-systems
 from __future__ import print_function, division
-from builtins import range, input
+#from builtins import range, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-import pickle
-import numpy as np
+#import pickle
+#import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 
-from keras.models import Model
-from keras.layers import Input, Embedding, Dot, Add, Flatten
-from keras.regularizers import l2
-from keras.optimizers import SGD, Adam
+from tensorflow.keras.models import Model #type:ignore
+from tensorflow.keras.layers import Input, Embedding, Dot, Add, Flatten #type:ignore
+from tensorflow.keras.regularizers import l2 #type:ignore
+from tensorflow.keras.optimizers import SGD #type:ignore
 
 # load in the data
-df = pd.read_csv('../large_files/movielens-20m-dataset/edited_rating.csv')
+df = pd.read_csv('.\\large_files\\movielens-20m-dataset\\rating.csv')
 
 N = df.userId.max() + 1 # number of users
-M = df.movie_idx.max() + 1 # number of movies
+M = df.movieId.max() + 1 # number of movies
 
 # split into train and test
 df = shuffle(df)
@@ -71,17 +71,17 @@ model.compile(
   loss='mse',
   # optimizer='adam',
   # optimizer=Adam(lr=0.01),
-  optimizer=SGD(lr=0.08, momentum=0.9),
+  optimizer=SGD(learning_rate=0.08, momentum=0.9),
   metrics=['mse'],
 )
 
 r = model.fit(
-  x=[df_train.userId.values, df_train.movie_idx.values],
+  x=[df_train.userId.values, df_train.movieId.values],
   y=df_train.rating.values - mu,
   epochs=epochs,
   batch_size=128,
   validation_data=(
-    [df_test.userId.values, df_test.movie_idx.values],
+    [df_test.userId.values, df_test.movieId.values],
     df_test.rating.values - mu
   )
 )

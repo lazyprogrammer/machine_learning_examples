@@ -5,17 +5,17 @@ from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-import numpy as np
-import pandas as pd
+#import numpy as np
+#import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
-from scipy.sparse import save_npz, load_npz
+from scipy.sparse import load_npz
 
-import keras.backend as K
-from keras.models import Model
-from keras.layers import Input, Dropout, Dense
-from keras.regularizers import l2
-from keras.optimizers import SGD
+import tensorflow.keras.backend as K #type:ignore
+from tensorflow.keras.models import Model #type:ignore
+from tensorflow.keras.layers import Input, Dropout, Dense #type:ignore
+from tensorflow.keras.regularizers import l2 #type:ignore
+from tensorflow.keras.optimizers import SGD #type:ignore
 
 # config
 batch_size = 128
