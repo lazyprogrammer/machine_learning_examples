@@ -73,14 +73,14 @@ usermovie2rating_test = pd.Series(df_test.rating.values, index=user_movie_keys_t
 # df_test.apply(update_usermovie2rating_test, axis=1)
 
 # note: these are not really JSONs
-with open('user2movie.json', 'wb') as f:
+with open('.\\large_files\\movielens-20m-dataset\\user2movie.json', 'wb') as f:
   pickle.dump(user2movie, f)
 
-with open('movie2user.json', 'wb') as f:
+with open('.\\large_files\\movielens-20m-dataset\\movie2user.json', 'wb') as f:
   pickle.dump(movie2user, f)
 
-with open('usermovie2rating.json', 'wb') as f:
+with open('.\\large_files\\movielens-20m-dataset\\usermovie2rating.json', 'wb') as f:
   pickle.dump(usermovie2rating, f)
 
-with open('usermovie2rating_test.json', 'wb') as f:
+with open('.\\large_files\\movielens-20m-dataset\\usermovie2rating_test.json', 'wb') as f:
   pickle.dump(usermovie2rating_test, f)
