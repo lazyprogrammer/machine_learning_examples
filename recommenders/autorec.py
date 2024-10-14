@@ -23,8 +23,8 @@ epochs = 20
 reg = 0.0001
 # reg = 0
 
-A = load_npz("Atrain.npz")
-A_test = load_npz("Atest.npz")
+A = load_npz(".\\large_files\\movielens-20m-dataset\\Atrain.npz")
+A_test = load_npz(".\\large_files\\movielens-20m-dataset\\Atest.npz")
 mask = (A > 0) * 1.0
 mask_test = (A_test > 0) * 1.0
 
@@ -56,6 +56,8 @@ x = Dense(M, kernel_regularizer=l2(reg))(x)
 
 def custom_loss(y_true, y_pred):
   mask = K.cast(K.not_equal(y_true, 0), dtype='float32')
+  y_true = K.cast(y_true, dtype='float32')
+  y_pred = K.cast(y_pred, dtype='float32')
   diff = y_pred - y_true
   sqdiff = diff * diff * mask
   sse = K.sum(K.sum(sqdiff))
@@ -96,7 +98,7 @@ def test_generator(A, M, A_test, M_test):
 model = Model(i, x)
 model.compile(
   loss=custom_loss,
-  optimizer=SGD(lr=0.08, momentum=0.9),
+  optimizer=SGD(learning_rate=0.08, momentum=0.9),
   # optimizer='adam',
   metrics=[custom_loss],
 )
