@@ -17,10 +17,10 @@ from tensorflow.keras.regularizers import l2 #type:ignore
 from tensorflow.keras.optimizers import SGD #type:ignore
 
 # load in the data
-df = pd.read_csv('.\\large_files\\movielens-20m-dataset\\rating.csv')
+df = pd.read_csv('.\\large_files\\movielens-20m-dataset\\edited_rating.csv')
 
 N = df.userId.max() + 1 # number of users
-M = df.movieId.max() + 1 # number of movies
+M = df.movie_idx.max() + 1 # number of movies
 
 # split into train and test
 df = shuffle(df)
@@ -76,12 +76,12 @@ model.compile(
 )
 
 r = model.fit(
-  x=[df_train.userId.values, df_train.movieId.values],
+  x=[df_train.userId.values, df_train.movie_idx.values],
   y=df_train.rating.values - mu,
   epochs=epochs,
   batch_size=128,
   validation_data=(
-    [df_test.userId.values, df_test.movieId.values],
+    [df_test.userId.values, df_test.movie_idx.values],
     df_test.rating.values - mu
   )
 )

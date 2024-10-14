@@ -1,16 +1,16 @@
 # https://udemy.com/recommender-systems
 # https://deeplearningcourses.com/recommender-systems
 from __future__ import print_function, division
-from builtins import range, input
+from builtins import range#, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
 import pickle
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.utils import shuffle
-from datetime import datetime
+#import pandas as pd
+#import matplotlib.pyplot as plt
+#from sklearn.utils import shuffle
+#from datetime import datetime
 from sortedcontainers import SortedList
 
 # load in the data
@@ -38,7 +38,7 @@ with open('usermovie2rating_test.json', 'rb') as f:
 N = np.max(list(user2movie.keys())) + 1
 # the test set may contain movies the train set doesn't have data on
 m1 = np.max(list(movie2user.keys()))
-m2 = np.max([m for (u, m), r in usermovie2rating_test.items()])
+m2 = np.max([m for (_, m), _ in usermovie2rating_test.items()])
 M = max(m1, m2) + 1
 print("N:", N, "M:", M)
 
