@@ -2,12 +2,12 @@ import pandas as pd
 import json
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 # get the data from: https://www.kaggle.com/tmdb/tmdb-movie-metadata
 # load in the data
-df = pd.read_csv('../large_files/tmdb_5000_movies.csv')
+df = pd.read_csv('.\\large_files\\tmdb_5000_movies.csv')
 
 
 # convert the relevant data for each movie into a single string
@@ -59,7 +59,7 @@ def recommend(title):
   recommended_idx = (-scores).argsort()[1:6]
 
   # return the titles of the recommendations
-  return df['title'].iloc[recommended_idx]
+  return df['title'].iloc[recommended_idx].values
 
 
 print("\nRecommendations for 'Scream 3':")
