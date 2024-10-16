@@ -7,8 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from util import getKaggleMNIST
-from keras.models import Model
-from keras.layers import Dense, Activation, Input
+from tensorflow.keras.models import Model # type: ignore
+from tensorflow.keras.layers import Dense, Input # type: ignore
 
 
 # get the data
@@ -58,8 +58,8 @@ plt.legend()
 plt.show()
 
 # accuracies
-plt.plot(r.history['acc'], label='acc')
-plt.plot(r.history['val_acc'], label='val_acc')
+plt.plot(r.history['accuracy'], label='acc')
+plt.plot(r.history['val_accuracy'], label='val_acc')
 plt.legend()
 plt.show()
 

@@ -18,7 +18,7 @@ sc = SparkContext("local", "Your App Name Here")
 
 
 # load in the data
-data = sc.textFile("/mnt/c/Users/Saif/Downloads/personal/Udemy_labs/nlp/machine_learning_examples/large_files/movielens-20m-dataset//small_ratings.csv")
+data = sc.textFile("/mnt/c/Users/Saif/Downloads/personal/Udemy_labs/nlp/machine_learning_examples/large_files/movielens-20m-dataset/rating.csv")
 #data = sc.textFile(".\\large_files\\movielens-20m-dataset\\rating.csv.gz")
 
 # filter out header
