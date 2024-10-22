@@ -1,44 +1,44 @@
 # https://udemy.com/recommender-systems
 # https://deeplearningcourses.com/recommender-systems
 from __future__ import print_function, division
-from builtins import range, input
+from builtins import range#, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
 import pickle
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.utils import shuffle
-from datetime import datetime
+#import pandas as pd
+#import matplotlib.pyplot as plt
+#from sklearn.utils import shuffle
+#from datetime import datetime
 from sortedcontainers import SortedList
 
 # load in the data
 import os
-if not os.path.exists('user2movie.json') or \
-   not os.path.exists('movie2user.json') or \
-   not os.path.exists('usermovie2rating.json') or \
-   not os.path.exists('usermovie2rating_test.json'):
+if not os.path.exists('.\\large_files\\movielens-20m-dataset\\user2movie.json') or \
+   not os.path.exists('.\\large_files\\movielens-20m-dataset\\movie2user.json') or \
+   not os.path.exists('.\\large_files\\movielens-20m-dataset\\usermovie2rating.json') or \
+   not os.path.exists('.\\large_files\\movielens-20m-dataset\\usermovie2rating_test.json'):
    import preprocess2dict
 
 
-with open('user2movie.json', 'rb') as f:
+with open('.\\large_files\\movielens-20m-dataset\\user2movie.json', 'rb') as f:
   user2movie = pickle.load(f)
 
-with open('movie2user.json', 'rb') as f:
+with open('.\\large_files\\movielens-20m-dataset\\movie2user.json', 'rb') as f:
   movie2user = pickle.load(f)
 
-with open('usermovie2rating.json', 'rb') as f:
+with open('.\\large_files\\movielens-20m-dataset\\usermovie2rating.json', 'rb') as f:
   usermovie2rating = pickle.load(f)
 
-with open('usermovie2rating_test.json', 'rb') as f:
+with open('.\\large_files\\movielens-20m-dataset\\usermovie2rating_test.json', 'rb') as f:
   usermovie2rating_test = pickle.load(f)
 
 
 N = np.max(list(user2movie.keys())) + 1
 # the test set may contain movies the train set doesn't have data on
 m1 = np.max(list(movie2user.keys()))
-m2 = np.max([m for (u, m), r in usermovie2rating_test.items()])
+m2 = np.max([m for (_, m), _ in usermovie2rating_test.items()])
 M = max(m1, m2) + 1
 print("N:", N, "M:", M)
 
