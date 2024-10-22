@@ -1,0 +1,2 @@
+Multivariate Change of Variables
+https://math.libretexts.org/Bookshelves/Calculus/Book%3A_Active_Calculus_(Boelkins_et_al.)/11%3A_Multiple_Integrals/11.09%3A_Change_of_Variables
