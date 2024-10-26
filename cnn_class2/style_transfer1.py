@@ -9,12 +9,12 @@ from builtins import range, input
 # In this script, we will focus on generating the content
 # E.g. given an image, can we recreate the same image
 
-from tensorflow.keras.layers import AveragePooling2D, MaxPooling2D, Conv2D
-from tensorflow.keras.models import Model, clone_model
-from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
-from tensorflow.keras.preprocessing import image
+from tensorflow.keras.layers import AveragePooling2D, MaxPooling2D, Conv2D #type: ignore
+from tensorflow.keras.models import Model, clone_model #type: ignore
+from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input #type: ignore
+from tensorflow.keras.preprocessing import image #type: ignore
 
-import tensorflow.keras.backend as K
+import tensorflow.keras.backend as K #type: ignore
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -97,6 +97,7 @@ def scale_img(x):
   return x
 
 
+
 if __name__ == '__main__':
 
   # open an image
@@ -132,7 +133,7 @@ if __name__ == '__main__':
   # define our loss in keras
   #loss_layer = Lambda(lambda inputs: K.mean(K.square(inputs[0] - inputs[1])))
   #loss = loss_layer([target, content_model.output])
-
+  
   def get_loss_and_grads(inputs):
     with tf.GradientTape() as tape:
         tape.watch(inputs)
@@ -141,7 +142,6 @@ if __name__ == '__main__':
     # Compute the gradient of loss with respect to the inputs
     grads_value = tape.gradient(loss_value, inputs)
     return loss_value, grads_value
-
 
 
   def get_loss_and_grads_wrapper(x_vec):
@@ -160,7 +160,6 @@ if __name__ == '__main__':
     l, g = get_loss_and_grads(x_tensor)
     #l, g = get_loss_and_grads(x_vec.reshape(*batch_shape))
     return l.numpy().astype(np.float64), g.numpy().flatten().astype(np.float64)
-
 
 
   from datetime import datetime
