@@ -32,10 +32,10 @@ batch_size = 32
 # valid_path = '../large_files/blood_cell_images/TEST'
 
 # https://www.kaggle.com/moltean/fruits
-# train_path = '../large_files/fruits-360/Training'
-# valid_path = '../large_files/fruits-360/Validation'
-train_path = '.\\large_files\\fruits-360-small\\Training'
-valid_path = '.\\large_files\\fruits-360-small\\Validation'
+train_path = '.\\large_files\\fruits-360\\Training'
+valid_path = '.\\large_files\\fruits-360\\Validation'
+#train_path = '.\\large_files\\fruits-360-small\\Training'
+#valid_path = '.\\large_files\\fruits-360-small\\Validation'
 
 # useful for getting number of files
 image_files = glob(train_path + '\\*\\*.jp*g')
