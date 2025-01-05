@@ -67,6 +67,10 @@ https://deeplearningcourses.com/c/deep-learning-tensorflow-2
 
 https://deeplearningcourses.com/c/linear-algebra-data-science
 
+**Math 0-1: Probability for Data Science & Machine Learning**
+
+https://deeplearningcourses.com/c/probability-data-science-machine-learning
+
 
 Deep Learning Courses Exclusives
 ================================
@@ -90,6 +94,9 @@ https://deeplearningcourses.com/c/matlab
 
 Other Course Links
 ==================
+
+Generative AI: ChatGPT & OpenAI LLMs in Python
+https://deeplearningcourses.com/c/genai-openai-chatgpt
 
 Math 0-1: Matrix Calculus for Data Science & Machine Learning
 https://deeplearningcourses.com/c/matrix-calculus-machine-learning
