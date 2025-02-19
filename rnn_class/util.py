@@ -118,7 +118,7 @@ def get_wikipedia_data(n_files, n_vocab, by_paragraph=False):
 
     for f in input_files:
         print("reading:", f)
-        for line in open(prefix + f):
+        for line in open(prefix + f, encoding='utf-8'):
             line = line.strip()
             # don't count headers, structured data, lists, etc...
             if line and line[0] not in ('[', '*', '-', '|', '=', '{', '}'):
