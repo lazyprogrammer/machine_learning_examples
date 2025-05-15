@@ -9,11 +9,14 @@
 # tmp = p.take(5)
 # print(tmp)
 
-from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
-import os
+from pyspark.mllib.recommendation import ALS, Rating
+from pyspark import SparkContext
+#import os
 
 # load in the data
-data = sc.textFile("../large_files/movielens-20m-dataset/small_rating.csv")
+sc = SparkContext('local', 'random')
+data = sc.textFile(".\\large_files\\movielens-20m-dataset\\small_rating.csv")
+#'/mnt/c/Users/Saif/Downloads/personal/Udemy_labs/nlp/machine_learning_examples/large_files/movielens-20m-dataset//small_ratings.csv'
 
 # filter out header
 header = data.first() #extract header
