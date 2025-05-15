@@ -1,0 +1,8 @@
+Gymnasium Library
+https://gymnasium.farama.org/
+
+Stable Baselines 3
+https://github.com/DLR-RM/stable-baselines3
+
+Reinforcement Learning Prerequisites
+https://deeplearningcourses.com/c/artificial-intelligence-reinforcement-learning-in-python
