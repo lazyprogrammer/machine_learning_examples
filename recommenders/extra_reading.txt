@@ -57,3 +57,6 @@ http://users.cecs.anu.edu.au/~u5098633/papers/www15.pdf
 
 Collaborative Filtering for Implicit Feedback Datasets
 http://yifanhu.net/PUB/cf.pdf
+
+Neural Collaborative Filtering
+https://arxiv.org/abs/1708.05031
