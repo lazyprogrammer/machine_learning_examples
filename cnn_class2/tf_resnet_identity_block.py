@@ -8,13 +8,14 @@ from builtins import range, input
 
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 from tf_resnet_convblock import ConvLayer, BatchNormLayer
 
 
 class IdentityBlock:
   def __init__(self, mi, fm_sizes, activation=tf.nn.relu):
+    super().__init__()
     # conv1, conv2, conv3
     # note: # feature maps shortcut = # feauture maps conv 3
     assert(len(fm_sizes) == 3)
