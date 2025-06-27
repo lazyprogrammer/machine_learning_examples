@@ -177,12 +177,12 @@ class MultiStockEnv:
     # get current value before performing the action
     prev_val = self._get_val()
 
+    # perform the trade
+    self._trade(action)
+
     # update price, i.e. go to the next day
     self.cur_step += 1
     self.stock_price = self.stock_price_history[self.cur_step]
-
-    # perform the trade
-    self._trade(action)
 
     # get the new value after taking the action
     cur_val = self._get_val()
