@@ -48,8 +48,8 @@ if __name__ == '__main__':
 
   # train a shallow neural network model
   D = 100
-  W1 = np.random.randn(V, D) / np.sqrt(V)
-  W2 = np.random.randn(D, V) / np.sqrt(D)
+  W1 = np.random.randn(V, D)/np.sqrt(V)
+  W2 = np.random.randn(D, V)/np.sqrt(D)
 
   losses = []
   epochs = 1
@@ -58,7 +58,7 @@ if __name__ == '__main__':
   def softmax(a):
     a = a - a.max()
     exp_a = np.exp(a)
-    return exp_a / exp_a.sum(axis=1, keepdims=True)
+    return exp_a/exp_a.sum(axis=1, keepdims=True)
 
   # what is the loss if we set W = log(bigram_probs)?
   W_bigram = np.log(bigram_probs)
@@ -84,24 +84,24 @@ if __name__ == '__main__':
       predictions = softmax(hidden.dot(W2))
 
       # do a gradient descent step
-      W2 = W2 - lr * hidden.T.dot(predictions - targets)
-      dhidden = (predictions - targets).dot(W2.T) * (1 - hidden * hidden)
-      W1 = W1 - lr * inputs.T.dot(dhidden)
+      W2 = W2 - lr*hidden.T.dot(predictions - targets)
+      dhidden = (predictions - targets).dot(W2.T)*(1 - hidden*hidden)
+      W1 = W1 - lr*inputs.T.dot(dhidden)
 
       # keep track of the loss
-      loss = -np.sum(targets * np.log(predictions)) / (n - 1)
+      loss = -np.sum(targets*np.log(predictions))/(n - 1)
       losses.append(loss)
 
       # keep track of the bigram loss
       # only do it for the first epoch to avoid redundancy
       if epoch == 0:
         bigram_predictions = softmax(inputs.dot(W_bigram))
-        bigram_loss = -np.sum(targets * np.log(bigram_predictions)) / (n - 1)
+        bigram_loss = -np.sum(targets*np.log(bigram_predictions))/(n - 1)
         bigram_losses.append(bigram_loss)
 
 
       if j % 10 == 0:
-        print("epoch:", epoch, "sentence: %s/%s" % (j, len(sentences)), "loss:", loss)
+        print(f"epoch: {epoch}, sentence: {j}/{len(sentences)}, loss: {loss}")
       j += 1
 
   print("Elapsed time training:", datetime.now() - t0)
@@ -118,8 +118,8 @@ if __name__ == '__main__':
     y = np.zeros(len(x))
     last = 0
     for t in range(len(x)):
-      z = decay * last + (1 - decay) * x[t]
-      y[t] = z / (1 - decay ** (t + 1))
+      z = decay*last + (1 - decay)*x[t]
+      y[t] = z/(1 - decay**(t + 1))
       last = z
     return y
 
