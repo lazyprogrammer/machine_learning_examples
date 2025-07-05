@@ -15,3 +15,6 @@ https://arxiv.org/abs/1409.4842
 
 Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
 https://arxiv.org/abs/1502.03167
+
+Deep learning improved by biological activation functions
+https://arxiv.org/pdf/1804.11237.pdf
