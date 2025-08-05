@@ -33,6 +33,11 @@ Beginning with Tensorflow 2, I started to use Google Colab. For those courses, u
 VIP Course Links
 ===================
 
+**Advanced AI: Deep Reinforcement Learning in PyTorch (v2)**
+
+https://deeplearningcourses.com/c/deep-reinforcement-learning-in-pytorch
+
+
 **Data Science: Transformers for Natural Language Processing**
 
 https://deeplearningcourses.com/c/data-science-transformers-nlp
