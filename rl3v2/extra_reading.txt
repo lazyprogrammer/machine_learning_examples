@@ -1,0 +1,23 @@
+=== PART 1 ===
+
+ES (Evolution Strategies)
+"Evolution Strategies as a Scalable Alternative to Reinforcement Learning"
+https://arxiv.org/abs/1703.03864
+
+Trust Region Evolution Strategies
+https://www.microsoft.com/en-us/research/uploads/prod/2018/11/trust-region-evolution-strategies.pdf
+
+The CMA Evolution Strategy: A Tutorial
+https://arxiv.org/pdf/1604.00772
+
+Simple random search provides a competitive approach to reinforcement learning (Augmented Random Search)
+https://arxiv.org/abs/1803.07055
+
+=== PART 2 ===
+
+DDPG (Deep Deterministic Policy Gradient)
+"Continuous control with deep reinforcement learning"
+https://arxiv.org/abs/1509.02971
+
+Deterministic Policy Gradient Algorithms
+http://proceedings.mlr.press/v32/silver14.pdf
