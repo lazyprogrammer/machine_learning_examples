@@ -12,12 +12,12 @@ from scipy.io import loadmat
 
 def getKaggleMNIST():
     # https://www.kaggle.com/c/digit-recognizer
-    return getMNISTFormat('../large_files/train.csv')
+    return getMNISTFormat('.\\large_files\\digit-recognizer\\train.csv')
 
 
 def getKaggleFashionMNIST():
     # https://www.kaggle.com/zalando-research/fashionmnist
-    return getMNISTFormat('../large_files/fashionmnist/fashion-mnist_train.csv')
+    return getMNISTFormat('.\\large_files\\fashionmnist\\fashion-mnist_train.csv')
 
 def getMNISTFormat(path):
     # MNIST data:

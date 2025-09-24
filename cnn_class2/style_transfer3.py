@@ -13,22 +13,23 @@ from builtins import range, input
 # We accomplish this by balancing the content loss
 # and style loss simultaneously.
 
-from keras.layers import Input, Lambda, Dense, Flatten
-from keras.layers import AveragePooling2D, MaxPooling2D
-from keras.layers.convolutional import Conv2D
-from keras.models import Model, Sequential
-from keras.applications.vgg16 import VGG16
-from keras.applications.vgg16 import preprocess_input
-from keras.preprocessing import image
-from skimage.transform import resize
+from tensorflow.keras.layers import Layer #type: ignore #Input, Lambda, Dense, Flatten
+# from keras.layers import AveragePooling2D, MaxPooling2D
+# from keras.layers.convolutional import Conv2D
+from tensorflow.keras.models import Model #type: ignore
+# from keras.applications.vgg16 import VGG16
+from tensorflow.keras.applications.vgg16 import preprocess_input #type: ignore
+from tensorflow.keras.preprocessing import image #type: ignore
+#from skimage.transform import resize
 
-import keras.backend as K
+import tensorflow.keras.backend as K #type: ignore
+import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
-from style_transfer1 import VGG16_AvgPool, VGG16_AvgPool_CutOff, unpreprocess, scale_img
-from style_transfer2 import gram_matrix, style_loss, minimize
-from scipy.optimize import fmin_l_bfgs_b
+from style_transfer1 import VGG16_AvgPool, scale_img
+from style_transfer2 import style_loss, minimize
+#from scipy.optimize import fmin_l_bfgs_b
 
 
 # load the content image
@@ -47,7 +48,7 @@ def load_img_and_preprocess(path, shape=None):
 content_img = load_img_and_preprocess(
   # '../large_files/caltech101/101_ObjectCategories/elephant/image_0002.jpg',
   # 'batman.jpg',
-  'content/sydney.jpg',
+  '.\\cnn_class2\\content\\sydney.jpg',
   # (225, 300),
 )
 
@@ -58,7 +59,7 @@ style_img = load_img_and_preprocess(
   # 'styles/starrynight.jpg',
   # 'styles/flowercarrier.jpg',
   # 'styles/monalisa.jpg',
-  'styles/lesdemoisellesdavignon.jpg',
+  '.\\cnn_class2\\styles\\lesdemoisellesdavignon.jpg',
   (h, w)
 )
 
@@ -78,16 +79,16 @@ vgg = VGG16_AvgPool(shape)
 # we only want 1 output
 # remember you can call vgg.summary() to see a list of layers
 # 1,2,4,5,7-9,11-13,15-17
-content_model = Model(vgg.input, vgg.layers[13].get_output_at(0))
-content_target = K.variable(content_model.predict(content_img))
+content_model = Model(vgg.input, vgg.layers[13].output)
+content_target = tf.Variable(content_model.predict(content_img))
 
 
 # create the style model
 # we want multiple outputs
 # we will take the same approach as in style_transfer2.py
 symbolic_conv_outputs = [
-  layer.get_output_at(1) for layer in vgg.layers \
-  if layer.name.endswith('conv1')
+  vgg.get_layer(layer.name).output for layer in vgg.layers
+    if layer.name.endswith('conv1')
 ]
 
 # make a big model that outputs multiple layers' outputs
@@ -103,7 +104,22 @@ style_weights = [0.2,0.4,0.3,0.5,0.2]
 
 
 # create the total loss which is the sum of content + style loss
-loss = K.mean(K.square(content_model.output - content_target))
+#loss = K.mean(K.square(content_model.output - content_target))
+
+class ContentLossLayer(Layer):
+    def __init__(self, content_target, **kwargs):
+        super(ContentLossLayer, self).__init__(**kwargs)
+        self.content_target = content_target
+
+    def call(self, inputs):
+        return tf.reduce_mean(tf.square(inputs - self.content_target))
+
+with tf.GradientTape() as tape:
+  # Instantiate the content loss layer
+  content_loss_layer = ContentLossLayer(content_target)
+
+  # Now compute the loss
+  loss = content_loss_layer(content_model.output)
 
 for w, symbolic, actual in zip(style_weights, symbolic_conv_outputs, style_layers_outputs):
   # gram_matrix() expects a (H, W, C) as input
@@ -113,7 +129,7 @@ for w, symbolic, actual in zip(style_weights, symbolic_conv_outputs, style_layer
 # once again, create the gradients and loss + grads function
 # note: it doesn't matter which model's input you use
 # they are both pointing to the same keras Input layer in memory
-grads = K.gradients(loss, vgg.input)
+grads = tape.gradient(loss, vgg.input)
 
 # just like theano.function
 get_loss_and_grads = K.function(
