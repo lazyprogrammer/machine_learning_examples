@@ -49,7 +49,7 @@ def classification_rate(Y, P):
     return np.mean(Y == P)
 
 def cross_entropy(Y, pY):
-    return -np.sum(Y * np.log(pY)) / len(T)
+    return -np.sum(Y * np.log(pY)) / len(Y)
 
 
 # train loop
