@@ -70,7 +70,7 @@ class SVM:
       self.alphas[self.alphas < 0] = 0
       self.alphas[self.alphas > self.C] = self.C
 
-    # distrbution of bs
+    # distribution of bs
     idx = np.where((self.alphas) > 0 & (self.alphas < self.C))[0]
     bs = Y[idx] - (self.alphas * Y).dot(self.kernel(X, X[idx]))
     self.b = np.mean(bs)
