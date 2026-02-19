@@ -7,7 +7,7 @@
 # tmp = p.take(5)
 # print(tmp)
 
-from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
+from pyspark.mllib.recommendation import ALS, Rating
 from pyspark import SparkContext
 
 # increase memory
@@ -18,8 +18,8 @@ sc = SparkContext("local", "Your App Name Here")
 
 
 # load in the data
-# data = sc.textFile("../large_files/movielens-20m-dataset/small_rating.csv")
-data = sc.textFile("../large_files/movielens-20m-dataset/rating.csv.gz")
+data = sc.textFile("/mnt/c/Users/Saif/Downloads/personal/Udemy_labs/nlp/machine_learning_examples/large_files/movielens-20m-dataset/rating.csv")
+#data = sc.textFile(".\\large_files\\movielens-20m-dataset\\rating.csv.gz")
 
 # filter out header
 header = data.first() #extract header

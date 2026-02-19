@@ -5,14 +5,14 @@ from builtins import range, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-import numpy as np
+#import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
-from scipy.sparse import lil_matrix, csr_matrix, save_npz, load_npz
+from scipy.sparse import lil_matrix, save_npz
 
 # load in the data
-df = pd.read_csv('../large_files/movielens-20m-dataset/edited_rating.csv')
+df = pd.read_csv('.\\large_files\\movielens-20m-dataset\\edited_rating.csv')
 # df = pd.read_csv('../large_files/movielens-20m-dataset/small_rating.csv')
 
 N = df.userId.max() + 1 # number of users
@@ -41,7 +41,7 @@ df_train.apply(update_train, axis=1)
 # mask, to tell us which entries exist and which do not
 A = A.tocsr()
 mask = (A > 0)
-save_npz("Atrain.npz", A)
+save_npz(".\\large_files\\movielens-20m-dataset\\Atrain.npz", A)
 
 # test ratings dictionary
 A_test = lil_matrix((N, M))
@@ -59,4 +59,4 @@ def update_test(row):
 df_test.apply(update_test, axis=1)
 A_test = A_test.tocsr()
 mask_test = (A_test > 0)
-save_npz("Atest.npz", A_test)
+save_npz(".\\large_files\\movielens-20m-dataset\\Atest.npz", A_test)

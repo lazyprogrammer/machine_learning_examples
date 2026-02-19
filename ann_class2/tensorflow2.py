@@ -12,10 +12,11 @@ from builtins import range
 
 import numpy as np
 import tensorflow as tf
-
 import matplotlib.pyplot as plt
-
 from util import get_normalized_data, y2indicator
+
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
 
 
 def error_rate(p, t):
@@ -31,7 +32,7 @@ def main():
     print_period = 50
 
     lr = 0.00004
-    reg = 0.01
+    #reg = 0.01
 
     Ytrain_ind = y2indicator(Ytrain)
     Ytest_ind = y2indicator(Ytest)
@@ -53,8 +54,8 @@ def main():
 
 
     # define variables and expressions
-    X = tf.placeholder(tf.float32, shape=(None, D), name='X')
-    T = tf.placeholder(tf.float32, shape=(None, K), name='T')
+    X = tf.compat.v1.placeholder(tf.float32, shape=(None, D), name='X')
+    T = tf.compat.v1.placeholder(tf.float32, shape=(None, K), name='T')
     W1 = tf.Variable(W1_init.astype(np.float32))
     b1 = tf.Variable(b1_init.astype(np.float32))
     W2 = tf.Variable(W2_init.astype(np.float32))
@@ -70,19 +71,19 @@ def main():
     # softmax_cross_entropy_with_logits take in the "logits"
     # if you wanted to know the actual output of the neural net,
     # you could pass "Yish" into tf.nn.softmax(logits)
-    cost = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(logits=Yish, labels=T))
+    cost = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(logits=Yish, labels=T))
 
     # we choose the optimizer but don't implement the algorithm ourselves
     # let's go with RMSprop, since we just learned about it.
     # it includes momentum!
-    train_op = tf.train.RMSPropOptimizer(lr, decay=0.99, momentum=0.9).minimize(cost)
+    train_op = tf.compat.v1.train.RMSPropOptimizer(lr, decay=0.99, momentum=0.9).minimize(cost)
 
     # we'll use this to calculate the error rate
     predict_op = tf.argmax(Yish, 1)
 
     costs = []
-    init = tf.global_variables_initializer()
-    with tf.Session() as session:
+    init = tf.compat.v1.global_variables_initializer()
+    with tf.compat.v1.Session() as session:
         session.run(init)
 
         for i in range(max_iter):

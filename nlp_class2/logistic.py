@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
 
   # train a logistic model
-  W = np.random.randn(V, V) / np.sqrt(V)
+  W = np.random.randn(V, V)/np.sqrt(V)
 
   losses = []
   epochs = 1
@@ -56,7 +56,7 @@ if __name__ == '__main__':
   def softmax(a):
     a = a - a.max()
     exp_a = np.exp(a)
-    return exp_a / exp_a.sum(axis=1, keepdims=True)
+    return exp_a/exp_a.sum(axis=1, keepdims=True)
 
   # what is the loss if we set W = log(bigram_probs)?
   W_bigram = np.log(bigram_probs)
@@ -85,19 +85,19 @@ if __name__ == '__main__':
       W = W - lr * inputs.T.dot(predictions - targets)
 
       # keep track of the loss
-      loss = -np.sum(targets * np.log(predictions)) / (n - 1)
+      loss = -np.sum(targets*np.log(predictions))/(n - 1)
       losses.append(loss)
 
       # keep track of the bigram loss
       # only do it for the first epoch to avoid redundancy
       if epoch == 0:
         bigram_predictions = softmax(inputs.dot(W_bigram))
-        bigram_loss = -np.sum(targets * np.log(bigram_predictions)) / (n - 1)
+        bigram_loss = -np.sum(targets*np.log(bigram_predictions))/(n - 1)
         bigram_losses.append(bigram_loss)
 
 
-      if j % 10 == 0:
-        print("epoch:", epoch, "sentence: %s/%s" % (j, len(sentences)), "loss:", loss)
+      if j%10 == 0:
+        print(f"epoch: {epoch}, sentence: {j}/{len(sentences)}, loss: {loss}")
       j += 1
 
   print("Elapsed time training:", datetime.now() - t0)
@@ -114,8 +114,8 @@ if __name__ == '__main__':
     y = np.zeros(len(x))
     last = 0
     for t in range(len(x)):
-      z = decay * last + (1 - decay) * x[t]
-      y[t] = z / (1 - decay ** (t + 1))
+      z = decay*last + (1 - decay)*x[t]
+      y[t] = z/(1 - decay**(t + 1))
       last = z
     return y
 
