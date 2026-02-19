@@ -21,3 +21,6 @@ https://arxiv.org/abs/1509.02971
 
 Deterministic Policy Gradient Algorithms
 http://proceedings.mlr.press/v32/silver14.pdf
+
+Addressing Function Approximation Error in Actor-Critic Methods
+https://arxiv.org/abs/1802.09477
