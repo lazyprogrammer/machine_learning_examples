@@ -1,24 +1,24 @@
 # https://udemy.com/recommender-systems
 # https://deeplearningcourses.com/recommender-systems
 from __future__ import print_function, division
-from builtins import range, input
+#from builtins import range, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-import pickle
-import numpy as np
+#import pickle
+#import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 
-from keras.models import Model
-from keras.layers import Input, Embedding, Flatten, Dense, Concatenate
-from keras.layers import Dropout, BatchNormalization, Activation
-from keras.regularizers import l2
-from keras.optimizers import SGD, Adam
+from tensorflow.keras.models import Model  # type:ignore
+from tensorflow.keras.layers import Input, Embedding, Flatten, Dense, Concatenate # type:ignore
+from tensorflow.keras.layers import Dropout, BatchNormalization, Activation # type:ignore
+#from tensorflow.keras.regularizers import l2
+from tensorflow.keras.optimizers import SGD#, Adam # type:ignore
 
 # load in the data
-df = pd.read_csv('../large_files/movielens-20m-dataset/edited_rating.csv')
+df = pd.read_csv('.\\large_files\\movielens-20m-dataset\\edited_rating.csv')
 
 N = df.userId.max() + 1 # number of users
 M = df.movie_idx.max() + 1 # number of movies
@@ -47,12 +47,12 @@ x = Concatenate()([u_embedding, m_embedding]) # (N, 2K)
 
 # the neural network
 x = Dense(400)(x)
-# x = BatchNormalization()(x)
+x = BatchNormalization()(x)
 x = Activation('relu')(x)
-# x = Dropout(0.5)(x)
-# x = Dense(100)(x)
-# x = BatchNormalization()(x)
-# x = Activation('relu')(x)
+x = Dropout(0.5)(x)
+x = Dense(100)(x)
+x = BatchNormalization()(x)
+x = Activation('relu')(x)
 x = Dense(1)(x)
 
 model = Model(inputs=[u, m], outputs=x)
@@ -60,7 +60,7 @@ model.compile(
   loss='mse',
   # optimizer='adam',
   # optimizer=Adam(lr=0.01),
-  optimizer=SGD(lr=0.08, momentum=0.9),
+  optimizer=SGD(learning_rate=0.08, momentum=0.9),
   metrics=['mse'],
 )
 

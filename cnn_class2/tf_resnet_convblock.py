@@ -17,6 +17,7 @@ def init_filter(d, mi, mo, stride):
 
 class ConvLayer:
   def __init__(self, d, mi, mo, stride=2, padding='VALID'):
+    super().__init__()
     self.W = tf.Variable(init_filter(d, mi, mo, stride))
     self.b = tf.Variable(np.zeros(mo, dtype=np.float32))
     self.stride = stride
@@ -50,6 +51,7 @@ class ConvLayer:
 
 class BatchNormLayer:
   def __init__(self, D):
+    super().__init__()
     self.running_mean = tf.Variable(np.zeros(D, dtype=np.float32), trainable=False)
     self.running_var  = tf.Variable(np.ones(D, dtype=np.float32), trainable=False)
     self.gamma        = tf.Variable(np.ones(D, dtype=np.float32))
@@ -82,6 +84,7 @@ class BatchNormLayer:
 
 class ConvBlock:
   def __init__(self, mi, fm_sizes, stride=2, activation=tf.nn.relu):
+    super().__init__()
     # conv1, conv2, conv3
     # note: # feature maps shortcut = # feauture maps conv 3
     assert(len(fm_sizes) == 3)

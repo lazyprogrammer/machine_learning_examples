@@ -37,9 +37,11 @@ model = torch.nn.Sequential()
 model.add_module("dense1", torch.nn.Linear(D, 500))
 model.add_module("bn1", torch.nn.BatchNorm1d(500))
 model.add_module("relu1", torch.nn.ReLU())
+model.add_module("dropout1", torch.nn.Dropout(p=0.2))
 model.add_module("dense2", torch.nn.Linear(500, 300))
 model.add_module("bn2", torch.nn.BatchNorm1d(300))
 model.add_module("relu2", torch.nn.ReLU())
+model.add_module("dropout2", torch.nn.Dropout(p=0.2))
 model.add_module("dense3", torch.nn.Linear(300, K))
 # Note: no final softmax!
 # just like Tensorflow, it's included in cross-entropy function

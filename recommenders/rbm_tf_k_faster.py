@@ -10,8 +10,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 
-import pandas as pd
-from scipy.sparse import lil_matrix, csr_matrix, save_npz, load_npz
+#import pandas as pd
+from scipy.sparse import load_npz
 from datetime import datetime
 
 if tf.__version__.startswith('2'):
@@ -33,6 +33,7 @@ def dot2(H, W):
 
 class RBM(object):
     def __init__(self, D, M, K):
+        super().__init__()
         self.D = D # input feature size
         self.M = M # hidden size
         self.K = K # number of ratings
@@ -115,7 +116,7 @@ class RBM(object):
         self.session.run(initop)
 
     def fit(self, X, X_test, epochs=10, batch_sz=256, show_fig=True):
-        N, D = X.shape
+        N, _ = X.shape
         n_batches = N // batch_sz
 
 
@@ -134,7 +135,7 @@ class RBM(object):
                 )
 
                 if j % 100 == 0:
-                    print("j / n_batches:", j, "/", n_batches, "cost:", c)
+                    print(f"j / n_batches: {j}/{n_batches}", "cost: ",c)
             print("duration:", datetime.now() - t0)
 
             # calculate the true train and test cost
@@ -209,10 +210,10 @@ class RBM(object):
 
 
 def main():
-    A = load_npz("Atrain.npz")
-    A_test = load_npz("Atest.npz")
+    A = load_npz(".\\large_files\\movielens-20m-dataset\\Atrain.npz")
+    A_test = load_npz(".\\large_files\\movielens-20m-dataset\\Atest.npz")
 
-    N, M = A.shape
+    _, M = A.shape
     rbm = RBM(M, 50, 10)
     rbm.fit(A, A_test)
 

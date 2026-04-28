@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 from sklearn.utils import shuffle
-from util import init_weight, get_ptb_data, display_tree
+from util import init_weight, get_ptb_data
 from datetime import datetime
 from sklearn.metrics import f1_score
 
@@ -191,7 +191,7 @@ class RecursiveNN:
                 it += 1
                 if it % 10 == 0:
                     sys.stdout.write(
-                        "j/N: %d/%d correct rate so far: %f, cost so far: %f\r" %
+                        "j/N: %d/%d correct rate so far: %.4f, cost so far: %.4f\r" %
                         (it, N, float(n_correct)/n_total, cost)
                     )
                     sys.stdout.flush()
@@ -212,10 +212,10 @@ class RecursiveNN:
 
 
             print(
-                "i:", i, "cost:", cost,
-                "train acc:", float(n_correct)/n_total,
-                "test acc:", float(n_test_correct)/n_test_total,
-                "time for epoch:", (datetime.now() - t0)
+                "i: ",i, "cost: %.4f", cost,
+                "train acc: %.4f", float(n_correct)/n_total,
+                "test acc: %.4f", float(n_test_correct)/n_test_total,
+                "time for epoch: ",(datetime.now() - t0)
             )
             costs.append(cost)
 

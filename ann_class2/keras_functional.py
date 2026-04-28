@@ -5,8 +5,8 @@ from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-from keras.models import Model
-from keras.layers import Dense, Input
+from tensorflow.keras.models import Model #type: ignore
+from tensorflow.keras.layers import Dense, Input #type: ignore
 from util import get_normalized_data, y2indicator
 
 import matplotlib.pyplot as plt

@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
-from sklearn.linear_model import LogisticRegression
+#from sklearn.linear_model import LogisticRegression
 
 
 def get_clouds():
@@ -70,14 +70,14 @@ def get_spiral():
 def get_transformed_data():
     print("Reading in and transforming data...")
 
-    if not os.path.exists('../large_files/train.csv'):
-        print('Looking for ../large_files/train.csv')
+    if not os.path.exists('.\\large_files\\digit-recognizer\\train.csv'):
+        print('Looking for .\\large_files\\digit-recognizer\\train.csv')
         print('You have not downloaded the data and/or not placed the files in the correct location.')
         print('Please get the data from: https://www.kaggle.com/c/digit-recognizer')
         print('Place train.csv in the folder large_files adjacent to the class folder')
         exit()
 
-    df = pd.read_csv('../large_files/train.csv')
+    df = pd.read_csv('.\\large_files\\digit-recognizer\\train.csv')
     data = df.values.astype(np.float32)
     np.random.shuffle(data)
 
@@ -117,14 +117,14 @@ def get_transformed_data():
 def get_normalized_data():
     print("Reading in and transforming data...")
 
-    if not os.path.exists('../large_files/train.csv'):
-        print('Looking for ../large_files/train.csv')
+    if not os.path.exists('.\\large_files\\digit-recognizer\\train.csv'):
+        print('Looking for .\\large_files\\digit-recognizer\\train.csv')
         print('You have not downloaded the data and/or not placed the files in the correct location.')
         print('Please get the data from: https://www.kaggle.com/c/digit-recognizer')
         print('Place train.csv in the folder large_files adjacent to the class folder')
         exit()
 
-    df = pd.read_csv('../large_files/train.csv')
+    df = pd.read_csv('.\\large_files\\digit-recognizer\\train.csv')
     data = df.values.astype(np.float32)
     np.random.shuffle(data)
     X = data[:, 1:]

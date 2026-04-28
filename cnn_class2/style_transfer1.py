@@ -9,15 +9,12 @@ from builtins import range, input
 # In this script, we will focus on generating the content
 # E.g. given an image, can we recreate the same image
 
-from keras.layers import Input, Lambda, Dense, Flatten
-from keras.layers import AveragePooling2D, MaxPooling2D
-from keras.layers.convolutional import Conv2D
-from keras.models import Model, Sequential
-from keras.applications.vgg16 import VGG16
-from keras.applications.vgg16 import preprocess_input
-from keras.preprocessing import image
+from tensorflow.keras.layers import AveragePooling2D, MaxPooling2D, Conv2D #type: ignore
+from tensorflow.keras.models import Model, clone_model #type: ignore
+from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input #type: ignore
+from tensorflow.keras.preprocessing import image #type: ignore
 
-import keras.backend as K
+import tensorflow.keras.backend as K #type: ignore
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -25,14 +22,15 @@ from scipy.optimize import fmin_l_bfgs_b
 
 
 import tensorflow as tf
-if tf.__version__.startswith('2'):
-  tf.compat.v1.disable_eager_execution()
+#if tf.__version__.startswith('2'):
+#  tf.compat.v1.disable_eager_execution()
 
 
 def VGG16_AvgPool(shape):
   # we want to account for features across the entire image
   # so get rid of the maxpool which throws away information
   vgg = VGG16(input_shape=shape, weights='imagenet', include_top=False)
+  vgg_clone = clone_model(vgg)
 
   # new_model = Sequential()
   # for layer in vgg.layers:
@@ -42,16 +40,17 @@ def VGG16_AvgPool(shape):
   #   else:
   #     new_model.add(layer)
 
-  i = vgg.input
-  x = i
-  for layer in vgg.layers:
-    if layer.__class__ == MaxPooling2D:
+  #i = vgg.input
+  #x = i
+  for layer in vgg_clone.layers:
+    if isinstance(layer, MaxPooling2D):
       # replace it with average pooling
-      x = AveragePooling2D()(x)
-    else:
-      x = layer(x)
+      layer = AveragePooling2D(pool_size=layer.pool_size)
+    #else:
+    #  x = layer(x)
 
-  return Model(i, x)
+# return Model(i, x)
+  return vgg_clone
 
 def VGG16_AvgPool_CutOff(shape, num_convs):
   # there are 13 convolutions in total
@@ -98,12 +97,13 @@ def scale_img(x):
   return x
 
 
+
 if __name__ == '__main__':
 
   # open an image
   # feel free to try your own
   # path = '../large_files/caltech101/101_ObjectCategories/elephant/image_0002.jpg'
-  path = 'content/elephant.jpg'
+  path = '.\\cnn_class2\\content\\elephant.jpg'
   img = image.load_img(path)
 
   # convert image to array and preprocess for vgg
@@ -116,8 +116,8 @@ if __name__ == '__main__':
   shape = x.shape[1:]
 
   # see the image
-  # plt.imshow(img)
-  # plt.show()
+  plt.imshow(img)
+  plt.show()
 
 
   # make a content model
@@ -131,16 +131,17 @@ if __name__ == '__main__':
   # try to match the image
 
   # define our loss in keras
-  loss = K.mean(K.square(target - content_model.output))
-
-  # gradients which are needed by the optimizer
-  grads = K.gradients(loss, content_model.input)
-
-  # just like theano.function
-  get_loss_and_grads = K.function(
-    inputs=[content_model.input],
-    outputs=[loss] + grads
-  )
+  #loss_layer = Lambda(lambda inputs: K.mean(K.square(inputs[0] - inputs[1])))
+  #loss = loss_layer([target, content_model.output])
+  
+  def get_loss_and_grads(inputs):
+    with tf.GradientTape() as tape:
+        tape.watch(inputs)
+        # Compute the loss as the mean squared difference between target and model output
+        loss_value = K.mean(K.square(target - content_model(inputs)))
+    # Compute the gradient of loss with respect to the inputs
+    grads_value = tape.gradient(loss_value, inputs)
+    return loss_value, grads_value
 
 
   def get_loss_and_grads_wrapper(x_vec):
@@ -155,10 +156,10 @@ if __name__ == '__main__':
     # gradient must also be a 1-D array
     # and both loss and gradient must be np.float64
     # will get an error otherwise
-
-    l, g = get_loss_and_grads([x_vec.reshape(*batch_shape)])
-    return l.astype(np.float64), g.flatten().astype(np.float64)
-
+    x_tensor = tf.convert_to_tensor(x_vec.reshape(*batch_shape), dtype=tf.float32)
+    l, g = get_loss_and_grads(x_tensor)
+    #l, g = get_loss_and_grads(x_vec.reshape(*batch_shape))
+    return l.numpy().astype(np.float64), g.numpy().flatten().astype(np.float64)
 
 
   from datetime import datetime

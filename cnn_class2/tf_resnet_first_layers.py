@@ -11,13 +11,13 @@ from builtins import range, input
 # compared to keras
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import keras
 
-from keras.applications.resnet50 import ResNet50
-from keras.models import Model
-from keras.preprocessing import image
-from keras.applications.resnet50 import preprocess_input, decode_predictions
+from tensorflow.keras.applications.resnet50 import ResNet50
+from tensorflow.keras.models import Model
+#from keras.preprocessing import image
+#from keras.applications.resnet50 import preprocess_input, decode_predictions
 
 from tf_resnet_convblock import ConvLayer, BatchNormLayer, ConvBlock
 
@@ -53,6 +53,7 @@ class ReLULayer:
 
 class MaxPoolLayer:
   def __init__(self, dim):
+    super().__init__()
     self.dim = dim
 
   def forward(self, X):
@@ -68,6 +69,7 @@ class MaxPoolLayer:
 
 class PartialResNet:
   def __init__(self):
+    super().__init__()
     self.layers = [
       # before conv block
       ConvLayer(d=7, mi=3, mo=64, stride=2, padding='SAME'),

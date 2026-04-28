@@ -20,7 +20,7 @@ from util import find_analogies
 import sys
 sys.path.append(os.path.abspath('..'))
 from rnn_class.util import get_wikipedia_data
-from rnn_class.brown import get_sentences_with_word2idx_limit_vocab, get_sentences_with_word2idx
+from rnn_class.brown import get_sentences_with_word2idx_limit_vocab
 
 # using ALS, what's the least # files to get correct analogies?
 # use this for word2vec training to make it faster
@@ -120,7 +120,7 @@ class Glove:
 
 
         costs = []
-        sentence_indexes = range(len(sentences))
+        #sentence_indexes = range(len(sentences))
         for epoch in range(epochs):
             delta = W.dot(U.T) + b.reshape(V, 1) + c.reshape(1, V) + mu - logX
             cost = ( fX * delta * delta ).sum()

@@ -11,14 +11,14 @@ from builtins import range, input
 # compared to keras
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import keras
 
-from keras.applications.resnet50 import ResNet50
-from keras.models import Model
-from keras.preprocessing import image
-from keras.layers import Dense
-from keras.applications.resnet50 import preprocess_input, decode_predictions
+from tensorflow.keras.applications.resnet50 import ResNet50
+from tensorflow.keras.models import Model
+#from tensorflow.keras.preprocessing import image
+from tensorflow.keras.layers import Dense
+#from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
 
 from tf_resnet_convblock import ConvLayer, BatchNormLayer, ConvBlock
 from tf_resnet_identity_block import IdentityBlock

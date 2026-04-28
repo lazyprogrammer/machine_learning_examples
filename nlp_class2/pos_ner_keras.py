@@ -9,20 +9,21 @@ from builtins import range
 
 import numpy as np
 import matplotlib.pyplot as plt
+import tensorflow as tf
 import os
 import sys
 sys.path.append(os.path.abspath('..'))
-from pos_baseline import get_data
+#from pos_baseline import get_data
 from sklearn.utils import shuffle
-from util import init_weight
+#from util import init_weight
 from datetime import datetime
-from sklearn.metrics import f1_score
+#from sklearn.metrics import f1_score
 
-from keras.models import Model
-from keras.layers import Input, Dense, Embedding, LSTM, GRU
-from keras.preprocessing.sequence import pad_sequences
-from keras.preprocessing.text import Tokenizer
-from keras.optimizers import Adam
+from tensorflow.keras.models import Model #type: ignore
+from tensorflow.keras.layers import Input, Dense, Embedding, GRU, LSTM, SimpleRNN #type: ignore
+from tensorflow.keras.preprocessing.sequence import pad_sequences #type: ignore
+from tensorflow.keras.preprocessing.text import Tokenizer #type: ignore
+from tensorflow.keras.optimizers import Adam #type: ignore
 
 
 MAX_VOCAB_SIZE = 20000
@@ -30,73 +31,12 @@ MAX_TAGS = 100
 
 
 
-def get_data_pos(split_sequences=False):
-  if not os.path.exists('chunking'):
-    print("Please create a folder in your local directory called 'chunking'")
-    print("train.txt and test.txt should be stored in there.")
-    print("Please check the comments to get the download link.")
-    exit()
-  elif not os.path.exists('chunking/train.txt'):
-    print("train.txt is not in chunking/train.txt")
-    print("Please check the comments to get the download link.")
-    exit()
-  elif not os.path.exists('chunking/test.txt'):
-    print("test.txt is not in chunking/test.txt")
-    print("Please check the comments to get the download link.")
-    exit()
-
-  Xtrain = []
-  Ytrain = []
-  currentX = []
-  currentY = []
-  for line in open('chunking/train.txt'):
-    line = line.rstrip()
-    if line:
-      r = line.split()
-      word, tag, _ = r
-      currentX.append(word)
-      
-      currentY.append(tag)
-    elif split_sequences:
-      Xtrain.append(currentX)
-      Ytrain.append(currentY)
-      currentX = []
-      currentY = []
-
-  if not split_sequences:
-    Xtrain = currentX
-    Ytrain = currentY
-
-  # load and score test data
-  Xtest = []
-  Ytest = []
-  currentX = []
-  currentY = []
-  for line in open('chunking/test.txt'):
-    line = line.rstrip()
-    if line:
-      r = line.split()
-      word, tag, _ = r
-      currentX.append(word)
-      currentY.append(tag)
-    elif split_sequences:
-      Xtest.append(currentX)
-      Ytest.append(currentY)
-      currentX = []
-      currentY = []
-  if not split_sequences:
-    Xtest = currentX
-    Ytest = currentY
-
-  return Xtrain, Ytrain, Xtest, Ytest
-
-
 def get_data_ner(split_sequences=False):
   Xtrain = []
   Ytrain = []
   currentX = []
   currentY = []
-  for line in open('ner.txt'):
+  for line in open('ner.txt', encoding='utf-8'):
     line = line.rstrip()
     if line:
       r = line.split()
@@ -138,7 +78,7 @@ Xtest  = tokenizer.texts_to_sequences(Xtest)
 
 # get word -> integer mapping
 word2idx = tokenizer.word_index
-print('Found %s unique tokens.' % len(word2idx))
+print(f'Found {len(word2idx)} unique tokens.')
 vocab_size = min(MAX_VOCAB_SIZE, len(word2idx) + 1)
 
 
@@ -150,7 +90,7 @@ Ytest  = tokenizer2.texts_to_sequences(Ytest)
 
 # get tag -> integer mapping
 tag2idx = tokenizer2.word_index
-print('Found %s unique tags.' % len(tag2idx))
+print(f'Found {len(tag2idx)} unique tags.')
 num_tags = min(MAX_TAGS, len(tag2idx) + 1)
 
 
@@ -189,34 +129,32 @@ embedding_dim = 10
 # build the model
 input_ = Input(shape=(sequence_length,))
 x = Embedding(vocab_size, embedding_dim)(input_)
-x = GRU(hidden_layer_size, return_sequences=True)(x)
+x = SimpleRNN(hidden_layer_size, return_sequences=True)(x)
 output = Dense(num_tags, activation='softmax')(x)
 
 
 model = Model(input_, output)
 model.compile(
   loss='categorical_crossentropy',
-  optimizer=Adam(lr=1e-2),
+  optimizer=Adam(learning_rate=1e-2),
   metrics=['accuracy']
 )
 
 
 print('Training model...')
-r = model.fit(
-  Xtrain,
-  Ytrain_onehot,
-  batch_size=batch_size,
-  epochs=epochs,
-  validation_data=(Xtest, Ytest_onehot)
-)
+r = model.fit(Xtrain,
+              Ytrain_onehot,
+              batch_size=batch_size,
+              epochs=epochs,
+              validation_data=(Xtest, Ytest_onehot))
 
-# plot some data
+# plot loss
 plt.plot(r.history['loss'], label='loss')
 plt.plot(r.history['val_loss'], label='val_loss')
 plt.legend()
 plt.show()
 
-# accuracies
+# plot accuracy
 plt.plot(r.history['accuracy'], label='acc')
 plt.plot(r.history['val_accuracy'], label='val_acc')
 plt.legend()

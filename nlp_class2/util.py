@@ -182,7 +182,7 @@ def get_ptb_data():
     test = []
 
     # train set first
-    for line in open('../large_files/trees/train.txt'):
+    for line in open('../large_files/trees/train.txt', encoding='utf-8'):
         line = line.rstrip()
         if line:
             t = str2tree(line, word2idx)
@@ -194,7 +194,7 @@ def get_ptb_data():
             # break
 
     # test set
-    for line in open('../large_files/trees/test.txt'):
+    for line in open('../large_files/trees/test.txt', encoding='utf-8'):
         line = line.rstrip()
         if line:
             t = str2tree(line, word2idx)

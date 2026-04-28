@@ -4,21 +4,23 @@ from builtins import range, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-from keras.layers import Input, Lambda, Dense, Flatten, Conv2D, BatchNormalization, Activation, MaxPooling2D
-from keras.models import Model
-from keras.preprocessing import image
+from tensorflow.keras.layers import (Input, Lambda, Dense, Flatten, Conv2D, #type: ignore
+                                     BatchNormalization, Activation, MaxPooling2D)
+from tensorflow.keras.models import Model #type: ignore
+from tensorflow.keras.preprocessing import image #type: ignore
 
-import keras.backend as K
+import tensorflow.keras.backend as K #type: ignore
 
 import numpy as np
 import matplotlib.pyplot as plt
+import tensorflow as tf
 
 from glob import glob
 from collections import Counter
 
 
 # get the data from: http://vision.ucsd.edu/content/yale-face-database
-files = glob('../large_files/yalefaces/subject*')
+files = glob('.\\large_files\\yalefaces\\subject*')
 
 # easier to randomize later
 np.random.shuffle(files)
@@ -54,7 +56,7 @@ for i, f in enumerate(files):
 # all the filenames are something like 'subject13.happy'
 labels = np.zeros(N)
 for i, f in enumerate(files):
-  filename = f.rsplit('/', 1)[-1]
+  filename = f.rsplit('\\', 1)[-1]
   subject_num = filename.split('.', 1)[0]
 
   # subtract 1 since the filenames start from 1
@@ -228,6 +230,32 @@ def test_generator():
       y = y_batch[:j]
       yield [x1, x2], y
 
+
+train_dataset = tf.data.Dataset.from_generator(
+    train_generator,
+    output_signature=(
+        (
+            tf.TensorSpec(shape=(None, *img.shape), dtype=tf.float32),  # x_batch_1
+            tf.TensorSpec(shape=(None, *img.shape), dtype=tf.float32)   # x_batch_2
+        ),
+        tf.TensorSpec(shape=(None,), dtype=tf.float32)  # y_batch
+    )
+)
+
+test_dataset = tf.data.Dataset.from_generator(
+    test_generator,
+    output_signature=(
+        (
+            tf.TensorSpec(shape=(None, *img.shape), dtype=tf.float32),  # x_batch_1
+            tf.TensorSpec(shape=(None, *img.shape), dtype=tf.float32)   # x_batch_2
+        ),
+        tf.TensorSpec(shape=(None,), dtype=tf.float32)  # y_batch
+    )
+)
+
+# Optional: Shuffle, batch, and prefetch for performance
+train_dataset = train_dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+test_dataset = test_dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)
 
 
 
@@ -426,10 +454,10 @@ valid_steps = int(np.ceil(len(test_positives) * 2 / batch_size))
 
 # fit the model
 r = model.fit(
-  train_generator(),
+  train_dataset,
   steps_per_epoch=train_steps,
   epochs=20,
-  validation_data=test_generator(),
+  validation_data=test_dataset,
   validation_steps=valid_steps,
 )
 
