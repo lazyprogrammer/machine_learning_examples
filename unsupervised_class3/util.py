@@ -78,9 +78,7 @@ def get_celeb(limit=None):
       with zipfile.ZipFile('../large_files/img_align_celeba.zip') as zf:
         zip_dir = zf.namelist()[0]
         zf.extractall('../large_files')
-
-
-    # load in the original images
+        # load in the original images
     filenames = glob("../large_files/img_align_celeba/*.jpg")
     N = len(filenames)
     print("Found %d files!" % N)
@@ -89,6 +87,16 @@ def get_celeb(limit=None):
     # crop the images to 64x64
     os.mkdir('../large_files/img_align_celeba-cropped')
     print("Cropping images, please wait...")
+
+    for i in range(N):
+      crop_and_resave(filenames[i], '../large_files/img_align_celeba-cropped')
+      if i % 1000 == 0:
+        print("%d/%d" % (i, N))
+  else:
+    # load in the original images
+    filenames = glob("../large_files/img_align_celeba/*.jpg")
+    N = len(filenames)
+    print("Found %d files!" % N)
 
     for i in range(N):
       crop_and_resave(filenames[i], '../large_files/img_align_celeba-cropped')
