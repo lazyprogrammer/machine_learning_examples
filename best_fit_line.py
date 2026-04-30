@@ -39,12 +39,12 @@ for x,y in points:
     prob += (a*x - y - c >= -z)
 
 status = prob.solve(GLPK(msg = 0))
-print "status:", LpStatus[status]
-print "values:"
-print "\ta:", value(a)
-# print "\tb:", value(b)
-print "\tc:", value(c)
-print "\tz:", value(z)
+print("status:", LpStatus[status])
+print("values:")
+print("\ta:", value(a))
+# print("\tb:", value(b))
+print("\tc:", value(c))
+print("\tz:", value(z))
 
 
 # extra part to plot everything
