@@ -25,7 +25,7 @@ def play_one_episode(env, params):
   done = False
   t = 0
 
-  while not done and t < 10000:
+  while not done:
     t += 1
     action = get_action(observation, params)
     observation, reward, done, info = env.step(action)
@@ -63,6 +63,7 @@ def random_search(env):
 
 if __name__ == '__main__':
   env = gym.make('CartPole-v0')
+  env._max_episode_steps = 10000
   episode_lengths, params = random_search(env)
   plt.plot(episode_lengths)
   plt.show()
