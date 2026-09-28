@@ -1,16 +1,15 @@
 # https://deeplearningcourses.com/c/advanced-computer-vision
 # https://www.udemy.com/advanced-computer-vision
 from __future__ import print_function, division
-from builtins import range, input
+#from builtins import range, input
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-from keras.layers import Input, Lambda, Dense, Flatten
-from keras.models import Model
-from keras.applications.vgg16 import VGG16
-from keras.applications.vgg16 import preprocess_input
-from keras.preprocessing import image
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.models import Model
+from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from sklearn.metrics import confusion_matrix
 import numpy as np
@@ -31,17 +30,17 @@ batch_size = 32
 # valid_path = '../large_files/blood_cell_images/TEST'
 
 # https://www.kaggle.com/moltean/fruits
-train_path = '../large_files/fruits-360/Training'
-valid_path = '../large_files/fruits-360/Validation'
-# train_path = '../large_files/fruits-360-small/Training'
-# valid_path = '../large_files/fruits-360-small/Validation'
+#train_path = './large_files/fruits-360/Training'
+#valid_path = '../large_files/fruits-360/Validation'
+train_path = '.\\large_files\\fruits-360-small\\Training'
+valid_path = '.\\large_files\\fruits-360-small\\Validation'
 
-# useful for getting number of files
-image_files = glob(train_path + '/*/*.jp*g')
-valid_image_files = glob(valid_path + '/*/*.jp*g')
+# useful for getting number of file
+image_files = glob(train_path + '\\*\\*.jp*g')
+valid_image_files = glob(valid_path + '\\*\\*.jp*g')
 
 # useful for getting number of classes
-folders = glob(train_path + '/*')
+folders = glob(train_path + '\\*')
 
 
 # look at an image for fun

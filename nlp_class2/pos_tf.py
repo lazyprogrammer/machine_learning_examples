@@ -13,15 +13,15 @@ import tensorflow as tf
 import os
 import sys
 sys.path.append(os.path.abspath('..'))
-from pos_baseline import get_data
+#from pos_baseline import get_data
 from sklearn.utils import shuffle
 from util import init_weight
 from datetime import datetime
-from sklearn.metrics import f1_score
+#from sklearn.metrics import f1_score
+from tensorflow.keras.layers import GRUCell, RNN #type: ignore
 
-from tensorflow.contrib.rnn import static_rnn as get_rnn_output
-from tensorflow.contrib.rnn import BasicRNNCell, GRUCell
-
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
 
 
 def get_data(split_sequences=False):
@@ -47,7 +47,7 @@ def get_data(split_sequences=False):
   Ytrain = []
   currentX = []
   currentY = []
-  for line in open('chunking/train.txt'):
+  for line in open('chunking/train.txt', encoding='utf-8'):
     line = line.rstrip()
     if line:
       r = line.split()
@@ -76,7 +76,7 @@ def get_data(split_sequences=False):
   Ytest = []
   currentX = []
   currentY = []
-  for line in open('chunking/test.txt'):
+  for line in open('chunking/test.txt', encoding='utf-8'):
     line = line.rstrip()
     if line:
       r = line.split()
@@ -110,7 +110,7 @@ K = len(set(flatten(Ytrain)) | set(flatten(Ytest))) + 1 # num classes
 
 
 # training config
-epochs = 20
+epochs = 200
 learning_rate = 1e-2
 mu = 0.99
 batch_size = 32
@@ -131,8 +131,8 @@ print("Ytrain.shape:", Ytrain.shape)
 
 
 # inputs
-inputs = tf.placeholder(tf.int32, shape=(None, sequence_length))
-targets = tf.placeholder(tf.int32, shape=(None, sequence_length))
+inputs = tf.compat.v1.placeholder(tf.int32, shape=(None, sequence_length))
+targets = tf.compat.v1.placeholder(tf.int32, shape=(None, sequence_length))
 num_samples = tf.shape(inputs)[0] # useful for later
 
 # embedding
@@ -148,7 +148,8 @@ tfWo = tf.Variable(Wo)
 tfbo = tf.Variable(bo)
 
 # make the rnn unit
-rnn_unit = GRUCell(num_units=hidden_layer_size, activation=tf.nn.relu)
+rnn_unit = RNN(GRUCell(
+  units=hidden_layer_size, activation=tf.nn.relu), return_sequences=True, return_state=True)
 
 
 # get the output
@@ -156,10 +157,10 @@ x = tf.nn.embedding_lookup(tfWe, inputs)
 
 # converts x from a tensor of shape N x T x M
 # into a list of length T, where each element is a tensor of shape N x M
-x = tf.unstack(x, sequence_length, 1)
+#x = tf.unstack(x, sequence_length, 1)
 
 # get the rnn output
-outputs, states = get_rnn_output(rnn_unit, x, dtype=tf.float32)
+outputs, states = rnn_unit(x)
 
 
 # outputs are now of size (T, N, M)
@@ -179,14 +180,14 @@ cost_op = tf.reduce_mean(
     labels=labels_flat
   )
 )
-train_op = tf.train.AdamOptimizer(learning_rate).minimize(cost_op)
+train_op = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(cost_op)
 
 
 
 
 # init stuff
-sess = tf.InteractiveSession()
-init = tf.global_variables_initializer()
+sess = tf.compat.v1.InteractiveSession()
+init = tf.compat.v1.global_variables_initializer()
 sess.run(init)
 
 
@@ -222,8 +223,7 @@ for i in range(epochs):
     # print stuff out periodically
     if j % 10 == 0:
       sys.stdout.write(
-        "j/N: %d/%d correct rate so far: %f, cost so far: %f\r" %
-        (j, n_batches, float(n_correct)/n_total, cost)
+        f"j/N: {j}/{n_batches} correct rate so far: {float(n_correct)/n_total}, cost so far: {cost}\r"
       )
       sys.stdout.flush()
 
@@ -236,13 +236,13 @@ for i in range(epochs):
     pii = pi[yi > 0]
     n_test_correct += np.sum(yii == pii)
     n_test_total += len(yii)
-  test_acc = float(n_test_correct) / n_test_total
+  test_acc = float(n_test_correct)/n_test_total
 
   print(
-      "i:", i, "cost:", "%.4f" % cost,
-      "train acc:", "%.4f" % (float(n_correct)/n_total),
-      "test acc:", "%.4f" % test_acc,
-      "time for epoch:", (datetime.now() - t0)
+      f'''i: {i}, cost: {cost:.4f},
+      train acc: {float(n_correct)/n_total:.4f},
+      test acc: {test_acc:.4f},
+      time for epoch: {(datetime.now() - t0)}'''
   )
   costs.append(cost)
 

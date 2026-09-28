@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 from util import get_normalized_data
 from sklearn.utils import shuffle
 
+if tf.__version__.startswith('2'):
+    tf.compat.v1.disable_eager_execution()
 
 class HiddenLayer(object):
     def __init__(self, M1, M2):
@@ -59,8 +61,8 @@ class ANN(object):
             self.params += h.params
 
         # set up theano functions and variables
-        inputs = tf.placeholder(tf.float32, shape=(None, D), name='inputs')
-        labels = tf.placeholder(tf.int64, shape=(None,), name='labels')
+        inputs = tf.compat.v1.placeholder(tf.float32, shape=(None, D), name='inputs')
+        labels = tf.compat.v1.placeholder(tf.int64, shape=(None,), name='labels')
         logits = self.forward(inputs)
 
         cost = tf.reduce_mean(
@@ -69,7 +71,7 @@ class ANN(object):
                 labels=labels
             )
         )
-        train_op = tf.train.RMSPropOptimizer(lr, decay=decay, momentum=mu).minimize(cost)
+        train_op = tf.compat.v1.train.RMSPropOptimizer(lr, decay=decay, momentum=mu).minimize(cost)
         # train_op = tf.train.MomentumOptimizer(lr, momentum=mu).minimize(cost)
         # train_op = tf.train.AdamOptimizer(lr).minimize(cost)
         prediction = self.predict(inputs)
@@ -85,8 +87,8 @@ class ANN(object):
 
         n_batches = N // batch_sz
         costs = []
-        init = tf.global_variables_initializer()
-        with tf.Session() as session:
+        init = tf.compat.v1.global_variables_initializer()
+        with tf.compat.v1.Session() as session:
             session.run(init)
             for i in range(epochs):
                 print("epoch:", i, "n_batches:", n_batches)

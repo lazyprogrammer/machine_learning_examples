@@ -5,14 +5,14 @@ from builtins import range
 # Note: you may need to update your version of future
 # sudo pip install -U future
 
-from keras.models import Model
-from keras.layers import Dense, Activation, Conv2D, MaxPooling2D, Flatten, Input
+from tensorflow.keras.models import Model # type: ignore
+from tensorflow.keras.layers import Dense, Activation, Conv2D, MaxPooling2D, Flatten, Input # type: ignore
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-from util import getKaggleMNIST3D, getKaggleFashionMNIST3D, getCIFAR10
+from util import getKaggleFashionMNIST3D
 
 
 # get the data
@@ -73,8 +73,8 @@ plt.legend()
 plt.show()
 
 # accuracies
-plt.plot(r.history['acc'], label='acc')
-plt.plot(r.history['val_acc'], label='val_acc')
+plt.plot(r.history['accuracy'], label='acc')
+plt.plot(r.history['val_accuracy'], label='val_acc')
 plt.legend()
 plt.show()
 
